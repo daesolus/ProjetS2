@@ -17,13 +17,19 @@ SOURCES += main.cpp\
     mainview.cpp \
     mainscene.cpp \
     layoutManager.cpp \
-    easywsclient.cpp
+    easywsclient.cpp \
+    cardItem.cpp \
+    effects.cpp \
+    settingsManager.cpp
 
 HEADERS  += \
     mainview.h \
     mainscene.h \
     layoutManager.h \
-    easywsclient.hpp
+    easywsclient.hpp \
+    cardItem.h \
+    effects.h \
+    settingsManager.h
 
 FORMS    += mainwindow.ui
 
@@ -31,3 +37,5 @@ DISTFILES +=
 
 RESOURCES += \
     resources.qrc
+
+CONFIG += c++11

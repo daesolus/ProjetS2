@@ -17,21 +17,19 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    //hide the status bar
-    [[UIApplication sharedApplication] setStatusBarHidden:true];
-
     // Do any additional setup after loading the view, typically from a nib.
     [self tryToConnect];
+}
+- (BOOL)prefersStatusBarHidden {
+    return YES;
 }
 - (void)tryToConnect
 {
     // create the NSURLRequest that will be sent as the handshake
     NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://107.170.171.251:8001"]];
-
     // create the socket and assign delegate
     self.socket = [PSWebSocket clientSocketWithRequest:request];
     self.socket.delegate = self;
-
     // open socket
     [self.socket open];
 }
@@ -56,38 +54,31 @@
     NSLog(@"The websocket closed with code: %@, reason: %@, wasClean: %@", @(code), reason, (wasClean) ? @"YES" : @"NO");
     [self tryToConnect];
 }
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
 - (UIColor*)colorWithHexString:(NSString*)str
 {
-    const char* cStr = [str cStringUsingEncoding:NSASCIIStringEncoding];
-    long col = strtol(cStr + 1, NULL, 16);
-    unsigned char r, g, b;
-    b = col & 0xFF;
-    g = (col >> 8) & 0xFF;
-    r = (col >> 16) & 0xFF;
+    long col = strtol([str cStringUsingEncoding:NSASCIIStringEncoding] + 1, NULL, 16);
+    unsigned char b = col & 0xFF, g = (col >> 8) & 0xFF, r = (col >> 16) & 0xFF;
     return [UIColor colorWithRed:(float)r / 255.0f green:(float)g / 255.0f blue:(float)b / 255.0f alpha:1];
 }
 - (void)touchesBegan:(NSSet*)touches withEvent:(UIEvent*)event
 {
-    for (UITouch* touch in event.allTouches) {
-        //[touch locationInView:self.view].x;
-        int baseInt = arc4random() % 16777216;
-        NSString* hex = [NSString stringWithFormat:@"#%06X", baseInt];
-        [self.socket send:hex];
-    }
+    [self colorScreenForEvent:event];
 }
 - (void)touchesMoved:(NSSet*)touches withEvent:(UIEvent*)event
 {
+    [self colorScreenForEvent:event];
+}
+-(void)colorScreenForEvent:(UIEvent*)event{
     for (UITouch* touch in event.allTouches) {
-        //[touch locationInView:self.view].x;
-        int baseInt = arc4random() % 16777216;
-        NSString* hex = [NSString stringWithFormat:@"#%06X", baseInt];
-        [self.socket send:hex];
+        UIColor *color = [UIColor colorWithHue:([touch locationInView:self.view].x/self.view.frame.size.width) saturation:([touch locationInView:self.view].y/self.view.frame.size.height) brightness:1 alpha:1];
+        int numComponents = (int)CGColorGetNumberOfComponents([color CGColor]);
+        if (numComponents == 4)
+        {
+            const CGFloat *components = CGColorGetComponents([color CGColor]);
+            NSString* hex = [NSString stringWithFormat:@"#%02X%02X%02X", (int)(components[0]*255.f),(int)(components[1]*255.f),(int)(components[2]*255.f)];
+            if(self.socket.readyState == PSWebSocketReadyStateOpen)
+                [self.socket send:hex];
+        }
     }
 }
 @end

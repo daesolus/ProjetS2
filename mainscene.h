@@ -8,6 +8,9 @@
 #include <QVector>
 #include <QVariant>
 #include "easywsclient.hpp"
+#include "settingsManager.h"
+#include "cardItem.h"
+#include <QTransform>
 
 class MainScene : public QGraphicsScene
 {
@@ -21,10 +24,13 @@ private:
     QPixmap image;
     QImage  *imageObject;
     
+    void blurBackgroundItem(QGraphicsItem *backgroundItem, QPixmap *referencePixmap);
+    QGraphicsItem* ambienceCard(const char* title, const char* image);
     QGraphicsItem* backArrow;
     QGraphicsItem* nextArrow;
     easywsclient::WebSocket::pointer ws;
-    
+    const char* hexColorFromRGB(int r, int g, int b);
+
     float getFullScreenPixelRatioForImage(QPixmap* image);
     QGraphicsItem* pixmapItemFromSvg(const char* svgTitle);
     void printItemPositions();
