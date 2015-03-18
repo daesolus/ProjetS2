@@ -10,7 +10,7 @@
 
 #include <string>
 #include <vector>
-
+#include <stdint.h>
 namespace easywsclient {
 
 struct Callback_Imp { virtual void operator()(const std::string& message) = 0; };

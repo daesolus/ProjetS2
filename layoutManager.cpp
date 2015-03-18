@@ -1,4 +1,4 @@
-#import "layoutManager.h"
+#include "layoutManager.h"
 
 void LayoutManager::centerInScreen(QGraphicsItem *item){
     

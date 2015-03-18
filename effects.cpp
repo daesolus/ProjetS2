@@ -245,9 +245,9 @@ RGBColor::RGBColor(const char* hexColor)
 }
 void RGBColor::setNewColor(double red, double green, double blue)
 {
-	r=red;
-	g=green;
-	b=blue;
+	r = ((red > 255) ? 255 : ((red < 0) ? 0 : red));
+	g = ((green > 255) ? 255 : ((green < 0) ? 0 : green));
+	b = ((blue > 255) ? 255 : ((blue < 0) ? 0 : blue));
 }
 
 int RGBColor::getR()
