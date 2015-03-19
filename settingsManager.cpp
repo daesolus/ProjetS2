@@ -2,7 +2,7 @@
 
 
 SettingsManager::SettingsManager(){
-    
+    presetArray = QList<Preset>();
 }
 
 SettingsManager::~SettingsManager(){
@@ -11,6 +11,7 @@ SettingsManager::~SettingsManager(){
 
 void SettingsManager::readConfigFile(){
     
+    //charge le fichier json
     QFile loadFile(QStringLiteral(":presets.json"));
     
     if (!loadFile.open(QIODevice::ReadOnly)) {
@@ -18,53 +19,41 @@ void SettingsManager::readConfigFile(){
         return;
     }
     
+    //lis
     QByteArray saveData = loadFile.readAll();
+    
+    //place le tout dans un QJsonDocument (qu'on peut facilement parser)
     QJsonDocument loadDoc((QJsonDocument::fromJson(saveData)));
+    
+    //parse le document lu
     parseAndStore(loadDoc.object());
     
-    /*
-    QDir dir = QDir::home();
-    dir.cdUp();
-    QSettings settings(QDir::currentPath() + "/Config.ini", QSettings::IniFormat);
-    
-    settings.setIniCodec("UTF-8");
-    
-    settings.sync();
-    //QSettings settings(QSettings::IniFormat, QSettings::UserScope, "test");
-    //settings.beginWriteArray("lol");
-    //settings.endArray();
-    
-    qDebug() << dir.absolutePath();
-    
-    int size = settings.beginReadArray("Presets");
-    for (int i = 0; i < size; ++i) {
-        
-        qDebug() << "loL";
-        settings.setArrayIndex(i);
-        Preset thePreset;
-        thePreset.name = settings.value("name").toString().toStdString().c_str();
-        thePreset.imgPath = settings.value("imgpath").toString().toStdString().c_str();
-        thePreset.musicPath = settings.value("musicpath").toString().toStdString().c_str();
-        
-        thePreset.colors.append(RGBColor(settings.value("color1").toString().toStdString().c_str()));
-        thePreset.colors.append(RGBColor(settings.value("color2").toString().toStdString().c_str()));
-        thePreset.colors.append(RGBColor(settings.value("color3").toString().toStdString().c_str()));
-        thePreset.colors.append(RGBColor(settings.value("color4").toString().toStdString().c_str()));
-        thePreset.colors.append(RGBColor(settings.value("color5").toString().toStdString().c_str()));
-        
-        presetArray.append(thePreset);
-    }
-    
-    qDebug() << settings.status();
-    settings.endArray();
-     */
+}
+const QList<Preset> SettingsManager::getPresetArray(){
+    return presetArray;
 }
 
 void SettingsManager::parseAndStore(const QJsonObject &json){
     
-    /*
-    mName = json["name"].toString();
-    mLevel = json["level"].toDouble();
-    mClassType = ClassType(qRound(json["classType"].toDouble()));
-     */
+    //initialise array de tout les presets
+    QJsonArray array = json["presets"].toArray();
+    
+    //pour chaque preset...
+    for (int i = 0; i < json["presets"].toArray().count(); i++) {
+        //objet preset
+        QJsonObject obj = array.at(i).toObject();
+        
+        Preset prst;
+        
+        //assigne les valeurs de prst aux valeures lues
+        prst.name = obj["name"].toString().toStdString();
+        prst.imgPath = obj["imgpath"].toString().toStdString();
+        prst.musicPath = obj["musicpath"].toString().toStdString();
+        prst.color1 = obj["colors"].toArray().at(0).toString().toUpper().toStdString();
+        prst.color2 = obj["colors"].toArray().at(1).toString().toUpper().toStdString();
+        prst.color3 = obj["colors"].toArray().at(2).toString().toUpper().toStdString();
+        prst.color4 = obj["colors"].toArray().at(3).toString().toUpper().toStdString();
+        presetArray.append(prst);
+    }
+    
 }

@@ -12,12 +12,18 @@
 
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 
 struct Preset {
-    const char * name;
-    const char * imgPath;
-    const char * musicPath;
-    QVector<RGBColor> colors;
+    string name;
+    string imgPath;
+    string musicPath;
+    string color1;
+    string color2;
+    string color3;
+    string color4;
+    
+    const char* colors[5];
 };
 
 class SettingsManager //: public QGraphicsItem
@@ -26,8 +32,9 @@ public:
     SettingsManager();
     ~SettingsManager();
     void readConfigFile();
+    const QList<Preset> getPresetArray();
 private:
-    QVector<Preset> presetArray;
+    QList<Preset> presetArray;
     void parseAndStore(const QJsonObject &json);
 };
 

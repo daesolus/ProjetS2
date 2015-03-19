@@ -6,30 +6,42 @@ CardItem::CardItem()
     rect = QRectF(0, 0, 50, 100);
     title = "";
     imgPath = "";
+    
+    imageObject = new QImage();
+    imageObject->load(imgPath.c_str());
+    QPixmap image = QPixmap::fromImage(*imageObject);
 }
 
-CardItem::CardItem(float xPos, float yPos, float width, float height, const char* text, const char* imagePath)
+CardItem::CardItem(float xPos, float yPos, float width, float height, string text, string imagePath)
 {
     rect = QRectF(xPos, yPos, width, height);
     
     title = text;
     imgPath = imagePath;
+    
+    imageObject = new QImage();
+    
+    imageObject->load(imgPath.c_str());
+    QPixmap image = QPixmap::fromImage(*imageObject);
 }
 
 CardItem::~CardItem()
 {
     
 }
-
+void CardItem::configure(const Preset *prst){
+    this->setOpacity(1);
+    title = prst->name;
+    imgPath = prst->imgPath;
+    
+    imageObject = new QImage();
+    imageObject->load(imgPath.c_str());
+    QPixmap image = QPixmap::fromImage(*imageObject);
+    
+}
 QRectF CardItem::boundingRect() const { // outer most edges
     return rect;
 }
-/*
-void CardItem::mouseMoveEvent ( QGraphicsSceneMouseEvent * event ){
-    QGraphicsItem::mouseMoveEvent(event);
-    //qDebug() << "move";
-}
- */
 
 void CardItem::setSelectedStyle(bool isSelected){
     selected = isSelected;
@@ -70,26 +82,15 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
     painter->setFont(font);
     painter->setPen(QPen(Qt::white));
     QPointF textCenter(rect.width()/2,rect.height()-(20+25));
-    drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, title);
-    
-    QImage *imageObject = new QImage();
-    imageObject->load(imgPath);
-    QPixmap image = QPixmap::fromImage(*imageObject);
-    
-    //float adaptiveRatio = ((float)image.width())/((float)image.height());
-    
-    //TODO: methode pour resizer l'image comme du monde
+    drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, title.c_str());
     
     float height = 340;
     float width = 340;
     
+    QPixmap image = QPixmap::fromImage(*imageObject);
     float smallestDimension = image.width()<image.height()?image.width():image.height();
-    painter->drawPixmap(QRect(rect.x()+(rect.width()/2)-(width/2), 30, width, height), image, QRect(0, 0, smallestDimension, smallestDimension));
+    painter->drawPixmap(QRect(rect.x()+(rect.width()/2)-(width/2), 30, width, height), image, QRect((smallestDimension-width)/4, 0, smallestDimension, smallestDimension));
     
-    //painter->drawPixmap(QRect(rect.x()+(rect.width()/2)-(width/2), 50, width, height), image);
-    
-    
-
 }
 void CardItem::mousePressEvent(QGraphicsSceneMouseEvent *event){
     

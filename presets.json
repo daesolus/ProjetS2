@@ -1,66 +1,51 @@
-[
-  {
-    "name": "Star Wars",
-    "imgpath": "Star_Wars.jpg",
-    "musicpath": "Star_Wars.mp3",
-    "colors": [
-      "#ff0400",
-      "#00aeff",
-      "#e64cff",
-      "#05e500",
-      "#ffd700"
-    ]
-  },
-    {
-        "name": "Autumn",
-        "imgpath": "../images/Autumn.jpg",
-        "musicpath": "../music/Autumn.mp3",
-        "colors": [
-            "#1a6521",
+{ "presets" : [ { "colors" : [ "#ff0400",
+            "#00aeff",
+            "#e64cff",
+            "#05e500",
+            "#ffd700"
+          ],
+        "imgpath" : ":Star_Wars.jpg",
+        "musicpath" : "Star_Wars.mp3",
+        "name" : "Star Wars"
+      },
+      { "colors" : [ "#1a6521",
             "#ffa200",
             "#ecdb21",
             "#df0909",
-            "723c02"
-        ]
-    },
-
-    {
-        "name": "Party",
-        "imgpath": "../images/Party.jpg",
-        "musicpath": "../music/Party.mp3",
-        "colors": [
-            "#de0000",
+            "#723c02"
+          ],
+        "imgpath" : ":Autumn.jpg",
+        "musicpath" : "Autumn.mp3",
+        "name" : "Autumn"
+      },
+      { "colors" : [ "#de0000",
             "#15e0f1",
-            "#71fc00 ",
+            "#71fc00",
             "#f300ff",
             "#ffffff"
-        ]
-    },
-
-    {
-        "name": "Irish",
-        "imgpath": "../images/Irish.jpg",
-        "musicpath": "../music/Irish.wav",
-        "colors": [
-            "#07b407",
-            "#ffd700",
-            "#ff7800",
-            "#4ede1c",
-            "#ffffff"
-        ]
-    },
-
-    {
-        "name": "Winter",
-        "imgpath": "../images/winter.jpg",
-        "musicpath": "../music/winter.mp3",
-        "colors": [
-            "#f5fcff",
+          ],
+        "imgpath" : ":Party.jpg",
+        "musicpath" : "Party.mp3",
+        "name" : "Party"
+      },
+      { "colors" : [ "#f5fcff",
             "#98d4f3",
             "#b6bbc1",
             "#c0dcea",
             "#bed1e3"
-        ]
-    }
-
-]
+          ],
+        "imgpath" : ":winter.jpg",
+        "musicpath" : "winter.mp3",
+        "name" : "Winter"
+      },
+      { "colors" : [ "#07b407",
+            "#ffd700",
+            "#ff7800",
+            "#4ede1c",
+            "#ffffff"
+          ],
+        "imgpath" : ":Irish.jpg",
+        "musicpath" : "Irish.mp3",
+        "name" : "Irish"
+      }
+    ] }

@@ -14,6 +14,7 @@
 #include <string>
 #include <time.h>
 #include <math.h>
+#include <QString>
 
 using namespace std;
 
@@ -29,6 +30,8 @@ public:
 	int getR();
 	int getG();
 	int getB();
+    string getHex();
+
 private:
 	double r;
 	double g;

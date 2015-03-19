@@ -8,9 +8,11 @@
 #include <QVector>
 #include <QVariant>
 #include "easywsclient.hpp"
-#include "settingsManager.h"
+//#include "settingsManager.h"
 #include "cardItem.h"
 #include <QTransform>
+#include <QMediaPlayer>
+#include <QMediaPlaylist>
 
 class MainScene : public QGraphicsScene
 {
@@ -19,23 +21,29 @@ public:
     ~MainScene();
     void keyPressEvent(QKeyEvent *event);
 private:
-    QVector<QGraphicsItem*> UIObjects;
+    void navBack();
+    void navForward();
+    void navSelect();
+    void refreshCurrentCards();
+    void loadSongs();
+    
+    SettingsManager *manager;
     LayoutManager layout;
     QPixmap image;
-    QImage  *imageObject;
+    QImage  imageObject;
+    QVector<CardItem*> visibleCards;
+    QGraphicsItem* background;
     
     void blurBackgroundItem(QGraphicsItem *backgroundItem, QPixmap *referencePixmap);
     QGraphicsItem* ambienceCard(const char* title, const char* image);
     QGraphicsItem* backArrow;
     QGraphicsItem* nextArrow;
-    easywsclient::WebSocket::pointer ws;
-    const char* hexColorFromRGB(int r, int g, int b);
-
+    const char * hexColorFromRGB(int r, int g, int b);
+    
     float getFullScreenPixelRatioForImage(QPixmap* image);
     QGraphicsItem* pixmapItemFromSvg(const char* svgTitle);
-    void printItemPositions();
     void handle_message(const std::string & message);
-    void sendColorToServer(const std::string & hexColor);
+    void sendColorToServer(string hexColor);
 };
 
 #endif // MAINSCENE_H

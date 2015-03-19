@@ -232,15 +232,22 @@ RGBColor::RGBColor(const char* hexColor)
         str3.append(hexColor[5]);
         str3.append(hexColor[6]);
         
-        str1.toInt();
-        str2.toInt();
-        str3.toInt();
+        bool ok;
         
-        qDebug() << str1.toInt() << str2.toInt() << str3.toInt();
+            r = str1.toUInt(&ok,16);
+        if (!ok)
+            qDebug() << "Error with r component";
+            g = str2.toUInt(&ok,16);
+        if (!ok)
+            qDebug() << "Error with g component";
+            b = str3.toUInt(&ok,16);
+        if (!ok)
+            qDebug() << "Error with b component";
         
     }else{
         
         qDebug() << "Not the right color lenght, apparently";
+        return;
     }
 }
 void RGBColor::setNewColor(double red, double green, double blue)
@@ -261,4 +268,21 @@ int RGBColor::getG()
 int RGBColor::getB()
 {
 	return (int)b;
+}
+string RGBColor::getHex()
+{
+    QString rstring;
+    rstring.setNum((int)r,16);
+    QString gstring;
+    gstring.setNum((int)g,16);
+    QString bstring;
+    bstring.setNum((int)b,16);
+    
+    QString *string = new QString();
+    string->append('#');
+    string->append(rstring);
+    string->append(gstring);
+    string->append(bstring);
+    qDebug() << string->toStdString().c_str();
+    return string->toStdString();
 }

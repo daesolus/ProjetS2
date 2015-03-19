@@ -1,8 +1,13 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-<file>./arrowLine.svg</file>
-<file>./Config.ini</file>
-<file>./Etoile.jpg</file>
-<file>./presets.json</file>
-</qresource>
+<RCC>
+    <qresource prefix="/">
+        <file>arrowLine.svg</file>
+        <file>Config.ini</file>
+        <file>Etoile.jpg</file>
+        <file>presets.json</file>
+        <file>Autumn.jpg</file>
+        <file>Irish.jpg</file>
+        <file>Party.jpg</file>
+        <file>Star_Wars.jpg</file>
+        <file>winter.jpg</file>
+    </qresource>
 </RCC>

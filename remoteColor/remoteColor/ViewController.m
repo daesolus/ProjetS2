@@ -13,10 +13,16 @@
 @end
 
 @implementation ViewController
-
+NSMutableArray *allColors;
+int i;
+int concurrentAnims;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    i = 0;
+    concurrentAnims = 0;
+    NSMutableArray *allColors = [NSMutableArray new];
+
     // Do any additional setup after loading the view, typically from a nib.
     [self tryToConnect];
 }
@@ -41,8 +47,26 @@
 {
     NSLog(@"The websocket received a message: %@", message);
     dispatch_async(dispatch_get_main_queue(), ^{
-        self.view.backgroundColor = [self colorWithHexString:message];
+        allColors = [[message componentsSeparatedByString:@","] mutableCopy];
+        [self animateAllColors];
+        //self.view.backgroundColor = [self colorWithHexString:message];
     });
+}
+-(void)animateAllColors{
+    concurrentAnims++;
+
+    [UIView animateWithDuration:allColors.count>1?1:0.5
+                     animations:^{
+                         self.view.backgroundColor =[self colorWithHexString:[allColors objectAtIndex:i]];
+                     }
+                     completion:^(BOOL  completed){
+                         i++;
+                         if(i == allColors.count)
+                             i = 0;
+                         concurrentAnims--;
+                         if(concurrentAnims < 1)
+                             [self animateAllColors];
+                     }];
 }
 - (void)webSocket:(PSWebSocket*)webSocket didFailWithError:(NSError*)error
 {

@@ -6,14 +6,14 @@
 #include <QGraphicsItem>
 #include <QWidget>
 #include <QColor>
-
-#include "mainscene.h"
+#include "settingsManager.h"
+//#include "mainscene.h"
 
 class CardItem : public QGraphicsItem
 {
 public:
     CardItem();
-    CardItem(float xPos, float yPos, float width, float height, const char* text, const char* imagePath);
+    CardItem(float xPos, float yPos, float width, float height, string text, string imagePath);
     ~CardItem();
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget);
     void setSelectedStyle(bool isSelected);
@@ -21,12 +21,15 @@ public:
     //void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );
     QRectF boundingRect() const;
     void drawText(QPainter & painter, const QPointF & point, int flags, const QString & text, QRectF * boundingRect);
+    void configure(const Preset *prst);
     
 protected:
     QRectF rect;
     bool selected;
-    const char* title;
-    const char* imgPath;
+    string title;
+    string imgPath;
+    //QPixmap image;
+    QImage *imageObject;
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 };

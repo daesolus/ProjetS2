@@ -10,65 +10,86 @@
 #include <QGraphicsBlurEffect>
 #include <QTransform>
 
+int currentSelection;
+
+QMediaPlayer *player;
+QMediaPlaylist *playlist;
+
 MainScene::MainScene()
 {
-    SettingsManager manager;
-    manager.readConfigFile();
+    //initialise le pointeur du client WebSocket
+    easywsclient::WebSocket::pointer ws;
     
+    currentSelection = 1;
+    
+    //lis les reglages
+    manager = new SettingsManager();
+    manager->readConfigFile();
+    
+    loadSongs();
+    
+    //nouveau seed pour que les fonctions aléatoires soient réellement aléatoires
     srand (time(NULL));
     
-    //connects to the websocket
+    //connecte au websocket
     using easywsclient::WebSocket;
-    ws = WebSocket::from_url("http://107.170.171.251:8001");
-    
-    //gets the screen height and width (in points, not pixels)
+    ws = easywsclient::WebSocket::from_url("http://107.170.171.251:8001");
+
+    //prend la taille de l'écran en points (pas en pixels)
     QRect rec = QApplication::desktop()->screenGeometry();
     float screenHeight = rec.height();
     float screenWidth =  rec.width();
     
-    //sets the rect of the scene to fit the screen
+    //set la taille de la scène pour que ca soit plein écran
     this->setSceneRect(0, 0, screenWidth, screenHeight);
     
-    //creates image
-    imageObject = new QImage();
-    imageObject->load(":Etoile.jpg");
-    image = QPixmap::fromImage(*imageObject);
-    
-    //aspect fill the screen
-    image.setDevicePixelRatio(getFullScreenPixelRatioForImage(&image));
-    qDebug() << getFullScreenPixelRatioForImage(&image);
-    //adds it to the scene
-    //this->addPixmap(image);
-    QGraphicsItem* background = this->addPixmap(image);
-
-    //adds lol test text
-    QGraphicsTextItem *text = new QGraphicsTextItem();
-    text->setPlainText("test");
-    text->setFlag(QGraphicsItem::ItemIsMovable);
-    this->addItem(text);
-    
+    //charge les flèches back et next à partir du fichier svg
     backArrow  = pixmapItemFromSvg(":arrowLine.svg");
     nextArrow  = pixmapItemFromSvg(":arrowLine.svg");
+    //rotate la flèche next
     nextArrow->setRotation(180);
+    //centre les 2 items
+    layout.centerInScreen(nextArrow);
+    layout.centerInScreen(backArrow);
+    //les déplace à leur bonne position
+    backArrow->moveBy(-643, 0);
+    nextArrow->moveBy(643+56, 142);
+
+    float cardWidth = 406;
+    float cardHeight = 466;
+    float cardSmallScale = 0.8;
     
-    CardItem *item = new CardItem(0, 0, 406, 466, "Été", ":Etoile.jpg");
-    item->setSelectedStyle(true);
-    item->setFlag(QGraphicsItem::ItemIsMovable);
-    this->addItem(item);
+    for (int i = 0; i <3; i++) {
+        
+        CardItem *item = new CardItem(0, 0, cardWidth, cardHeight, "", "");
+        
+        //ajoute la carte à la scene
+        this->addItem(item);
+        
+        //si c'est la carte du milieu, la sélectionner
+        if(i%2 == 1){
+            item->setSelectedStyle(true);
+        }else{
+            //sinon, la mettre plus petite
+            item->setScale(cardSmallScale);
+            item->setSelectedStyle(false);
+        }
+        //centrer la carte
+        layout.centerInScreen(item);
+        //l'ajouter au QVector des cartes visibles
+        visibleCards.append(item);
+    }
     
-    layout.centerInScreen(item);
-    CardItem *item2 = new CardItem(0, 0, 406, 466, "Été", ":Etoile.jpg");
-    item2->setSelectedStyle(false);
-    item2->setFlag(QGraphicsItem::ItemIsMovable);
-    item2->setScale(0.8);
-    this->addItem(item2);
+    //déplace les cartes au bon endroit, chacune de leur bord
+    visibleCards.at(0)->moveBy(-cardWidth+cardWidth*(1-cardSmallScale)/2,
+                               cardHeight*(1-cardSmallScale)/2);
     
-    layout.centerInScreen(item);
-    CardItem *item3 = new CardItem(0, 0, 406, 466, "Été", ":Etoile.jpg");
-    item3->setSelectedStyle(false);
-    item3->setFlag(QGraphicsItem::ItemIsMovable);
-    item3->setScale(0.8);
-    this->addItem(item3);
+    visibleCards.at(2)->moveBy(cardWidth+cardWidth*(1-cardSmallScale)/2,
+                               cardHeight*(1-cardSmallScale)/2);
+    
+    //rafraichis et configure les cartes
+    refreshCurrentCards();
+    
     /*
     QTransform m;
     m.scale(0.8069269949, 0.8069269949);
@@ -89,50 +110,141 @@ MainScene::MainScene()
     item2->setTransformOriginPoint(406, 0);
     item2->setTransform(m2);
     */
+
+}
+void MainScene::loadSongs(){
+    //initialise player et playlist
+    player = new QMediaPlayer;
+    playlist = new QMediaPlaylist(player);
     
-    layout.centerInScreen(item);
+    //loop
+    playlist->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
     
-    qDebug() << this->sceneRect().height();
-    qDebug() << this->sceneRect().width();
+    //navigue au bon dossier
+    QDir dir = QDir(QCoreApplication::applicationDirPath());
+    dir.cdUp();
+    dir.cdUp();
+    dir.cdUp();
+    dir.cdUp();
+
+    //prend chaque musique pour chaque preset
+    for (int i = 0; i < manager->getPresetArray().count(); i++) {
+        playlist->addMedia(QUrl::fromLocalFile(dir.path() + "/" +manager->getPresetArray().at(i).musicPath.c_str()));
+    }
     
-    blurBackgroundItem(background, &image);
+    //fort
+    player->setVolume(100);
+    //assigne le playlist au player
+    player->setPlaylist(playlist);
+
+}
+void MainScene::refreshCurrentCards(){
+    
+    //si la sélection avant la courante est 0...
+    if (currentSelection-1 >= 0) {
+        //configure la carte
+        visibleCards.at(0)->configure(&manager->getPresetArray().at(currentSelection-1));
+        //affiche l'update de configuration
+        visibleCards.at(0)->update();
+    }else{
+        //sinon, cache la carte
+        visibleCards.at(0)->setOpacity(0);
+    }
+    
+    if (currentSelection < manager->getPresetArray().count()) {
+        visibleCards.at(1)->configure(&manager->getPresetArray().at(currentSelection));
+        visibleCards.at(1)->update();
+        
+        //affichage de l'arrière plan
+        imageObject = QImage();
+        imageObject.load(manager->getPresetArray().at(currentSelection).imgPath.c_str());
+        image = QPixmap::fromImage(imageObject);
+        
+        //enlève l'ancien arrière plan
+        this->removeItem(background);
+        background = this->addPixmap(image);
+        //le met en arrière plan
+        background->setZValue(-1);
+        
+        //aspect fill l'écran
+        image.setDevicePixelRatio(getFullScreenPixelRatioForImage(&image));
+        
+        //rend l'arrière plan flou et cool
+        blurBackgroundItem(background, &image);
+        
+        //envoye les couleurs du thème au serveur
+        string str =    (manager->getPresetArray().at(currentSelection).color1) + "," +
+                        (manager->getPresetArray().at(currentSelection).color2) + "," +
+                        (manager->getPresetArray().at(currentSelection).color3) + "," +
+                        (manager->getPresetArray().at(currentSelection).color4);
+        sendColorToServer(str);
+
+    }else{
+        //sinon, cache la carte du milieu (ne devrait jamais arriver, dans une situation normale)
+        visibleCards.at(1)->setOpacity(0);
+    }
+    
+    //change de musique et la joue
+    playlist->setCurrentIndex(currentSelection);
+    player->play();
+
+    //cache et met à jour la 3e carte
+    if (currentSelection+1 < manager->getPresetArray().count()) {
+        visibleCards.at(2)->configure(&manager->getPresetArray().at(currentSelection+1));
+        visibleCards.at(2)->update();
+    }else{
+        visibleCards.at(2)->setOpacity(0);
+    }
+}
+//navigue par en arrière si possible
+void MainScene::navBack(){
+   if(currentSelection-1 >= 0){
+        currentSelection--;
+       //et rafraichis les cartes
+        refreshCurrentCards();
+   }
+}
+void MainScene::navForward(){
+    if(currentSelection+1 < manager->getPresetArray().count()){
+        currentSelection++;
+        refreshCurrentCards();
+        
+    }
+}
+void MainScene::navSelect(){
+    //TODO
 }
 
-/*
-QGraphicsItem* MainScene::ambienceCard(const char* title, const char* image){
-    QPixmap pixmap = QPixmap(50,73); //example size that match my case
-    QRectF rect(0,0,48,11);
-    
-    QPainter painter(&pixmap);
-    painter.setRenderHint(QPainter::TextAntialiasing);
-    painter.setWorldMatrixEnabled(false);
-    painter.setPen(QPen()); //no pen
-    painter.setBrush(QBrush(color));
-    painter.drawRoundedRect(rect, 2.0, 2.0);
- 
-    QGraphicsItem* item = this->addPixmap(svgImage);
-    item->setFlag(QGraphicsItem::ItemIsMovable);
-    item->setScale(1/qApp->devicePixelRatio());
-    UIObjects.append(item);
-    layout.centerInScreen(item);
-    return item;
-}
-*/
 void MainScene::blurBackgroundItem(QGraphicsItem *backgroundItem, QPixmap *referencePixmap){
-    float blurRadius = 40;
+    
+    //radius de blur
+    float blurRadius = 80;
+    
+    //initialise le nouvel effet
     QGraphicsBlurEffect *effect = new QGraphicsBlurEffect;
-    effect->setBlurHints(QGraphicsBlurEffect::QualityHint);
+    //en mode performance (pour les PCs lents aux membres de l'équipe)
+    effect->setBlurHints(QGraphicsBlurEffect::PerformanceHint);
     effect->setBlurRadius(blurRadius);
+    //assigne l'effet à l'item approprié
     backgroundItem->setGraphicsEffect(effect);
-    backgroundItem->setScale((1/getFullScreenPixelRatioForImage(referencePixmap))*1.1);
-    backgroundItem->setX(-blurRadius/1.5);
-    backgroundItem->setY(-blurRadius/1.5);
+    //rend le scale plus grand pour cacher les bordures blanches
+    backgroundItem->setScale((1/getFullScreenPixelRatioForImage(referencePixmap))*1.2);
+    //cache les bordures en haut et à gauche
+    backgroundItem->setX(-blurRadius/0.5);
+    backgroundItem->setY(-blurRadius/0.5);
 }
+
 QGraphicsItem* MainScene::pixmapItemFromSvg(const char* svgTitle){
+    //initialize le SVG renderer
     QSvgRenderer renderer((QString(svgTitle)));
+    
+    //initialize les dimensions selon la densité de pixels de l'écran (support pour écran Retina)
     QImage lineImage(58*qApp->devicePixelRatio(), 143*qApp->devicePixelRatio(), QImage::Format_ARGB32);
+    //remplit de transparent l'image où on va "paint" le svg
     lineImage.fill(qRgba(0, 0, 0, 0));
+    
     QPainter painter(&lineImage);
+    //render le svg dans l'image
     renderer.render(&painter);
     QPixmap svgImage = QPixmap::fromImage(lineImage);
     
@@ -140,17 +252,20 @@ QGraphicsItem* MainScene::pixmapItemFromSvg(const char* svgTitle){
         //rien!
     #endif
     
+    //ajoute le tout à la scène
     QGraphicsItem* item = this->addPixmap(svgImage);
-    item->setFlag(QGraphicsItem::ItemIsMovable);
+    //retina display
     item->setScale(1/qApp->devicePixelRatio());
-    UIObjects.append(item);
-    layout.centerInScreen(item);
     return item;
 }
+
 float MainScene::getFullScreenPixelRatioForImage(QPixmap* image){
+    
+    //calcule les bonnes dimensions de l'image d'arrière plan pour que l'écran soit rempli
     float imageHeight = image->size().height();
     float imageWidth = image->size().width();
     
+    //va prendre les dimensions de l'écran
     QRect rec = QApplication::desktop()->screenGeometry();
     float screenHeight = rec.height();
     float screenWidth =  rec.width();
@@ -158,18 +273,35 @@ float MainScene::getFullScreenPixelRatioForImage(QPixmap* image){
     float heightRatio = imageHeight/screenHeight;
     float widthRatio = imageWidth/screenWidth;
     
+    //rapporte le ratio le plus petit pour que ca rentre sans qu'il reste de blanc
     return (heightRatio<widthRatio)?heightRatio:widthRatio;
 }
+
 void MainScene::keyPressEvent(QKeyEvent *event)
 {
     qDebug() << "KEY ID:" << event->key();
     
-    sendColorToServer(hexColorFromRGB(rand() % 256, rand() % 256, rand() % 256));
-    
-    printItemPositions();
+    //arrière
+    if (event->key() == 16777234) {
+        navBack();
+    }
+    //en bas
+    if (event->key() == 16777237) {
+        navSelect();
+    }
+    //avant
+    if (event->key() == 16777236) {
+        navForward();
+    }
+    //touche 1 (pour debuggage)
+    if (event->key() == 49) {
+        sendColorToServer(hexColorFromRGB(rand() % 256, rand() % 256, rand() % 256));
+    }
 }
-const char* MainScene::hexColorFromRGB(int r, int g, int b)
+
+const char * MainScene::hexColorFromRGB(int r, int g, int b)
 {
+    //transforme les valeurs en string hexa
     QString rstring;
     rstring.setNum(r,16);
     QString gstring;
@@ -177,6 +309,7 @@ const char* MainScene::hexColorFromRGB(int r, int g, int b)
     QString bstring;
     bstring.setNum(b,16);
     
+    //assemble le tout
     QString *string = new QString();
     string->append('#');
     string->append(rstring);
@@ -186,40 +319,20 @@ const char* MainScene::hexColorFromRGB(int r, int g, int b)
     return string->toStdString().c_str();
 }
 
-void MainScene::sendColorToServer(const std::string & hexColor){
-    /*
-     if(ws->CLOSED)
-    {
-        using easywsclient::WebSocket;
-        ws = WebSocket::from_url("http://107.170.171.251:8001");
-    }
+void MainScene::sendColorToServer(string hexColor){
+    //initialise le client websocket
+    easywsclient::WebSocket::pointer ws = easywsclient::WebSocket::from_url("http://107.170.171.251:8001");
     
-    qDebug() << "Sending " << &hexColor << " to the server";
+    qDebug() << "Sending " << hexColor.c_str() << " to the server";
     
-    if (ws->OPEN) {
+    //si la connection est bonne, envoye au serveur
+    if (ws->OPEN && ws != nullptr) {
         ws->send(hexColor);
         ws->poll();
     }
-     */
-}
-
-void MainScene::printItemPositions(){
-    QRect rec = QApplication::desktop()->screenGeometry();
-    float height = rec.height()/2;
-    float width =  rec.width()/2;
     
-    for (int i = 0; i<UIObjects.count(); i++) {
-        
-        QPointF objPos = UIObjects.at(i)->pos();
-        
-        float heightFromCenter = objPos.ry() - height;
-        float widthFromCenter = objPos.rx() - width;
-        
-        qDebug() << heightFromCenter << "," << widthFromCenter;
-        
-    }
 }
-
+//destructeur
 MainScene::~MainScene()
 {
 
