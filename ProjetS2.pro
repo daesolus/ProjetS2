@@ -10,7 +10,7 @@ QT       += svg
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ProjetS2
-TEMPLATE = app
+TEMPLATE = vcapp
 
 
 SOURCES += main.cpp\
@@ -29,13 +29,16 @@ HEADERS  += \
     easywsclient.hpp \
     cardItem.h \
     effects.h \
-    settingsManager.h
+    settingsManager.h \
+    CommunicationFPGA.h
 
 FORMS    += mainwindow.ui
 
 DISTFILES +=
-
+INCLUDEPATH += libs
 RESOURCES += \
     resources.qrc
-
 CONFIG += c++11
+CONFIG(debug, debug|release){
+    LIBS	+= libs\CommunicationFPGA.lib
+}

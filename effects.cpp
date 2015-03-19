@@ -87,13 +87,13 @@ void EffectsGenerator::gradientSigmoidTransition(int transitionSize, std::string
 
 	for (int j = 0; j < colors.size() - 1; j++)
 	{
-		vector<double> RedOperations = SigmoidCalculator(0, transitionSize, colors[j].getR(), colors[j + 1].getR());
-		vector<double> GreenOperations = SigmoidCalculator(0, transitionSize, colors[j].getG(), colors[j + 1].getG());
-		vector<double> BlueOperations = SigmoidCalculator(0, transitionSize, colors[j].getB(), colors[j + 1].getB());
+		vector<double> redOperations = SigmoidCalculator(0, transitionSize, colors[j].getR(), colors[j + 1].getR());
+		vector<double> greenOperations = SigmoidCalculator(0, transitionSize, colors[j].getG(), colors[j + 1].getG());
+		vector<double> blueOperations = SigmoidCalculator(0, transitionSize, colors[j].getB(), colors[j + 1].getB());
 
 		for (int i = 0; i < transitionSize; i++)
 		{
-			tempColor.calculateColor(RedOperations,GreenOperations,BlueOperations,i);
+			tempColor.calculateColor(redOperations, greenOperations, blueOperations, i);
 
 			//Envoyer les valeurs aux leds, ajouter un delais ou changer le transitionSize
             os += to_string(tempColor.getR()) + " "
@@ -190,19 +190,19 @@ void RGBColor::calculateColor(int operation,RGBColor &color1, RGBColor &color2, 
 }
 
 //Calculs necessessaire pour la graduation en sigmoid
-void RGBColor::calculateColor(vector<double> RedOpp, vector<double> GreenOpp, vector<double> BlueOpp, int argument)
+void RGBColor::calculateColor(vector<double> redOpp, vector<double> greenOpp, vector<double> blueOpp, int argument)
 {
 	// 0 = Yi
 	// 1 = Yf
 	// 2 = a
 	// 3 = b
-	double Red = (RedOpp[0] - RedOpp[1]) / (1 + exp(RedOpp[2] * (argument - RedOpp[3]))) + RedOpp[1];
-	double Green = (GreenOpp[0] - GreenOpp[1]) / (1 + exp(GreenOpp[2] * (argument - GreenOpp[3]))) + GreenOpp[1];
-	double Blue = (BlueOpp[0] - BlueOpp[1]) / (1 + exp(BlueOpp[2] * (argument - BlueOpp[3]))) + BlueOpp[1];
+	double red = (redOpp[0] - redOpp[1]) / (1 + exp(redOpp[2] * (argument - redOpp[3]))) + redOpp[1];
+	double green = (greenOpp[0] - greenOpp[1]) / (1 + exp(greenOpp[2] * (argument - greenOpp[3]))) + greenOpp[1];
+	double blue = (blueOpp[0] - blueOpp[1]) / (1 + exp(blueOpp[2] * (argument - blueOpp[3]))) + blueOpp[1];
 
-	setNewColor(((Red > 255) ? 255 : ((Red < 0) ? 0 : Red)),
-				((Green > 255) ? 255 : ((Green < 0) ? 0 : Green)),
-				((Blue > 255) ? 255 : ((Blue < 0) ? 0 : Blue)));
+	setNewColor(((red > 255) ? 255 : ((red < 0) ? 0 : red)),
+				((green > 255) ? 255 : ((green < 0) ? 0 : green)),
+				((blue > 255) ? 255 : ((blue < 0) ? 0 : blue)));
 
 	/*if (y > 255)
 		y = 255;
@@ -215,7 +215,7 @@ RGBColor::RGBColor()
 {
 	setNewColor(0,0,0);
 }
-RGBColor::RGBColor(double red, double green, double blue)
+RGBColor::RGBColor(const double& red,const double& green,const double& blue)
 {
 	setNewColor(red,green,blue);
 }
@@ -243,22 +243,22 @@ RGBColor::RGBColor(const char* hexColor)
         qDebug() << "Not the right color lenght, apparently";
     }
 }
-void RGBColor::setNewColor(double red, double green, double blue)
+void RGBColor::setNewColor(const double &red, const double &green, const double &blue)
 {
 	r = ((red > 255) ? 255 : ((red < 0) ? 0 : red));
 	g = ((green > 255) ? 255 : ((green < 0) ? 0 : green));
 	b = ((blue > 255) ? 255 : ((blue < 0) ? 0 : blue));
 }
 
-int RGBColor::getR()
+int RGBColor::getR() const
 {
 	return (int)r;
 }
-int RGBColor::getG()
+int RGBColor::getG() const
 {
 	return (int)g;
 }
-int RGBColor::getB()
+int RGBColor::getB() const
 {
 	return (int)b;
 }

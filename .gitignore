@@ -329,3 +329,14 @@ FakesAssemblies/
 *.exe
 *.out
 *.app
+
+
+# Parametre personnalises
+*.pro
+*.user
+*.suo
+*.vcxproj
+*.filters
+*.sln
+debug/
+release/

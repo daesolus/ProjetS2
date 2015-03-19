@@ -21,14 +21,15 @@ class RGBColor
 {
 public:
 	RGBColor();
-	RGBColor(double red, double green, double blue);
+	RGBColor(const double&, const double&, const double&);
     RGBColor(const char* hexColor);
-	void setNewColor(double red, double green, double blue);
+	void setNewColor(const double&, const double&, const double&);
 	void calculateColor(int operation,RGBColor &color1, RGBColor &color2,int argument);
 	void calculateColor(vector<double> RedOpp, vector<double> GreenOpp, vector<double> BlueOpp, int argument);
-	int getR();
-	int getG();
-	int getB();
+	int getR() const;
+	int getG() const;
+	int getB() const;
+
 private:
 	double r;
 	double g;
