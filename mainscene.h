@@ -7,19 +7,29 @@
 #include <QKeyEvent>
 #include <QVector>
 #include <QVariant>
-#include "easywsclient.hpp"
+//#include "easywsclient.hpp"
 //#include "settingsManager.h"
 #include "cardItem.h"
 #include <QTransform>
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
+#include <QtWebSockets>
+//#include "easywsclient.hpp"
 
 class MainScene : public QGraphicsScene
 {
+    Q_OBJECT
 public:
-    MainScene();
+    explicit MainScene();
     ~MainScene();
     void keyPressEvent(QKeyEvent *event);
+    /*
+public Q_SLOTS:
+    void wsDidConnect();*/
+private Q_SLOTS:
+    void onConnected();
+    void onDisconnect();
+
 private:
     void navBack();
     void navForward();
@@ -27,6 +37,7 @@ private:
     void refreshCurrentCards();
     void loadSongs();
     
+    QWebSocket *m_webSocket;
     SettingsManager *manager;
     LayoutManager layout;
     QPixmap image;
@@ -44,6 +55,8 @@ private:
     QGraphicsItem* pixmapItemFromSvg(const char* svgTitle);
     void handle_message(const std::string & message);
     void sendColorToServer(string hexColor);
+    
+    //QSignalMapper *mapper;
 };
 
 #endif // MAINSCENE_H

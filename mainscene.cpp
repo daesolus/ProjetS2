@@ -1,25 +1,42 @@
-#include "mainscene.h"
-#include <QGraphicsBlurEffect>
-#include <QGraphicsPixmapItem>
-#include <QDebug>
-#include <QRect>
-#include <QDesktopWidget>
-#include <QApplication>
 #include <math.h>
-#include <QSvgRenderer>
-#include <QGraphicsBlurEffect>
 #include <QTransform>
+#include <QSvgRenderer>
+#include <QRect>
+#include <QGraphicsPixmapItem>
+#include <QGraphicsBlurEffect>
+#include <QGraphicsBlurEffect>
+#include <QDesktopWidget>
+#include <QDebug>
+#include <QApplication>
+#include "mainscene.h"
+
+QT_USE_NAMESPACE
 
 int currentSelection;
+bool isConnected = false;
 
 QMediaPlayer *player;
 QMediaPlaylist *playlist;
 
 MainScene::MainScene()
 {
-    //initialise le pointeur du client WebSocket
-    easywsclient::WebSocket::pointer ws;
+    //mapper = new QSignalMapper(this);
     
+    
+    //initialise le client QWebSocket
+    //connect(&m_webSocket, &QWebSocket::connected, this, &MainScene::onConnected);
+    //connect(&m_webSocket, &QWebSocket::disconnected, this, &MainScene::closed);
+    //m_webSocket = QWebSocket new QWebSocket (QStringLiteral("Chat Server"),
+                     //            QWebSocketServer::NonSecureMode,
+                       //          this);
+    m_webSocket = new QWebSocket();
+    m_webSocket->close();
+    m_webSocket->open(QUrl("ws://107.170.171.251:8001"));
+    //QObject::connect(m_webSocket, SIGNAL(connected()),
+    //      this, SLOT(wsDidConnect()));
+    connect(m_webSocket, &QWebSocket::connected, this, &MainScene::onConnected);
+    connect(m_webSocket, &QWebSocket::disconnected, this, &MainScene::onDisconnect);
+
     currentSelection = 1;
     
     //lis les reglages
@@ -32,8 +49,8 @@ MainScene::MainScene()
     srand (time(NULL));
     
     //connecte au websocket
-    using easywsclient::WebSocket;
-    ws = easywsclient::WebSocket::from_url("http://107.170.171.251:8001");
+    //using easywsclient::WebSocket;
+    //ws = easywsclient::WebSocket::from_url("http://107.170.171.251:8001");
 
     //prend la taille de l'écran en points (pas en pixels)
     QRect rec = QApplication::desktop()->screenGeometry();
@@ -52,8 +69,8 @@ MainScene::MainScene()
     layout.centerInScreen(nextArrow);
     layout.centerInScreen(backArrow);
     //les déplace à leur bonne position
-    backArrow->moveBy(-643, 0);
-    nextArrow->moveBy(643+56, 142);
+    backArrow->moveBy(-643,  -75 + (75*qApp->devicePixelRatio()));
+    nextArrow->moveBy(643+(56*qApp->devicePixelRatio()), 67 + (75*qApp->devicePixelRatio()));
 
     float cardWidth = 406;
     float cardHeight = 466;
@@ -177,6 +194,7 @@ void MainScene::refreshCurrentCards(){
                         (manager->getPresetArray().at(currentSelection).color2) + "," +
                         (manager->getPresetArray().at(currentSelection).color3) + "," +
                         (manager->getPresetArray().at(currentSelection).color4);
+        qDebug() << "allo " << str.c_str();
         sendColorToServer(str);
 
     }else{
@@ -186,6 +204,7 @@ void MainScene::refreshCurrentCards(){
     
     //change de musique et la joue
     playlist->setCurrentIndex(currentSelection);
+    //TODO: remettre le play (ca gosse la musique par dessus la musique qu'on veut vraiment)
     player->play();
 
     //cache et met à jour la 3e carte
@@ -320,22 +339,38 @@ const char * MainScene::hexColorFromRGB(int r, int g, int b)
 }
 
 void MainScene::sendColorToServer(string hexColor){
-    //initialise le client websocket
-    easywsclient::WebSocket::pointer ws = easywsclient::WebSocket::from_url("http://107.170.171.251:8001");
+    //if(m_webSocket->state() != QAbstractSocket::ConnectedState)
+      //  m_webSocket->open(QUrl("ws://107.170.171.251:8001"));
     
-    qDebug() << "Sending " << hexColor.c_str() << " to the server";
-    
-    //si la connection est bonne, envoye au serveur
-    if (ws->OPEN && ws != nullptr) {
-        ws->send(hexColor);
-        ws->poll();
+    //if (m_webSocket) {
+      //  
+    //}
+    if(isConnected){
+        qDebug() << "SENDING: " << hexColor.c_str() << "CurrentState:" <<m_webSocket->state();
+        m_webSocket->sendTextMessage(QString(hexColor.c_str()));
     }
-    
+    //if(m_webSocket->sendTextMessage(QString(hexColor.c_str())) == 0){
+    //    m_webSocket->open(QUrl("ws://107.170.171.251:8001"));
+    //    m_webSocket->sendTextMessage(QString(hexColor.c_str()));
+    //}
 }
 //destructeur
 MainScene::~MainScene()
 {
 
+}
+
+void MainScene::onConnected(){
+    qDebug() << "did connect";
+    isConnected = true;
+    refreshCurrentCards();
+}
+
+
+void MainScene::onDisconnect(){
+    qDebug() << "disconnected ... trying to reconnect";
+    isConnected = false;
+    m_webSocket->open(QUrl("ws://107.170.171.251:8001"));
 }
 
 
