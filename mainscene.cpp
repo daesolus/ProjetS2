@@ -18,8 +18,17 @@ bool isConnected = false;
 QMediaPlayer *player;
 QMediaPlaylist *playlist;
 
+//radius de blur
+float blurRadius = 80;
+QGraphicsBlurEffect *effect;
+
 MainScene::MainScene()
 {
+    effect = new QGraphicsBlurEffect();
+    //en mode performance (pour les PCs lents aux membres de l'équipe)
+    effect->setBlurHints(QGraphicsBlurEffect::PerformanceHint);
+    effect->setBlurRadius(blurRadius);
+
     //mapper = new QSignalMapper(this);
     
     
@@ -29,9 +38,9 @@ MainScene::MainScene()
     //m_webSocket = QWebSocket new QWebSocket (QStringLiteral("Chat Server"),
                      //            QWebSocketServer::NonSecureMode,
                        //          this);
+    
     m_webSocket = new QWebSocket();
-    m_webSocket->close();
-    m_webSocket->open(QUrl("ws://107.170.171.251:8001"));
+    m_webSocket->open(QUrl("ws://107.170.171.251:56453"));
     //QObject::connect(m_webSocket, SIGNAL(connected()),
     //      this, SLOT(wsDidConnect()));
     connect(m_webSocket, &QWebSocket::connected, this, &MainScene::onConnected);
@@ -153,6 +162,7 @@ void MainScene::loadSongs(){
     player->setVolume(100);
     //assigne le playlist au player
     player->setPlaylist(playlist);
+    
 
 }
 void MainScene::refreshCurrentCards(){
@@ -165,6 +175,16 @@ void MainScene::refreshCurrentCards(){
         visibleCards.at(0)->update();
     }else{
         //sinon, cache la carte
+        /*
+         CardItem *item = visibleCards.at(0);
+        
+        QPropertyAnimation *animation = new QPropertyAnimation((QGraphicsObject*)item, "opacity");
+        animation->setDuration(1000);
+        animation->setStartValue(1);
+        animation->setEndValue(0);
+        
+        animation->start();
+        */
         visibleCards.at(0)->setOpacity(0);
     }
     
@@ -175,11 +195,17 @@ void MainScene::refreshCurrentCards(){
         //affichage de l'arrière plan
         imageObject = QImage();
         imageObject.load(manager->getPresetArray().at(currentSelection).imgPath.c_str());
+
         image = QPixmap::fromImage(imageObject);
-        
+
         //enlève l'ancien arrière plan
-        this->removeItem(background);
-        background = this->addPixmap(image);
+        //this->removeItem(background);
+        
+        if(background == NULL)
+            background = this->addPixmap(image);
+        else
+            background->setPixmap(image);
+        
         //le met en arrière plan
         background->setZValue(-1);
         
@@ -189,23 +215,16 @@ void MainScene::refreshCurrentCards(){
         //rend l'arrière plan flou et cool
         blurBackgroundItem(background, &image);
         
-        //envoye les couleurs du thème au serveur
-        string str =    (manager->getPresetArray().at(currentSelection).color1) + "," +
-                        (manager->getPresetArray().at(currentSelection).color2) + "," +
-                        (manager->getPresetArray().at(currentSelection).color3) + "," +
-                        (manager->getPresetArray().at(currentSelection).color4);
-        qDebug() << "allo " << str.c_str();
-        sendColorToServer(str);
+        //change de musique et la joue
+        playlist->setCurrentIndex(currentSelection);
+        //TODO: remettre le play (ca gosse la musique par dessus la musique qu'on veut vraiment)
+        player->play();
 
     }else{
         //sinon, cache la carte du milieu (ne devrait jamais arriver, dans une situation normale)
         visibleCards.at(1)->setOpacity(0);
     }
     
-    //change de musique et la joue
-    playlist->setCurrentIndex(currentSelection);
-    //TODO: remettre le play (ca gosse la musique par dessus la musique qu'on veut vraiment)
-    player->play();
 
     //cache et met à jour la 3e carte
     if (currentSelection+1 < manager->getPresetArray().count()) {
@@ -219,14 +238,30 @@ void MainScene::refreshCurrentCards(){
 void MainScene::navBack(){
    if(currentSelection-1 >= 0){
         currentSelection--;
+       
+       //change de musique et la joue
+       playlist->setCurrentIndex(currentSelection);
+       //TODO: remettre le play (ca gosse la musique par dessus la musique qu'on veut vraiment)
+       player->play();
+       
        //et rafraichis les cartes
         refreshCurrentCards();
+       sendCurrentColorToServer();
+
    }
 }
 void MainScene::navForward(){
     if(currentSelection+1 < manager->getPresetArray().count()){
         currentSelection++;
+        
+        //change de musique et la joue
+        playlist->setCurrentIndex(currentSelection);
+        //TODO: remettre le play (ca gosse la musique par dessus la musique qu'on veut vraiment)
+        player->play();
+        
         refreshCurrentCards();
+        sendCurrentColorToServer();
+
         
     }
 }
@@ -236,14 +271,6 @@ void MainScene::navSelect(){
 
 void MainScene::blurBackgroundItem(QGraphicsItem *backgroundItem, QPixmap *referencePixmap){
     
-    //radius de blur
-    float blurRadius = 80;
-    
-    //initialise le nouvel effet
-    QGraphicsBlurEffect *effect = new QGraphicsBlurEffect;
-    //en mode performance (pour les PCs lents aux membres de l'équipe)
-    effect->setBlurHints(QGraphicsBlurEffect::PerformanceHint);
-    effect->setBlurRadius(blurRadius);
     //assigne l'effet à l'item approprié
     backgroundItem->setGraphicsEffect(effect);
     //rend le scale plus grand pour cacher les bordures blanches
@@ -338,6 +365,16 @@ const char * MainScene::hexColorFromRGB(int r, int g, int b)
     return string->toStdString().c_str();
 }
 
+void MainScene::sendCurrentColorToServer()
+{
+    //envoye les couleurs du thème au serveur
+    string str =    (manager->getPresetArray().at(currentSelection).color1) + "," +
+    (manager->getPresetArray().at(currentSelection).color2) + "," +
+    (manager->getPresetArray().at(currentSelection).color3) + "," +
+    (manager->getPresetArray().at(currentSelection).color4);
+    sendColorToServer(str);
+}
+
 void MainScene::sendColorToServer(string hexColor){
     //if(m_webSocket->state() != QAbstractSocket::ConnectedState)
       //  m_webSocket->open(QUrl("ws://107.170.171.251:8001"));
@@ -345,8 +382,8 @@ void MainScene::sendColorToServer(string hexColor){
     //if (m_webSocket) {
       //  
     //}
-    if(isConnected){
-        qDebug() << "SENDING: " << hexColor.c_str() << "CurrentState:" <<m_webSocket->state();
+    if(m_webSocket->state() == QAbstractSocket::ConnectedState){
+        //qDebug() << "SENDING: " << hexColor.c_str() << "CurrentState:" <<m_webSocket.state();
         m_webSocket->sendTextMessage(QString(hexColor.c_str()));
     }
     //if(m_webSocket->sendTextMessage(QString(hexColor.c_str())) == 0){
@@ -363,14 +400,17 @@ MainScene::~MainScene()
 void MainScene::onConnected(){
     qDebug() << "did connect";
     isConnected = true;
-    refreshCurrentCards();
+    sendCurrentColorToServer();
 }
 
 
 void MainScene::onDisconnect(){
+   // if(isConnected == true){
     qDebug() << "disconnected ... trying to reconnect";
     isConnected = false;
-    m_webSocket->open(QUrl("ws://107.170.171.251:8001"));
+    //m_webSocket.close();
+    m_webSocket->open(QUrl("ws://107.170.171.251:56453"));
+    //}
 }
 
 

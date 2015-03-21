@@ -43,8 +43,9 @@ private:
     QPixmap image;
     QImage  imageObject;
     QVector<CardItem*> visibleCards;
-    QGraphicsItem* background;
-    
+    QGraphicsPixmapItem* background;
+    void sendCurrentColorToServer();
+
     void blurBackgroundItem(QGraphicsItem *backgroundItem, QPixmap *referencePixmap);
     QGraphicsItem* ambienceCard(const char* title, const char* image);
     QGraphicsItem* backArrow;
