@@ -9,7 +9,9 @@ CardItem::CardItem()
     
     imageObject = new QImage();
     imageObject->load(imgPath.c_str());
-    QPixmap image = QPixmap::fromImage(*imageObject);
+    image = QPixmap::fromImage(*imageObject);
+    delete imageObject;
+
 }
 
 CardItem::CardItem(float xPos, float yPos, float width, float height, string text, string imagePath)
@@ -22,7 +24,8 @@ CardItem::CardItem(float xPos, float yPos, float width, float height, string tex
     imageObject = new QImage();
     
     imageObject->load(imgPath.c_str());
-    QPixmap image = QPixmap::fromImage(*imageObject);
+    image = QPixmap::fromImage(*imageObject);
+    delete imageObject;
 }
 
 CardItem::~CardItem()
@@ -36,8 +39,9 @@ void CardItem::configure(const Preset *prst){
     
     imageObject = new QImage();
     imageObject->load(imgPath.c_str());
-    QPixmap image = QPixmap::fromImage(*imageObject);
-    
+    image = QPixmap::fromImage(*imageObject);
+    delete imageObject;
+
 }
 QRectF CardItem::boundingRect() const { // outer most edges
     return rect;
@@ -87,7 +91,7 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
     float height = 340;
     float width = 340;
     
-    QPixmap image = QPixmap::fromImage(*imageObject);
+    //QPixmap image = QPixmap::fromImage(*imageObject);
     float smallestDimension = image.width()<image.height()?image.width():image.height();
     painter->drawPixmap(QRect(rect.x()+(rect.width()/2)-(width/2), 30, width, height), image, QRect((smallestDimension-width)/4, 0, smallestDimension, smallestDimension));
     

@@ -193,11 +193,11 @@ void MainScene::refreshCurrentCards(){
         visibleCards.at(1)->update();
         
         //affichage de l'arrière plan
-        imageObject = QImage();
-        imageObject.load(manager->getPresetArray().at(currentSelection).imgPath.c_str());
+        imageObject = new QImage();
+        imageObject->load(manager->getPresetArray().at(currentSelection).imgPath.c_str());
 
-        image = QPixmap::fromImage(imageObject);
-
+        image = QPixmap::fromImage(*imageObject);
+        delete imageObject;
         //enlève l'ancien arrière plan
         //this->removeItem(background);
         

@@ -41,7 +41,7 @@ private:
     SettingsManager *manager;
     LayoutManager layout;
     QPixmap image;
-    QImage  imageObject;
+    QImage  *imageObject;
     QVector<CardItem*> visibleCards;
     QGraphicsPixmapItem* background;
     void sendCurrentColorToServer();

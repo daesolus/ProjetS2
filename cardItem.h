@@ -30,6 +30,7 @@ protected:
     string imgPath;
     //QPixmap image;
     QImage *imageObject;
+    QPixmap image;
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 };
