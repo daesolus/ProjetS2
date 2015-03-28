@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+<!--full screen iOS web app-->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<!--full screen Android web app (pas testé)-->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>WebSocket Test</title>
+<script src="http://cdn.jsdelivr.net/sweep/latest/mainfile"></script>
+<script language="javascript" type="text/javascript">
+  var wsUri = "ws://107.170.171.251:56453";
+  var output;  function init() {
+    document.body.style.background = '#FFFFFF'
+    output = document.getElementById("output"); testWebSocket();
+    }
+    function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+  function animate(targetColor, step, speed){
+      var target = hexToRgb(targetColor);
+      var current = hexToRgb(document.body.style.background);
+
+      //ca marche fuck all.
+
+      writeToScreen(current.g);
+/*
+      current.r = ((target.r-current.r)/step) + current.r
+      current.g = ((target.g-current.g)/step) + current.g
+      current.b = ((target.b-current.b)/step) + current.b
+*/
+      document.body.style.background = rgbToHex(((target.r-current.r)/step) + ((target.g-current.g)/step) + current.g,current.g,((target.b-current.b)/step) + current.b);
+      step = step+1
+      if(current != target)
+
+      setInterval(animate(targetColor,step,speed), speed);
+  }
+
+  function testWebSocket() {
+    websocket = new WebSocket(wsUri);
+    websocket.onopen = function(evt) { onOpen(evt) };
+    websocket.onclose = function(evt) { onClose(evt) };
+    websocket.onmessage = function(evt) { onMessage(evt) };
+    websocket.onerror = function(evt) { onError(evt) }; }
+    function onOpen(evt) { writeToScreen("CONNECTED");
+    //doSend("#03F3F3");
+}
+
+    function onClose(evt) { writeToScreen("DISCONNECTED, reconnecting");
+        testWebSocket();
+      }
+
+    function onMessage(evt) {
+      //animate(evt.data,0,1);
+	var colors = evt.data.split(",");
+    document.body.style.background = colors[0];
+      //colorFade('output','background',document.body.style.background,evt.data,20,1);
+      //animateBackgroundToColor(evt.data, 0);
+      //writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
+      //doSend("#030303");
+      //var transition = sweep(document.body, ['color', 'background-color'], document.body.style.background, evt.data,{direction: -1, duration: 2000});
+
+      //document.body.style.background = evt.data;
+
+      //doSend("WebSocket rocks");
+      //websocket.close();
+      }
+
+    function animateBackgroundToColor(color, step){
+
+
+      setTimeout(doMove,20);
+    }
+
+    function onError(evt) { writeToScreen('<span style="color: red;">ERROR:</span> ' + evt.data); }
+
+    function doSend(message) { writeToScreen("SENT: " + message);  websocket.send(message); }
+
+    function writeToScreen(message) {
+      //décommenter pour voir l'output
+      /*
+      var pre = document.createElement("p");
+      pre.style.wordWrap = "break-word";
+      pre.innerHTML = message; output.appendChild(pre);
+      */
+      }
+
+    window.addEventListener("load", init, false);
+</script>
+<div id="output"></div>

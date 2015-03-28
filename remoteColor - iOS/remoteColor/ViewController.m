@@ -32,7 +32,7 @@ int concurrentAnims;
 - (void)tryToConnect
 {
     // create the NSURLRequest that will be sent as the handshake
-    NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://107.170.171.251:8001"]];
+    NSURLRequest* request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://107.170.171.251:56453"]];
     // create the socket and assign delegate
     self.socket = [PSWebSocket clientSocketWithRequest:request];
     self.socket.delegate = self;
