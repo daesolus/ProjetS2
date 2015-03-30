@@ -289,10 +289,10 @@ void MainScene::animateCard(CardItem* card, QPoint position, bool selected, bool
     positionAnimation->setStartValue(card->pos());
     positionAnimation->setEndValue(position);
     
-    QPropertyAnimation *positionAnimation2 = new QPropertyAnimation((QGraphicsObject*)card, "scale");
-    positionAnimation2->setDuration(ANIMATION_TIME_MS);
-    positionAnimation2->setStartValue(card->scale());
-    positionAnimation2->setEndValue(selected?1:0.8);
+    QPropertyAnimation *scaleAnimation = new QPropertyAnimation((QGraphicsObject*)card, "scale");
+    scaleAnimation->setDuration(ANIMATION_TIME_MS);
+    scaleAnimation->setStartValue(card->scale());
+    scaleAnimation->setEndValue(selected?1:0.8);
     float currentOpacity = 0;
     if((QGraphicsOpacityEffect*)card->graphicsEffect())
         currentOpacity = ((QGraphicsOpacityEffect*)card->graphicsEffect())->opacity();
@@ -303,11 +303,11 @@ void MainScene::animateCard(CardItem* card, QPoint position, bool selected, bool
     opacityAnimation->setDuration(ANIMATION_TIME_MS);
     opacityAnimation->setStartValue(currentOpacity);
     opacityAnimation->setEndValue( visible?1.0:0.0 );
-    opacityAnimation->setEasingCurve( QEasingCurve::InCurve );
+    //opacityAnimation->setEasingCurve( QEasingCurve::InCurve );
 
     opacityAnimation->start();
     positionAnimation->start();
-    positionAnimation2->start();
+    scaleAnimation->start();
 }
 //navigue par en arrière si possible
 void MainScene::navBack(){
