@@ -15,6 +15,12 @@
 		DCAE8F1F1AB5EECD00A44939 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DCAE8F1E1AB5EECD00A44939 /* Images.xcassets */; };
 		DCAE8F221AB5EECD00A44939 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = DCAE8F201AB5EECD00A44939 /* LaunchScreen.xib */; };
 		DCAE8F2E1AB5EECD00A44939 /* remoteColorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DCAE8F2D1AB5EECD00A44939 /* remoteColorTests.m */; };
+		DCE5A0501AC7705400261A73 /* InterfaceController.m in Sources */ = {isa = PBXBuildFile; fileRef = DCE5A04F1AC7705400261A73 /* InterfaceController.m */; };
+		DCE5A0521AC7705400261A73 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DCE5A0511AC7705400261A73 /* Images.xcassets */; };
+		DCE5A0561AC7705400261A73 /* remoteColor WatchKit App.app in Resources */ = {isa = PBXBuildFile; fileRef = DCE5A0551AC7705400261A73 /* remoteColor WatchKit App.app */; };
+		DCE5A05E1AC7705400261A73 /* Interface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DCE5A05C1AC7705400261A73 /* Interface.storyboard */; };
+		DCE5A0601AC7705400261A73 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DCE5A05F1AC7705400261A73 /* Images.xcassets */; };
+		DCE5A0631AC7705400261A73 /* remoteColor WatchKit Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = DCE5A04A1AC7705400261A73 /* remoteColor WatchKit Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,7 +31,35 @@
 			remoteGlobalIDString = DCAE8F0D1AB5EECC00A44939;
 			remoteInfo = remoteColor;
 		};
+		DCE5A0571AC7705400261A73 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DCAE8F061AB5EECC00A44939 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DCE5A0541AC7705400261A73;
+			remoteInfo = "remoteColor WatchKit App";
+		};
+		DCE5A0611AC7705400261A73 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DCAE8F061AB5EECC00A44939 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DCE5A0491AC7705400261A73;
+			remoteInfo = "remoteColor WatchKit Extension";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DCE5A06A1AC7705400261A73 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				DCE5A0631AC7705400261A73 /* remoteColor WatchKit Extension.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		03BF13B6318C5E4CF088C63B /* libPods-remoteColor.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-remoteColor.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -43,6 +77,15 @@
 		DCAE8F271AB5EECD00A44939 /* remoteColorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = remoteColorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DCAE8F2C1AB5EECD00A44939 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DCAE8F2D1AB5EECD00A44939 /* remoteColorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = remoteColorTests.m; sourceTree = "<group>"; };
+		DCE5A04A1AC7705400261A73 /* remoteColor WatchKit Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "remoteColor WatchKit Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DCE5A04D1AC7705400261A73 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DCE5A04E1AC7705400261A73 /* InterfaceController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InterfaceController.h; sourceTree = "<group>"; };
+		DCE5A04F1AC7705400261A73 /* InterfaceController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InterfaceController.m; sourceTree = "<group>"; };
+		DCE5A0511AC7705400261A73 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		DCE5A0551AC7705400261A73 /* remoteColor WatchKit App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "remoteColor WatchKit App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DCE5A05B1AC7705400261A73 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DCE5A05D1AC7705400261A73 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Interface.storyboard; sourceTree = "<group>"; };
+		DCE5A05F1AC7705400261A73 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		F243CEC4E7004B5B231480AE /* Pods-remoteColor.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-remoteColor.debug.xcconfig"; path = "Pods/Target Support Files/Pods-remoteColor/Pods-remoteColor.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -56,6 +99,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		DCAE8F241AB5EECD00A44939 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DCE5A0471AC7705400261A73 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -87,6 +137,8 @@
 			children = (
 				DCAE8F101AB5EECD00A44939 /* remoteColor */,
 				DCAE8F2A1AB5EECD00A44939 /* remoteColorTests */,
+				DCE5A04B1AC7705400261A73 /* remoteColor WatchKit Extension */,
+				DCE5A0591AC7705400261A73 /* remoteColor WatchKit App */,
 				DCAE8F0F1AB5EECD00A44939 /* Products */,
 				1C1A39F7604F9E01935DBF76 /* Pods */,
 				42DA9BC612AFC3B89886D71B /* Frameworks */,
@@ -98,6 +150,8 @@
 			children = (
 				DCAE8F0E1AB5EECD00A44939 /* remoteColor.app */,
 				DCAE8F271AB5EECD00A44939 /* remoteColorTests.xctest */,
+				DCE5A04A1AC7705400261A73 /* remoteColor WatchKit Extension.appex */,
+				DCE5A0551AC7705400261A73 /* remoteColor WatchKit App.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -143,6 +197,43 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		DCE5A04B1AC7705400261A73 /* remoteColor WatchKit Extension */ = {
+			isa = PBXGroup;
+			children = (
+				DCE5A04E1AC7705400261A73 /* InterfaceController.h */,
+				DCE5A04F1AC7705400261A73 /* InterfaceController.m */,
+				DCE5A0511AC7705400261A73 /* Images.xcassets */,
+				DCE5A04C1AC7705400261A73 /* Supporting Files */,
+			);
+			path = "remoteColor WatchKit Extension";
+			sourceTree = "<group>";
+		};
+		DCE5A04C1AC7705400261A73 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				DCE5A04D1AC7705400261A73 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		DCE5A0591AC7705400261A73 /* remoteColor WatchKit App */ = {
+			isa = PBXGroup;
+			children = (
+				DCE5A05C1AC7705400261A73 /* Interface.storyboard */,
+				DCE5A05F1AC7705400261A73 /* Images.xcassets */,
+				DCE5A05A1AC7705400261A73 /* Supporting Files */,
+			);
+			path = "remoteColor WatchKit App";
+			sourceTree = "<group>";
+		};
+		DCE5A05A1AC7705400261A73 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				DCE5A05B1AC7705400261A73 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -155,10 +246,13 @@
 				DCAE8F0B1AB5EECC00A44939 /* Frameworks */,
 				DCAE8F0C1AB5EECC00A44939 /* Resources */,
 				AF83DFD188853C1AAB50D248 /* Copy Pods Resources */,
+				DCE5A06A1AC7705400261A73 /* Embed App Extensions */,
+				22C5065550E7316A367FD2F8 /* Find unused imports */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				DCE5A0621AC7705400261A73 /* PBXTargetDependency */,
 			);
 			name = remoteColor;
 			productName = remoteColor;
@@ -183,6 +277,39 @@
 			productReference = DCAE8F271AB5EECD00A44939 /* remoteColorTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		DCE5A0491AC7705400261A73 /* remoteColor WatchKit Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DCE5A0691AC7705400261A73 /* Build configuration list for PBXNativeTarget "remoteColor WatchKit Extension" */;
+			buildPhases = (
+				DCE5A0461AC7705400261A73 /* Sources */,
+				DCE5A0471AC7705400261A73 /* Frameworks */,
+				DCE5A0481AC7705400261A73 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DCE5A0581AC7705400261A73 /* PBXTargetDependency */,
+			);
+			name = "remoteColor WatchKit Extension";
+			productName = "remoteColor WatchKit Extension";
+			productReference = DCE5A04A1AC7705400261A73 /* remoteColor WatchKit Extension.appex */;
+			productType = "com.apple.product-type.watchkit-extension";
+		};
+		DCE5A0541AC7705400261A73 /* remoteColor WatchKit App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DCE5A0681AC7705400261A73 /* Build configuration list for PBXNativeTarget "remoteColor WatchKit App" */;
+			buildPhases = (
+				DCE5A0531AC7705400261A73 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "remoteColor WatchKit App";
+			productName = "remoteColor WatchKit App";
+			productReference = DCE5A0551AC7705400261A73 /* remoteColor WatchKit App.app */;
+			productType = "com.apple.product-type.application.watchapp";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -199,6 +326,13 @@
 					DCAE8F261AB5EECD00A44939 = {
 						CreatedOnToolsVersion = 6.2;
 						TestTargetID = DCAE8F0D1AB5EECC00A44939;
+					};
+					DCE5A0491AC7705400261A73 = {
+						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = DVKB9Z8TQ2;
+					};
+					DCE5A0541AC7705400261A73 = {
+						CreatedOnToolsVersion = 6.2;
 					};
 				};
 			};
@@ -217,6 +351,8 @@
 			targets = (
 				DCAE8F0D1AB5EECC00A44939 /* remoteColor */,
 				DCAE8F261AB5EECD00A44939 /* remoteColorTests */,
+				DCE5A0491AC7705400261A73 /* remoteColor WatchKit Extension */,
+				DCE5A0541AC7705400261A73 /* remoteColor WatchKit App */,
 			);
 		};
 /* End PBXProject section */
@@ -239,6 +375,24 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DCE5A0481AC7705400261A73 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DCE5A0561AC7705400261A73 /* remoteColor WatchKit App.app in Resources */,
+				DCE5A0521AC7705400261A73 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DCE5A0531AC7705400261A73 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DCE5A05E1AC7705400261A73 /* Interface.storyboard in Resources */,
+				DCE5A0601AC7705400261A73 /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
@@ -256,6 +410,20 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
+		};
+		22C5065550E7316A367FD2F8 /* Find unused imports */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Find unused imports";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"/Users/Felix/Library/Application Support/Developer/Shared/Xcode/Plug-ins/xcfui.xcplugin/Contents/Resources/fui_script.sh\" \"/Users/Felix/QtProjects/ProjetS2/remoteColor - iOS\"";
 		};
 		AF83DFD188853C1AAB50D248 /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -293,6 +461,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DCE5A0461AC7705400261A73 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DCE5A0501AC7705400261A73 /* InterfaceController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -300,6 +476,16 @@
 			isa = PBXTargetDependency;
 			target = DCAE8F0D1AB5EECC00A44939 /* remoteColor */;
 			targetProxy = DCAE8F281AB5EECD00A44939 /* PBXContainerItemProxy */;
+		};
+		DCE5A0581AC7705400261A73 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DCE5A0541AC7705400261A73 /* remoteColor WatchKit App */;
+			targetProxy = DCE5A0571AC7705400261A73 /* PBXContainerItemProxy */;
+		};
+		DCE5A0621AC7705400261A73 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DCE5A0491AC7705400261A73 /* remoteColor WatchKit Extension */;
+			targetProxy = DCE5A0611AC7705400261A73 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -318,6 +504,14 @@
 				DCAE8F211AB5EECD00A44939 /* Base */,
 			);
 			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+		DCE5A05C1AC7705400261A73 /* Interface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DCE5A05D1AC7705400261A73 /* Base */,
+			);
+			name = Interface.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -465,6 +659,68 @@
 			};
 			name = Release;
 		};
+		DCE5A0641AC7705400261A73 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "remoteColor WatchKit Extension/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		DCE5A0651AC7705400261A73 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				INFOPLIST_FILE = "remoteColor WatchKit Extension/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
+				PRODUCT_NAME = "${TARGET_NAME}";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		DCE5A0661AC7705400261A73 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IBSC_MODULE = remoteColor_WatchKit_Extension;
+				INFOPLIST_FILE = "remoteColor WatchKit App/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				"TARGETED_DEVICE_FAMILY[sdk=iphonesimulator*]" = "1,4";
+			};
+			name = Debug;
+		};
+		DCE5A0671AC7705400261A73 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				IBSC_MODULE = remoteColor_WatchKit_Extension;
+				INFOPLIST_FILE = "remoteColor WatchKit App/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = 4;
+				"TARGETED_DEVICE_FAMILY[sdk=iphonesimulator*]" = "1,4";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -491,6 +747,24 @@
 			buildConfigurations = (
 				DCAE8F351AB5EECD00A44939 /* Debug */,
 				DCAE8F361AB5EECD00A44939 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DCE5A0681AC7705400261A73 /* Build configuration list for PBXNativeTarget "remoteColor WatchKit App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DCE5A0661AC7705400261A73 /* Debug */,
+				DCE5A0671AC7705400261A73 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DCE5A0691AC7705400261A73 /* Build configuration list for PBXNativeTarget "remoteColor WatchKit Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DCE5A0641AC7705400261A73 /* Debug */,
+				DCE5A0651AC7705400261A73 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

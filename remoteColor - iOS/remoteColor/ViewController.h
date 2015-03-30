@@ -8,10 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import <PocketSocket/PSWebSocket.h>
+#import <MMWormhole/MMWormhole.h>
 
 @interface ViewController : UIViewController <PSWebSocketDelegate>
 
 @property (nonatomic, strong) PSWebSocket *socket;
+@property (nonatomic, strong) MMWormhole *wormhole;
 
 @end
 

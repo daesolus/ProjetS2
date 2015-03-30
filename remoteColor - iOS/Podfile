@@ -3,6 +3,8 @@
 
 target 'remoteColor' do
 pod 'PocketSocket'
+pod 'MMWormhole', '~> 1.1.1'
+
 end
 
 target 'remoteColorTests' do

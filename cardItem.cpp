@@ -64,7 +64,6 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
     
     painter->setRenderHint(QPainter::HighQualityAntialiasing);
 
-    qDebug() << "PAINTING" << scale();
     float cornerRadius = 20.f;
 
     QColor transparentWhite = QColor(255, 255, 255);
@@ -97,7 +96,6 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
     
 }
 void CardItem::setScale(qreal scale){
-    qDebug() << "got called";
     this->prepareGeometryChange();
     this->QGraphicsItem::setScale(scale);
     this->update();

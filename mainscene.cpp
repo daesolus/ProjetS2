@@ -12,6 +12,8 @@
 
 QT_USE_NAMESPACE
 
+const int ANIMATION_TIME_MS = 250;
+
 int currentSelection;
 bool isConnected = false;
 
@@ -31,6 +33,11 @@ cardProperties cardPos[5];
 MainScene::MainScene()
 {
     
+    //prend la taille de l'écran en points (pas en pixels)
+    QRect rec = QApplication::desktop()->screenGeometry();
+    float screenHeight = rec.height();
+    float screenWidth =  rec.width();
+    
     /*
      
      POSITION DES 3 CARTES IMPORTANTES
@@ -42,20 +49,22 @@ MainScene::MainScene()
     */
     
     //hardcore hardcoding, sorry
+    //optimisé pour un écran 1440x900 (retina), mais centre tt au centre pour que ca fonctionne avec
+    //toute taille d'écran
     cardProperties props;
-    props.x = 151.6;
-    props.y = 263.6;
+    props.x = (screenWidth/2) - 568.4;
+    props.y = (screenHeight/2) - 186.4;
     props.scale = 0.8;
     cardPos[1] = props;
     props.x = props.x - 200;
     cardPos[0] = props;
-    props.x = 963.6;
-    props.y = 263.6;
+    props.x = (screenWidth/2) + 243.6;
+    props.y = (screenHeight/2) - 186.4;
     cardPos[3] = props;
     props.x = props.x + 200;
     cardPos[4] = props;
-    props.x = 517;
-    props.y = 217;
+    props.x = (screenWidth/2) - 203;
+    props.y = (screenHeight/2) - 233;
     props.scale = 1;
     cardPos[2] = props;
     
@@ -96,10 +105,6 @@ MainScene::MainScene()
     //using easywsclient::WebSocket;
     //ws = easywsclient::WebSocket::from_url("http://107.170.171.251:8001");
 
-    //prend la taille de l'écran en points (pas en pixels)
-    QRect rec = QApplication::desktop()->screenGeometry();
-    float screenHeight = rec.height();
-    float screenWidth =  rec.width();
     
     //set la taille de la scène pour que ca soit plein écran
     this->setSceneRect(0, 0, screenWidth, screenHeight);
@@ -280,12 +285,12 @@ void MainScene::refreshCurrentCards(){
 void MainScene::animateCard(CardItem* card, QPoint position, bool selected, bool visible){
     
     QPropertyAnimation *positionAnimation = new QPropertyAnimation((QGraphicsObject*)card, "pos");
-    positionAnimation->setDuration(250);
+    positionAnimation->setDuration(ANIMATION_TIME_MS);
     positionAnimation->setStartValue(card->pos());
     positionAnimation->setEndValue(position);
     
     QPropertyAnimation *positionAnimation2 = new QPropertyAnimation((QGraphicsObject*)card, "scale");
-    positionAnimation2->setDuration(250);
+    positionAnimation2->setDuration(ANIMATION_TIME_MS);
     positionAnimation2->setStartValue(card->scale());
     positionAnimation2->setEndValue(selected?1:0.8);
     float currentOpacity = 0;
@@ -295,7 +300,7 @@ void MainScene::animateCard(CardItem* card, QPoint position, bool selected, bool
     QPropertyAnimation *opacityAnimation = new QPropertyAnimation(opacity, "opacity" );
     card->setGraphicsEffect( opacity );
     
-    opacityAnimation->setDuration( 250 );
+    opacityAnimation->setDuration(ANIMATION_TIME_MS);
     opacityAnimation->setStartValue(currentOpacity);
     opacityAnimation->setEndValue( visible?1.0:0.0 );
     opacityAnimation->setEasingCurve( QEasingCurve::InCurve );

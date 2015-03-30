@@ -19,6 +19,11 @@ int concurrentAnims;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    //initializes the wormhole
+    self.wormhole = [[MMWormhole alloc] initWithApplicationGroupIdentifier:@"group.com.mutualmobile.wormhole"
+                                                         optionalDirectory:@"wormhole"];
+    
     i = 0;
     concurrentAnims = 0;
     NSMutableArray *allColors = [NSMutableArray new];
