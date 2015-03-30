@@ -21,9 +21,44 @@ QMediaPlaylist *playlist;
 //radius de blur
 float blurRadius = 80;
 QGraphicsBlurEffect *effect;
-
+struct cardProperties{
+    float x;
+    float y;
+    float scale;
+    bool selected;
+};
+cardProperties cardPos[5];
 MainScene::MainScene()
 {
+    
+    /*
+     
+     POSITION DES 3 CARTES IMPORTANTES
+     
+     0  x: 151.6  y: 263.6  scale: 0.8
+     1  x: 517  y: 217  scale: 1
+     2  x: 963.6  y: 263.6  scale: 0.8
+    
+    */
+    
+    //hardcore hardcoding, sorry
+    cardProperties props;
+    props.x = 151.6;
+    props.y = 263.6;
+    props.scale = 0.8;
+    cardPos[1] = props;
+    props.x = props.x - 200;
+    cardPos[0] = props;
+    props.x = 963.6;
+    props.y = 263.6;
+    cardPos[3] = props;
+    props.x = props.x + 200;
+    cardPos[4] = props;
+    props.x = 517;
+    props.y = 217;
+    props.scale = 1;
+    cardPos[2] = props;
+    
     effect = new QGraphicsBlurEffect();
     //en mode performance (pour les PCs lents aux membres de l'équipe)
     effect->setBlurHints(QGraphicsBlurEffect::PerformanceHint);
@@ -85,7 +120,7 @@ MainScene::MainScene()
     float cardHeight = 466;
     float cardSmallScale = 0.8;
     
-    for (int i = 0; i <3; i++) {
+    for (int i = 0; i < manager->getPresetArray().count(); i++) {
         
         CardItem *item = new CardItem(0, 0, cardWidth, cardHeight, "", "");
         
@@ -102,16 +137,12 @@ MainScene::MainScene()
         }
         //centrer la carte
         layout.centerInScreen(item);
+        //le configure pour le bon preset
+        item->configure(&manager->getPresetArray().at(i));
+        
         //l'ajouter au QVector des cartes visibles
-        visibleCards.append(item);
+        allCards.append(item);
     }
-    
-    //déplace les cartes au bon endroit, chacune de leur bord
-    visibleCards.at(0)->moveBy(-cardWidth+cardWidth*(1-cardSmallScale)/2,
-                               cardHeight*(1-cardSmallScale)/2);
-    
-    visibleCards.at(2)->moveBy(cardWidth+cardWidth*(1-cardSmallScale)/2,
-                               cardHeight*(1-cardSmallScale)/2);
     
     //rafraichis et configure les cartes
     refreshCurrentCards();
@@ -166,31 +197,42 @@ void MainScene::loadSongs(){
 
 }
 void MainScene::refreshCurrentCards(){
-    
+    /*
     //si la sélection avant la courante est 0...
     if (currentSelection-1 >= 0) {
         //configure la carte
-        visibleCards.at(0)->configure(&manager->getPresetArray().at(currentSelection-1));
+        allCards.at(0)->configure(&manager->getPresetArray().at(currentSelection-1));
         //affiche l'update de configuration
-        visibleCards.at(0)->update();
+        allCards.at(0)->update();
     }else{
         //sinon, cache la carte
-        /*
-         CardItem *item = visibleCards.at(0);
         
-        QPropertyAnimation *animation = new QPropertyAnimation((QGraphicsObject*)item, "opacity");
-        animation->setDuration(1000);
-        animation->setStartValue(1);
-        animation->setEndValue(0);
         
-        animation->start();
-        */
-        visibleCards.at(0)->setOpacity(0);
+    }
+    */
+    //get the new positions
+    for (int i = 0; i < manager->getPresetArray().count(); i++) {
+        if (i < currentSelection-1) {
+            //cache à gauche
+            animateCard(allCards.at(i), QPoint(cardPos[0].x, cardPos[0].y), false, false);
+        }else if(i == currentSelection-1){
+            //place à gauche
+            animateCard(allCards.at(i), QPoint(cardPos[1].x, cardPos[1].y), false, true);
+        }else if(i == currentSelection){
+            //place au milieu
+            animateCard(allCards.at(i), QPoint(cardPos[2].x, cardPos[2].y), true, true);
+        }else if(i == currentSelection+1){
+            //place à droite
+            animateCard(allCards.at(i), QPoint(cardPos[3].x, cardPos[3].y), false, true);
+        }else if(i > currentSelection+1){
+            //cache à droite
+            animateCard(allCards.at(i), QPoint(cardPos[4].x, cardPos[4].y), false, false);
+        }
     }
     
     if (currentSelection < manager->getPresetArray().count()) {
-        visibleCards.at(1)->configure(&manager->getPresetArray().at(currentSelection));
-        visibleCards.at(1)->update();
+        //allCards.at(1)->configure(&manager->getPresetArray().at(currentSelection));
+        //allCards.at(1)->update();
         
         //affichage de l'arrière plan
         imageObject = new QImage();
@@ -218,21 +260,49 @@ void MainScene::refreshCurrentCards(){
         //change de musique et la joue
         playlist->setCurrentIndex(currentSelection);
         //TODO: remettre le play (ca gosse la musique par dessus la musique qu'on veut vraiment)
-        player->play();
+        //player->play();
 
     }else{
         //sinon, cache la carte du milieu (ne devrait jamais arriver, dans une situation normale)
-        visibleCards.at(1)->setOpacity(0);
+        //allCards.at(1)->setOpacity(0);
     }
     
-
+/*
     //cache et met à jour la 3e carte
     if (currentSelection+1 < manager->getPresetArray().count()) {
-        visibleCards.at(2)->configure(&manager->getPresetArray().at(currentSelection+1));
-        visibleCards.at(2)->update();
+        allCards.at(2)->configure(&manager->getPresetArray().at(currentSelection+1));
+        allCards.at(2)->update();
     }else{
-        visibleCards.at(2)->setOpacity(0);
+        allCards.at(2)->setOpacity(0);
     }
+    */
+}
+void MainScene::animateCard(CardItem* card, QPoint position, bool selected, bool visible){
+    
+    QPropertyAnimation *positionAnimation = new QPropertyAnimation((QGraphicsObject*)card, "pos");
+    positionAnimation->setDuration(250);
+    positionAnimation->setStartValue(card->pos());
+    positionAnimation->setEndValue(position);
+    
+    QPropertyAnimation *positionAnimation2 = new QPropertyAnimation((QGraphicsObject*)card, "scale");
+    positionAnimation2->setDuration(250);
+    positionAnimation2->setStartValue(card->scale());
+    positionAnimation2->setEndValue(selected?1:0.8);
+    float currentOpacity = 0;
+    if((QGraphicsOpacityEffect*)card->graphicsEffect())
+        currentOpacity = ((QGraphicsOpacityEffect*)card->graphicsEffect())->opacity();
+    QGraphicsOpacityEffect *opacity = new QGraphicsOpacityEffect;
+    QPropertyAnimation *opacityAnimation = new QPropertyAnimation(opacity, "opacity" );
+    card->setGraphicsEffect( opacity );
+    
+    opacityAnimation->setDuration( 250 );
+    opacityAnimation->setStartValue(currentOpacity);
+    opacityAnimation->setEndValue( visible?1.0:0.0 );
+    opacityAnimation->setEasingCurve( QEasingCurve::InCurve );
+
+    opacityAnimation->start();
+    positionAnimation->start();
+    positionAnimation2->start();
 }
 //navigue par en arrière si possible
 void MainScene::navBack(){
@@ -242,7 +312,7 @@ void MainScene::navBack(){
        //change de musique et la joue
        playlist->setCurrentIndex(currentSelection);
        //TODO: remettre le play (ca gosse la musique par dessus la musique qu'on veut vraiment)
-       player->play();
+       //player->play();
        
        //et rafraichis les cartes
         refreshCurrentCards();
@@ -257,7 +327,7 @@ void MainScene::navForward(){
         //change de musique et la joue
         playlist->setCurrentIndex(currentSelection);
         //TODO: remettre le play (ca gosse la musique par dessus la musique qu'on veut vraiment)
-        player->play();
+        //player->play();
         
         refreshCurrentCards();
         sendCurrentColorToServer();

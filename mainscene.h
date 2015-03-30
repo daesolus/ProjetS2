@@ -36,13 +36,14 @@ private:
     void navSelect();
     void refreshCurrentCards();
     void loadSongs();
+    void animateCard(CardItem* card, QPoint position, bool selected, bool visible);
     
     QWebSocket *m_webSocket;
     SettingsManager *manager;
     LayoutManager layout;
     QPixmap image;
     QImage  *imageObject;
-    QVector<CardItem*> visibleCards;
+    QVector<CardItem*> allCards;
     QGraphicsPixmapItem* background;
     void sendCurrentColorToServer();
 

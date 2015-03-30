@@ -14,7 +14,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = ProjetS2
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
     mainview.cpp \
     mainscene.cpp \
