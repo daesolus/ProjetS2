@@ -208,7 +208,7 @@ void MainScene::loadSongs(){
 
     //prend chaque musique pour chaque preset
     for (int i = 0; i < manager->getPresetArray().count(); i++) {
-        playlist->addMedia(QUrl::fromLocalFile(dir.path() + "/" +manager->getPresetArray().at(i).musicPath.c_str()));
+		playlist->addMedia(QUrl::fromLocalFile(manager->getPresetArray().at(i).musicPath.c_str()));
     }
     
     //fort
@@ -282,10 +282,10 @@ void MainScene::refreshCurrentCards(){
         //change de musique et la joue
         playlist->setCurrentIndex(currentSelection);
         //TODO: remettre le play (ca gosse la musique par dessus la musique qu'on veut vraiment)
-        //player->play();
+        player->play();
 
     }else{
-        //sinon, cache la carte du milieu (ne devrait jamais arriver, dans une situation normale)
+        //sinon, cache la carte du milieu (ne devrait jamais arriver dans une situation normale)
         //allCards.at(1)->setOpacity(0);
     }
     
@@ -334,7 +334,7 @@ void MainScene::navBack(){
        //change de musique et la joue
        playlist->setCurrentIndex(currentSelection);
        //TODO: remettre le play (ca gosse la musique par dessus la musique qu'on veut vraiment)
-       //player->play();
+       player->play();
        
        //et rafraichis les cartes
         refreshCurrentCards();
@@ -349,7 +349,7 @@ void MainScene::navForward(){
         //change de musique et la joue
         playlist->setCurrentIndex(currentSelection);
         //TODO: remettre le play (ca gosse la musique par dessus la musique qu'on veut vraiment)
-        //player->play();
+        player->play();
         
         refreshCurrentCards();
         sendCurrentColorToServer();
