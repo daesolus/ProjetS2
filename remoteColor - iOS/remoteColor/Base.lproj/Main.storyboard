@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="14D87p" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6751" systemVersion="14D127a" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6736"/>
     </dependencies>
     <scenes>
@@ -16,10 +17,32 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="nNm-35-Qny" appends="YES" id="loG-dR-XSK"/>
+                            <outletCollection property="gestureRecognizers" destination="H7c-Nx-E3T" appends="YES" id="TNF-8D-t55"/>
+                            <outletCollection property="gestureRecognizers" destination="6ZY-eb-FbQ" appends="YES" id="aNC-8X-m24"/>
+                            <outletCollection property="gestureRecognizers" destination="nNm-35-Qny" appends="YES" id="vzH-zf-9po"/>
+                        </connections>
                     </view>
                     <nil key="simulatedStatusBarMetrics"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <swipeGestureRecognizer direction="left" id="H7c-Nx-E3T">
+                    <connections>
+                        <action selector="swipeLeft:" destination="BYZ-38-t0r" id="b9F-V1-H6V"/>
+                    </connections>
+                </swipeGestureRecognizer>
+                <tapGestureRecognizer id="6ZY-eb-FbQ">
+                    <connections>
+                        <action selector="tap:" destination="BYZ-38-t0r" id="qqO-hI-Yxd"/>
+                    </connections>
+                </tapGestureRecognizer>
+                <swipeGestureRecognizer direction="right" id="nNm-35-Qny">
+                    <connections>
+                        <action selector="swipeRight:" destination="BYZ-38-t0r" id="aCh-8q-JZr"/>
+                    </connections>
+                </swipeGestureRecognizer>
             </objects>
         </scene>
     </scenes>

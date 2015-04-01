@@ -21,8 +21,21 @@ int concurrentAnims;
     [super viewDidLoad];
     
     //initializes the wormhole
+    /*
     self.wormhole = [[MMWormhole alloc] initWithApplicationGroupIdentifier:@"group.com.mutualmobile.wormhole"
                                                          optionalDirectory:@"wormhole"];
+    */
+    
+    UISwipeGestureRecognizer *left = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeLeft:)];
+    left.direction = UISwipeGestureRecognizerDirectionLeft ;
+    [self.view addGestureRecognizer:left];
+    
+    UISwipeGestureRecognizer *right = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeRight:)];
+    right.direction = UISwipeGestureRecognizerDirectionRight ;
+    [self.view addGestureRecognizer:right];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tap:)];
+    [self.view addGestureRecognizer:tap];
     
     i = 0;
     concurrentAnims = 0;
@@ -50,6 +63,10 @@ int concurrentAnims;
 }
 - (void)webSocket:(PSWebSocket*)webSocket didReceiveMessage:(id)message
 {
+    if ([((NSString*)message) characterAtIndex:0] == '!') {
+        return;
+    }
+    
     NSLog(@"The websocket received a message: %@", message);
     dispatch_async(dispatch_get_main_queue(), ^{
         allColors = [[message componentsSeparatedByString:@","] mutableCopy];
@@ -59,11 +76,11 @@ int concurrentAnims;
 }
 -(void)animateAllColors{
     concurrentAnims++;
-
-    [UIView animateWithDuration:allColors.count>1?1:0.5
-                     animations:^{
-                         self.view.backgroundColor =[self colorWithHexString:[allColors objectAtIndex:i]];
-                     }
+    
+    [UIView animateWithDuration:allColors.count>1?1:0.5 delay:0 options:UIViewAnimationOptionAllowUserInteraction
+                        animations:^{
+                            self.view.backgroundColor =[self colorWithHexString:[allColors objectAtIndex:i]];
+                        }
                      completion:^(BOOL  completed){
                          i++;
                          if(i == allColors.count)
@@ -91,6 +108,7 @@ int concurrentAnims;
 }
 - (void)touchesBegan:(NSSet*)touches withEvent:(UIEvent*)event
 {
+    NSLog(@"tap");
     [self colorScreenForEvent:event];
 }
 - (void)touchesMoved:(NSSet*)touches withEvent:(UIEvent*)event
@@ -98,7 +116,8 @@ int concurrentAnims;
     [self colorScreenForEvent:event];
 }
 -(void)colorScreenForEvent:(UIEvent*)event{
-    for (UITouch* touch in event.allTouches) {
+    /*
+     for (UITouch* touch in event.allTouches) {
         UIColor *color = [UIColor colorWithHue:([touch locationInView:self.view].x/self.view.frame.size.width) saturation:([touch locationInView:self.view].y/self.view.frame.size.height) brightness:1 alpha:1];
         int numComponents = (int)CGColorGetNumberOfComponents([color CGColor]);
         if (numComponents == 4)
@@ -109,5 +128,23 @@ int concurrentAnims;
                 [self.socket send:hex];
         }
     }
+     */
+}
+- (IBAction)swipeRight:(id)sender {
+    NSLog(@"right");
+    if(self.socket.readyState == PSWebSocketReadyStateOpen)
+        [self.socket send:@"!r"];
+}
+
+- (IBAction)swipeLeft:(id)sender {
+    NSLog(@"left");
+    if(self.socket.readyState == PSWebSocketReadyStateOpen)
+        [self.socket send:@"!l"];
+}
+
+- (IBAction)tap:(id)sender {
+    NSLog(@"taplol");
+    if(self.socket.readyState == PSWebSocketReadyStateOpen)
+        [self.socket send:@"!m"];
 }
 @end

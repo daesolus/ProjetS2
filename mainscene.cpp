@@ -82,6 +82,7 @@ MainScene::MainScene()
     //      this, SLOT(wsDidConnect()));
     connect(m_webSocket, &QWebSocket::connected, this, &MainScene::onConnected);
     connect(m_webSocket, &QWebSocket::disconnected, this, &MainScene::onDisconnect);
+    connect(m_webSocket, &QWebSocket::textMessageReceived, this, &MainScene::wsMessageReceived);
 
     currentSelection = 1;
     
@@ -166,6 +167,29 @@ MainScene::MainScene()
     item2->setTransform(m2);
     */
 
+}
+void MainScene::wsMessageReceived(QString text){
+    if(text.at(0) == '!'){
+        qDebug() << text;
+        switch (text.toStdString().c_str()[1]) {
+            case 'l':
+                navBack();
+                break;
+            
+            case 'r':
+                navForward();
+                break;
+            
+            case 'm':
+                navSelect();
+                break;
+                
+            default:
+                break;
+        }
+        
+    }
+    
 }
 void MainScene::loadSongs(){
     //initialise player et playlist

@@ -37,6 +37,7 @@ public Q_SLOTS:
 private Q_SLOTS:
     void onConnected();
     void onDisconnect();
+    void wsMessageReceived(QString text);
 
 private:
     HsbColor HsbColorFromRgb(double r, double g, double b);

@@ -14,6 +14,9 @@
 
 @property (nonatomic, strong) PSWebSocket *socket;
 @property (nonatomic, strong) MMWormhole *wormhole;
+- (IBAction)swipeRight:(id)sender;
+- (IBAction)swipeLeft:(id)sender;
+- (IBAction)tap:(id)sender;
 
 @end
 
