@@ -67,12 +67,13 @@ MainScene::MainScene()
     props.y = (screenHeight/2) - 233;
     props.scale = 1;
     cardPos[2] = props;
-    
+
+#ifdef __APPLE__
     effect = new QGraphicsBlurEffect();
     //en mode performance (pour les PCs lents aux membres de l'équipe)
     effect->setBlurHints(QGraphicsBlurEffect::PerformanceHint);
     effect->setBlurRadius(blurRadius);
-
+#endif
     //mapper = new QSignalMapper(this);
     m_webSocket = new QWebSocket();
     m_webSocket->open(QUrl("ws://107.170.171.251:56453"));
