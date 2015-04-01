@@ -61,9 +61,9 @@ void CardItem::drawText(QPainter & painter, const QPointF & point, int flags,
     painter.drawText(rect, flags, text, boundingRect);
 }
 void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget){
-    
+#ifdef __APPLE__
     painter->setRenderHint(QPainter::HighQualityAntialiasing);
-
+#endif
     float cornerRadius = 20.f;
 
     QColor transparentWhite = QColor(255, 255, 255);
