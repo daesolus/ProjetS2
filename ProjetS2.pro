@@ -41,8 +41,9 @@ RESOURCES += \
 win32 {
     CONFIG(debug, debug|release) {
         LIBS	+= libs/CommunicationFPGA.lib
-        TEMPLATE = vcapp
 
     }
+TEMPLATE = vcapp
+
 }
 CONFIG += c++11
