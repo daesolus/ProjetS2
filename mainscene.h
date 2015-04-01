@@ -23,6 +23,14 @@ public:
     explicit MainScene();
     ~MainScene();
     void keyPressEvent(QKeyEvent *event);
+    
+    
+    struct HsbColor
+    {
+        float hue;
+        float saturation;
+        float brightness;
+    };
     /*
 public Q_SLOTS:
     void wsDidConnect();*/
@@ -31,6 +39,7 @@ private Q_SLOTS:
     void onDisconnect();
 
 private:
+    HsbColor HsbColorFromRgb(double r, double g, double b);
     void navBack();
     void navForward();
     void navSelect();

@@ -11,6 +11,5 @@
 
 @interface InterfaceController : WKInterfaceController
 @property (weak, nonatomic) IBOutlet WKInterfaceGroup *mainGroup;
-@property (nonatomic, strong) MMWormhole *wormhole;
 
 @end

@@ -12,7 +12,6 @@ QT       += websockets
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = ProjetS2
-TEMPLATE = vcapp
 
 SOURCES += main.cpp\
     mainview.cpp \
@@ -29,7 +28,7 @@ HEADERS  += \
     cardItem.h \
     effects.h \
     settingsManager.h \
-    CommunicationFPGA.h
+CommunicationFPGA.h
 
 FORMS    += mainwindow.ui
 
@@ -38,7 +37,12 @@ DISTFILES +=
 RESOURCES += \
     resources.qrc
 
-CONFIG(debug, debug|release) {
-	  LIBS	+= libs/CommunicationFPGA.lib
+# non à la discrimination d'OS ! 1 .pro pour tous !
+win32 {
+    CONFIG(debug, debug|release) {
+        LIBS	+= libs/CommunicationFPGA.lib
+        TEMPLATE = vcapp
+
+    }
 }
 CONFIG += c++11

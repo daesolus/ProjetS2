@@ -74,17 +74,9 @@ MainScene::MainScene()
     effect->setBlurRadius(blurRadius);
 
     //mapper = new QSignalMapper(this);
-    
-    
-    //initialise le client QWebSocket
-    //connect(&m_webSocket, &QWebSocket::connected, this, &MainScene::onConnected);
-    //connect(&m_webSocket, &QWebSocket::disconnected, this, &MainScene::closed);
-    //m_webSocket = QWebSocket new QWebSocket (QStringLiteral("Chat Server"),
-                     //            QWebSocketServer::NonSecureMode,
-                       //          this);
-    
     m_webSocket = new QWebSocket();
     m_webSocket->open(QUrl("ws://107.170.171.251:56453"));
+
     //QObject::connect(m_webSocket, SIGNAL(connected()),
     //      this, SLOT(wsDidConnect()));
     connect(m_webSocket, &QWebSocket::connected, this, &MainScene::onConnected);
@@ -442,12 +434,68 @@ const char * MainScene::hexColorFromRGB(int r, int g, int b)
 
 void MainScene::sendCurrentColorToServer()
 {
+    
+    QNetworkAccessManager * netManager = new QNetworkAccessManager(this);
+
     //envoye les couleurs du thème au serveur
     string str =    (manager->getPresetArray().at(currentSelection).color1) + "," +
     (manager->getPresetArray().at(currentSelection).color2) + "," +
     (manager->getPresetArray().at(currentSelection).color3) + "," +
     (manager->getPresetArray().at(currentSelection).color4);
     sendColorToServer(str);
+    
+    //CEST DEGUEULASSE JLE SAIS MAIS CEST PRINCIPALEMENT UN TEST
+    RGBColor color = RGBColor((manager->getPresetArray().at(currentSelection).color1).c_str());
+    HsbColor colorHSB =  HsbColorFromRgb(color.getR()/255.f, color.getG()/255.f, color.getB()/255.f);
+    string body = "{\"hue\":"+to_string(colorHSB.hue * 65535)+", \"sat\":"+to_string(colorHSB.saturation * 255)+", \"bri\":"+to_string(colorHSB.brightness * 255)+", \"transitiontime\":3000}";
+    netManager->put(QNetworkRequest(QUrl("http://localhost:8123/api/lapfelix/lights/1/state")), body.c_str());
+    color = RGBColor((manager->getPresetArray().at(currentSelection).color2).c_str());
+    colorHSB =  HsbColorFromRgb(color.getR()/255.f, color.getG()/255.f, color.getB()/255.f);
+    body = "{\"hue\":"+to_string(colorHSB.hue * 65535)+", \"sat\":"+to_string(colorHSB.saturation * 255)+", \"bri\":"+to_string(colorHSB.brightness * 255)+", \"transitiontime\":3000}";
+    netManager->put(QNetworkRequest(QUrl("http://localhost:8123/api/lapfelix/lights/2/state")), body.c_str());
+    color = RGBColor((manager->getPresetArray().at(currentSelection).color3).c_str());
+    colorHSB =  HsbColorFromRgb(color.getR()/255.f, color.getG()/255.f, color.getB()/255.f);
+    body = "{\"hue\":"+to_string(colorHSB.hue * 65535)+", \"sat\":"+to_string(colorHSB.saturation * 255)+", \"bri\":"+to_string(colorHSB.brightness * 255)+", \"transitiontime\":3000}";
+    netManager->put(QNetworkRequest(QUrl("http://localhost:8123/api/lapfelix/lights/3/state")), body.c_str());
+    
+}
+
+MainScene::HsbColor MainScene::HsbColorFromRgb(double r, double g, double b){
+    qDebug() << r << g << b;
+    if(r == 1)
+        r = r - 1e-5f;
+    if(g == 1)
+        g = g - 1e-5f;
+    if(b == 1)
+        b = b - 1e-5f;
+    qDebug() << r << g << b;
+
+    HsbColor result;
+    
+    //float colorsRGB[3] = {color.getR()/255.f, color.getG()/255.f, color.getB()/255.f};
+    //float r = colorsRGB[0], g = colorsRGB[1], b = colorsRGB[2];
+    float K = 0.f;
+    
+    if (g < b)
+    {
+        std::swap(g, b);
+        
+        K = -1.f;
+    }
+    
+    if (r < g)
+    {
+        std::swap(r, g);
+        
+        K = -2.f / 6.f - K;
+    }
+    float chroma = r - min(g, b);
+    result.hue = fabs(K + (g - b) / (6.f * chroma + 1e-20f));
+    result.saturation = chroma / (r + 1e-20f);
+    result.brightness = r;
+    qDebug() << result.hue << result.saturation << result.brightness;
+
+    return result;
 }
 
 void MainScene::sendColorToServer(string hexColor){

@@ -29,13 +29,18 @@ public:
 	void calculateColor(vector<double> RedOpp, vector<double> GreenOpp, vector<double> BlueOpp, int argument);
 	int getR();
 	int getG();
-	int getB();
+    int getB();
+    double getX();
+    double getY();
     string getHex();
 
 private:
 	double r;
 	double g;
 	double b;
+    double x;
+    double y;
+
 };
 
 class EffectsGenerator
@@ -46,6 +51,7 @@ public:
 	void gradientSigmoidTransition(int transitionSize, string &os);
 	vector<double> SigmoidCalculator(double Xi, double Xf, double Yi, double Yf);
 	void strobeTransition(int transitionTime, bool random, string &os);
+    
 private:
 	vector<RGBColor> colors; //tableau dynamique de couleurs
 

@@ -243,7 +243,8 @@ RGBColor::RGBColor(const char* hexColor)
             b = str3.toUInt(&ok,16);
         if (!ok)
             qDebug() << "Error with b component";
-        
+        qDebug() << r << g << b;
+        setNewColor(r, g, b);
     }else{
         
         qDebug() << "Not the right color lenght, apparently";
@@ -255,6 +256,27 @@ void RGBColor::setNewColor(double red, double green, double blue)
 	r = ((red > 255) ? 255 : ((red < 0) ? 0 : red));
 	g = ((green > 255) ? 255 : ((green < 0) ? 0 : green));
 	b = ((blue > 255) ? 255 : ((blue < 0) ? 0 : blue));
+    
+    
+    red = r/255;
+    green = g/255;
+    blue = b/255;
+    //Calculs pour un xy prŽcis
+    
+    //correction gamma ( source: https://github.com/PhilipsHue/PhilipsHueSDK-iOS-OSX/blob/master/ApplicationDesignNotes/RGB%20to%20xy%20Color%20conversion.md )
+    float newRed = (red > 0.04045f) ? pow((red + 0.055f) / (1.0f + 0.055f), 2.4f) : (red / 12.92f);
+    float newGreen = (green > 0.04045f) ? pow((green + 0.055f) / (1.0f + 0.055f), 2.4f) : (green / 12.92f);
+    float newBlue = (blue > 0.04045f) ? pow((blue + 0.055f) / (1.0f + 0.055f), 2.4f) : (blue / 12.92f);
+    
+    float X = newRed * 0.649926f + newGreen * 0.103455f + newBlue * 0.197109f;
+    float Y = newRed * 0.234327f + newGreen * 0.743075f + newBlue * 0.022598f;
+    float Z = newRed * 0.0000000f + newGreen * 0.053077f + newBlue * 1.035763f;
+    
+    x = X / (X + Y + Z);
+    y = Y / (X + Y + Z);
+    
+    qDebug()<< x << y;
+    
 }
 
 int RGBColor::getR()
@@ -267,7 +289,15 @@ int RGBColor::getG()
 }
 int RGBColor::getB()
 {
-	return (int)b;
+    return (int)b;
+}
+double RGBColor::getX()
+{
+    return (double)x;
+}
+double RGBColor::getY()
+{
+    return (double)y;
 }
 string RGBColor::getHex()
 {
