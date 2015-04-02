@@ -6,36 +6,7 @@
  */
 
 #include "effects.h"
-/*
-void main()
-{
-	vector<RGBColor> colors;
-	colors.push_back(RGBColor(200,0,0));
-	colors.push_back(RGBColor(81,179,11));
-	colors.push_back(RGBColor(200, 0, 0));
-	colors.push_back(RGBColor(55, 63, 105));
-	colors.push_back(RGBColor(0,135,71));
 
-	EffectsGenerator efx(colors);
-
-
-	ofstream fichier("img.ppm");
-	if (fichier.is_open())
-	{
-		int transitionSize = 500;
-		fichier << "P3\n" << (transitionSize*(colors.size()-1)) << " " << transitionSize << "\n255\n";
-		string texte;
-
-		efx.gradientSigmoidTransition(transitionSize, texte);
-		
-		for (int i = 0; i < transitionSize; i++)
-			fichier << texte << endl;
-
-		fichier.close();
-	}
-
-}
-*/
 
 
 EffectsGenerator::EffectsGenerator(vector<RGBColor> const& colorsGrid) : colors(colorsGrid)

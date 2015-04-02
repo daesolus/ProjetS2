@@ -96,11 +96,12 @@ void UIUtilities::blurBackgroundItem(QGraphicsItem *backgroundItem, QPixmap *ref
     
     //assigne l'effet à l'item approprié
     backgroundItem->setGraphicsEffect(effect);
+    
+#endif
     //rend le scale plus grand pour cacher les bordures blanches
     backgroundItem->setScale((1/getFullScreenPixelRatioForImage(referencePixmap))*1.2);
     //cache les bordures en haut et à gauche
     backgroundItem->setX(-blurRadius/0.5);
     backgroundItem->setY(-blurRadius/0.5);
     
-#endif
 }
