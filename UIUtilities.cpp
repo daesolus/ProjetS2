@@ -98,14 +98,14 @@ void UIUtilities::blurBackgroundItem(QGraphicsItem *backgroundItem, QPixmap *ref
     
     //désactive le blur si le compileur compile pour un ordinateur qui n'est pas un
     //Mac pour des raisons (mystérieuses(?)) de performance
-#ifdef __APPLE__
+//#ifdef __APPLE__
     QGraphicsBlurEffect *effect = new QGraphicsBlurEffect();
     effect->setBlurHints(QGraphicsBlurEffect::PerformanceHint);
     effect->setBlurRadius(blurRadius);
     
     //assigne l'effet à l'item approprié
     backgroundItem->setGraphicsEffect(effect);
-#endif
+//#endif
     
     //rend le scale plus grand pour cacher les bordures blanches
     backgroundItem->setScale((1/getFullScreenPixelRatioForImage(referencePixmap))*1.2);
