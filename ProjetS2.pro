@@ -16,7 +16,7 @@ TARGET = ProjetS2
 SOURCES += main.cpp\
     mainview.cpp \
     mainscene.cpp \
-    layoutManager.cpp \
+    UIUtilities.cpp \
     cardItem.cpp \
     effects.cpp \
     settingsManager.cpp
@@ -24,7 +24,7 @@ SOURCES += main.cpp\
 HEADERS  += \
     mainview.h \
     mainscene.h \
-    layoutManager.h \
+    UIUtilities.h \
     cardItem.h \
     effects.h \
     settingsManager.h \

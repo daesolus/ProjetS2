@@ -49,7 +49,7 @@ void EffectsGenerator::gradientTransition(int transitionSize, string &os)
 {
 	RGBColor tempColor, stepColor;
 
-	for (int j = 0; j < colors.size() - 1; j++)
+	for (int j = 0; j < (int)colors.size() - 1; j++)
 	{
 		stepColor.calculateColor(0, colors[j], colors[j + 1], transitionSize - 1);
 
@@ -85,7 +85,7 @@ void EffectsGenerator::gradientSigmoidTransition(int transitionSize, std::string
 {
 	RGBColor tempColor;
 
-	for (int j = 0; j < colors.size() - 1; j++)
+	for (int j = 0; j < (int)colors.size() - 1; j++)
 	{
 		vector<double> RedOperations = SigmoidCalculator(0, transitionSize, colors[j].getR(), colors[j + 1].getR());
 		vector<double> GreenOperations = SigmoidCalculator(0, transitionSize, colors[j].getG(), colors[j + 1].getG());
@@ -112,7 +112,7 @@ void EffectsGenerator::strobeTransition(int transitionTime, bool random, string 
 {
 	if (!random)
 	{
-		for (int j = 0; j < colors.size(); j++)
+		for (int j = 0; j < (int)colors.size(); j++)
 		{
 			for (int i = 0; i < transitionTime; i++)
 			{
@@ -132,7 +132,7 @@ void EffectsGenerator::strobeTransition(int transitionTime, bool random, string 
 		int min = transitionTime/4;
 		int max = transitionTime;
 
-		for (int i = 0; i < transitionTime*colors.size(); i++)
+		for (int i = 0; i < transitionTime*(int)colors.size(); i++)
 		{
 			if (randNumber<i)
 			{
@@ -150,19 +150,16 @@ void EffectsGenerator::strobeTransition(int transitionTime, bool random, string 
 				//sendColorToServer(colors[currentColor].getR(),colors[currentColor].getG(),colors[currentColor].getB())
 				i++;
 
-				if (i >= transitionTime*colors.size())
+				if (i >= transitionTime*(int)colors.size())
 					break;
 			}
 			i--;
 			currentColor++;
-			if (currentColor>=colors.size())
+			if (currentColor>=(int)colors.size())
 				currentColor=0;
 		}
 	}
 }
-
-
-
 
 
 ////////////////////////////////////////////////
@@ -299,7 +296,7 @@ double RGBColor::getY()
 {
     return (double)y;
 }
-string RGBColor::getHex()
+const char * RGBColor::getHex()
 {
     QString rstring;
     rstring.setNum((int)r,16);
@@ -314,5 +311,42 @@ string RGBColor::getHex()
     string->append(gstring);
     string->append(bstring);
     qDebug() << string->toStdString().c_str();
-    return string->toStdString();
+    return string->toStdString().c_str();
+}
+
+HsbColor RGBColor::getHSB(){
+    
+    qDebug() << r << g << b;
+    if(r == 1)
+        r = r - 1e-5f;
+    if(g == 1)
+        g = g - 1e-5f;
+    if(b == 1)
+        b = b - 1e-5f;
+    qDebug() << r << g << b;
+    
+    HsbColor result;
+    
+    float K = 0.f;
+    
+    if (g < b)
+    {
+        std::swap(g, b);
+        
+        K = -1.f;
+    }
+    
+    if (r < g)
+    {
+        std::swap(r, g);
+        
+        K = -2.f / 6.f - K;
+    }
+    float chroma = r - min(g, b);
+    result.hue = fabs(K + (g - b) / (6.f * chroma + 1e-20f));
+    result.saturation = chroma / (r + 1e-20f);
+    result.brightness = r;
+    qDebug() << result.hue << result.saturation << result.brightness;
+    
+    return result;
 }

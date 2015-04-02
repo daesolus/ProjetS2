@@ -18,6 +18,13 @@
 
 using namespace std;
 
+struct HsbColor
+{
+    float hue;
+    float saturation;
+    float brightness;
+};
+
 class RGBColor
 {
 public:
@@ -32,8 +39,9 @@ public:
     int getB();
     double getX();
     double getY();
-    string getHex();
-
+    const char * getHex();
+    HsbColor getHSB();
+    
 private:
 	double r;
 	double g;

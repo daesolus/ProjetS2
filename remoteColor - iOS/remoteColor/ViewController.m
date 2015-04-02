@@ -39,7 +39,6 @@ int concurrentAnims;
     
     i = 0;
     concurrentAnims = 0;
-    NSMutableArray *allColors = [NSMutableArray new];
 
     // Do any additional setup after loading the view, typically from a nib.
     [self tryToConnect];
