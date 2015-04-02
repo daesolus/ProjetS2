@@ -12,8 +12,15 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
     MainScene scene;
-    QFont font("Helvetica Neue",30,-1,false);
-    QFont sansFont("Helvetica", 30);
+	QString police = "Calibri";
+#ifdef __APPLE__
+	police = "Helvetica Neue";
+#endif
+	QFont font(police, 30, -1, false);
+#ifdef __APPLE__
+	police = "Helvetica";
+#endif
+    QFont sansFont(police, 30);
     
     /*
      //Show off mode

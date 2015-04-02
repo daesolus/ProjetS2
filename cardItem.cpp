@@ -83,8 +83,13 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
         painter->drawRoundRect( this->boundingRect().x(), this->boundingRect().y(), this->boundingRect().width(), this->boundingRect().height(), cornerRadius, cornerRadius*(this->boundingRect().width()/this->boundingRect().height()));
     else
         painter->drawRoundRect( this->boundingRect().x(), this->boundingRect().y(), this->boundingRect().width(), this->boundingRect().height(), cornerRadius*(this->boundingRect().height()/this->boundingRect().width()), cornerRadius);
-    
-    QFont font("Helvetica Neue", 52);
+
+	QString police = "Calibri";
+#ifdef __APPLE__
+	police = "Helvetica Neue";
+#endif
+	QFont font(police, 52);
+
     font.setStyleName("Light");
     painter->setFont(font);
     painter->setPen(QPen(Qt::white));
