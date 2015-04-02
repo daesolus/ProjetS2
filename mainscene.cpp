@@ -13,8 +13,9 @@ QT_USE_NAMESPACE
 const int ANIMATION_TIME_MS = 200;
 const bool ENABLE_SOUND = false;
 
-string PHILIPS_HUE_URL = "localhost";
-int PHILIPS_HUE_PORT = 8123;
+string PHILIPS_HUE_URL = "10.0.1.34";
+string PHILIPS_HUE_USERNAME = "lapfelixlapfelixlapfelix";
+int PHILIPS_HUE_PORT = 80;
 
 int currentSelection;
 bool isConnected = false;
@@ -36,9 +37,11 @@ MainScene::MainScene()
 
     //enregistre le username "lapfelix" comme utilisateur des Philips Hue
     //(le 'Link Button' doit être enfoncé moins de 30 secondes avant le launch pour que ca fonctionne (si il y a un changement/reset)
-    string body = "{\"device type\":\"felixHues\", \"username\":\"lapfelix\"}";
+    string body = "{\"device type\":\"hue#ProjetS2\", \"username\":\""+PHILIPS_HUE_USERNAME+"\"}";
     string URL = "http://"+PHILIPS_HUE_URL+":"+to_string(PHILIPS_HUE_PORT)+"/api";
-    netManager->post(QNetworkRequest(QUrl(URL.c_str())), body.c_str());
+    QNetworkRequest *request = new QNetworkRequest(QUrl(URL.c_str()));
+    request->setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    netManager->post(*request, body.c_str());
     
     //prend la taille de l'écran en points (pas en pixels)
     QRect rec = QApplication::desktop()->screenGeometry();
@@ -66,12 +69,9 @@ MainScene::MainScene()
     props.scale = 1;
     cardPos[2] = props;
     
-    //mapper = new QSignalMapper(this);
     m_webSocket = new QWebSocket();
     m_webSocket->open(QUrl("ws://107.170.171.251:56453"));
 
-    //QObject::connect(m_webSocket, SIGNAL(connected()),
-    //      this, SLOT(wsDidConnect()));
     connect(m_webSocket, &QWebSocket::connected, this, &MainScene::onConnected);
     connect(m_webSocket, &QWebSocket::disconnected, this, &MainScene::onDisconnect);
     connect(m_webSocket, &QWebSocket::textMessageReceived, this, &MainScene::wsMessageReceived);
@@ -132,29 +132,6 @@ MainScene::MainScene()
     
     //rafraichis et configure les cartes
     refreshCurrentCards();
-    
-    //transformations 3D
-    //(Vont peut-être être utilisées plus tard)
-    /*
-    QTransform m;
-    m.scale(0.8069269949, 0.8069269949);
-    m.rotate(-30,Qt::YAxis);
-    item3->setTransform(m);
-    QTransform m3;
-    //m3.scale(1/0.8069269949, 1/0.8069269949);
-    m3.rotate(0,Qt::YAxis);
-    //item3->setTransform(m3);
-    //item3->setTransform(m.inverted());
-    
-    
-    QTransform m2;
-    m2.scale(0.8069269949, 0.8069269949);
-    //m2.translate(406, 0);
-    m2.rotate(30,Qt::YAxis);
-    //m2.translate(-406, 0);
-    item2->setTransformOriginPoint(406, 0);
-    item2->setTransform(m2);
-    */
 
 }
 
@@ -337,14 +314,16 @@ void MainScene::sendCurrentColorToServer()
     (manager->getPresetArray().at(currentSelection).color4);
     sendColorToServer(str);
     
-    sendColorToPhilipsHue(1, RGBColor((manager->getPresetArray().at(currentSelection).color1).c_str()), 100);
-    sendColorToPhilipsHue(2, RGBColor((manager->getPresetArray().at(currentSelection).color2).c_str()), 100);
-    sendColorToPhilipsHue(3, RGBColor((manager->getPresetArray().at(currentSelection).color3).c_str()), 100);
-    sendColorToPhilipsHue(4, RGBColor((manager->getPresetArray().at(currentSelection).color4).c_str()), 100);
+    sendColorToPhilipsHue(1, RGBColor((manager->getPresetArray().at(currentSelection).color3).c_str()), 3);
+    sendColorToPhilipsHue(2, RGBColor((manager->getPresetArray().at(currentSelection).color4).c_str()), 3);
+    sendColorToPhilipsHue(3, RGBColor((manager->getPresetArray().at(currentSelection).color1).c_str()), 3);
+    sendColorToPhilipsHue(4, RGBColor((manager->getPresetArray().at(currentSelection).color2).c_str()), 3);
     
 }
 
 void MainScene::wsMessageReceived(QString text){
+    
+    //vérifie le premier caractère pour savoir si ce qui a été reçu est une commande de navigation
     if(text.at(0) == '!'){
         qDebug() << text;
         switch (text.toStdString().c_str()[1]) {
@@ -372,13 +351,17 @@ void MainScene::wsMessageReceived(QString text){
 void MainScene::onConnected(){
     qDebug() << "did connect";
     isConnected = true;
+    //envoye la couleur courante au serveur (au cas ou la déconnexion était lors d'une tentative d'envoi de la couleur au serveur)
     sendCurrentColorToServer();
 }
 
 
 void MainScene::onDisconnect(){
+    
     qDebug() << "disconnected ... trying to reconnect";
     isConnected = false;
+    
+    //tente une connection au serveur
     m_webSocket->open(QUrl("ws://107.170.171.251:56453"));
 }
 
@@ -388,10 +371,17 @@ void MainScene::onDisconnect(){
 void MainScene::sendColorToPhilipsHue(int lightNumber, RGBColor color, int transitionTime){
     //le temps de transition est multiplié par 100ms, donc 7 = 700ms;
     
+    //prend la couleur en HSB
     HsbColor colorHSB =  color.getHSB();
     
-    string body = "{\"hue\":"+to_string(colorHSB.hue * 65535)+", \"sat\":"+to_string(colorHSB.saturation * 255)+", \"bri\":"+to_string(colorHSB.brightness * 255)+", \"transitiontime\":"+to_string(transitionTime)+"}";
-    string URL = "http://"+PHILIPS_HUE_URL+":"+to_string(PHILIPS_HUE_PORT)+"/api/lapfelix/lights/"+to_string(lightNumber)+"/state";
-    netManager->put(QNetworkRequest(QUrl(URL.c_str())), body.c_str());
+    //monte la saturation de 25% pour simuler l'effet gamma d'un écran pour que les couleurs se ressemblent (écran et lumières)
+    float moreSat = (colorHSB.brightness * 1.25)>1?1:colorHSB.brightness * 1.25;
     
+    string body = "{\"hue\":"+to_string((int)(colorHSB.hue * 65535))+", \"sat\":"+to_string((int)(colorHSB.saturation * 255))+", \"bri\":"+to_string((int)(moreSat * 255))+", \"transitiontime\":"+to_string(transitionTime)+"}";
+    string URL = "http://"+PHILIPS_HUE_URL+":"+to_string(PHILIPS_HUE_PORT)+"/api/"+PHILIPS_HUE_USERNAME+"/lights/"+to_string(lightNumber)+"/state";
+    
+    QNetworkRequest *request = new QNetworkRequest(QUrl(URL.c_str()));
+    request->setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    netManager->put(*request, body.c_str());
+
 }

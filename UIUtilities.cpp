@@ -2,13 +2,16 @@
 
 void UIUtilities::centerInScreen(QGraphicsItem *item){
     
+    //prend les dimensions de l'écran
     QRect rec = QApplication::desktop()->screenGeometry();
     float screenHeight = rec.height();
     float screenWidth =  rec.width();
     
+    //prend les dimensions de l'item
     float width = item->boundingRect().width();
     float height = item->boundingRect().height();
     
+    //place l'item au milieu de l'écran
     item->setPos((screenWidth /2)-(width /2),(screenHeight/2)-(height/2));
 }
 
@@ -57,26 +60,32 @@ QGraphicsItem* UIUtilities::pixmapItemFromSvg(const char* svgTitle, QGraphicsSce
 
 void UIUtilities::animateCard(CardItem* card, QPoint position, bool selected, bool visible, const int ANIMATION_TIME_MS){
     
+    //initialise l'animation de position
     QPropertyAnimation *positionAnimation = new QPropertyAnimation((QGraphicsObject*)card, "pos");
     positionAnimation->setDuration(ANIMATION_TIME_MS);
     positionAnimation->setStartValue(card->pos());
     positionAnimation->setEndValue(position);
     
+    //initialise l'animation d'échelle
     QPropertyAnimation *scaleAnimation = new QPropertyAnimation((QGraphicsObject*)card, "scale");
     scaleAnimation->setDuration(ANIMATION_TIME_MS);
     scaleAnimation->setStartValue(card->scale());
     scaleAnimation->setEndValue(selected?1:0.8);
     float currentOpacity = 0;
+    
+    //prend en note l'opacité courante
     if((QGraphicsOpacityEffect*)card->graphicsEffect())
         currentOpacity = ((QGraphicsOpacityEffect*)card->graphicsEffect())->opacity();
+    
+    //initialise l'animation d'opacité
     QGraphicsOpacityEffect *opacity = new QGraphicsOpacityEffect;
     QPropertyAnimation *opacityAnimation = new QPropertyAnimation(opacity, "opacity" );
     card->setGraphicsEffect( opacity );
-    
     opacityAnimation->setDuration(ANIMATION_TIME_MS);
     opacityAnimation->setStartValue(currentOpacity);
     opacityAnimation->setEndValue( visible?1.0:0.0 );
     
+    //démarre toute les animations
     opacityAnimation->start();
     positionAnimation->start();
     scaleAnimation->start();
@@ -88,7 +97,7 @@ void UIUtilities::blurBackgroundItem(QGraphicsItem *backgroundItem, QPixmap *ref
     float blurRadius = 80.f;
     
     //désactive le blur si le compileur compile pour un ordinateur qui n'est pas un
-    //Mac pour des raisons (mystérieuses) de performance
+    //Mac pour des raisons (mystérieuses(?)) de performance
 #ifdef __APPLE__
     QGraphicsBlurEffect *effect = new QGraphicsBlurEffect();
     effect->setBlurHints(QGraphicsBlurEffect::PerformanceHint);
@@ -96,8 +105,8 @@ void UIUtilities::blurBackgroundItem(QGraphicsItem *backgroundItem, QPixmap *ref
     
     //assigne l'effet à l'item approprié
     backgroundItem->setGraphicsEffect(effect);
-    
 #endif
+    
     //rend le scale plus grand pour cacher les bordures blanches
     backgroundItem->setScale((1/getFullScreenPixelRatioForImage(referencePixmap))*1.2);
     //cache les bordures en haut et à gauche
