@@ -1,4 +1,6 @@
 #include "cardItem.h"
+#include <QApplication>
+#include <QDesktopWidget>
 
 /*
 CardItem::CardItem()
@@ -61,6 +63,7 @@ void CardItem::drawText(QPainter & painter, const QPointF & point, int flags,
     painter.drawText(rect, flags, text, boundingRect);
 }
 void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget){
+    
 #ifdef __APPLE__
     painter->setRenderHint(QPainter::HighQualityAntialiasing);
 #endif
@@ -94,17 +97,65 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
     float smallestDimension = image.width()<image.height()?image.width():image.height();
     painter->drawPixmap(QRect(this->boundingRect().x()+(this->boundingRect().width()/2)-(width/2), 30, width, height), image, QRect((smallestDimension-width)/4, 0, smallestDimension, smallestDimension));
     
+    //tentative de rotation selon la position x au milieu par rapport au centre de l'écran
+    
+    
+    
+    
+    
+    
 }
 void CardItem::setScale(qreal scale){
     this->prepareGeometryChange();
+    
+    float xMiddle = ((this->pos().x()+28) + (this->boundingRect().width()/2))-(QApplication::desktop()->screenGeometry().width()/2);
+    QTransform m2;
+    //m2.translate(406, 0);
+    qDebug() << xMiddle;
+    //m2.translate(-406, 0);
+    qDebug() << boundingRect();
+    if(xMiddle > 28){
+        
+        xMiddle *= 0.9103139013;
+        
+        //this->setTransformOriginPoint(this->boundingRect().width(), 0);
+        
+        //m2.translate(xMiddle, 0);
+        //m2.rotate(xMiddle*0.1,Qt::YAxis);
+        //m2.translate(-xMiddle, 0);
+        
+        
+        //m2.translate(this->boundingRect().width()/2, 0);
+        //m2.rotate(xMiddle*0.1,Qt::YAxis);
+        //m2.translate(-this->boundingRect().width()/2, 0);
+        
+        
+        m2.translate(0, this->boundingRect().height()/2);
+        m2.rotate(xMiddle*0.1,Qt::YAxis);
+        m2.translate(0, -this->boundingRect().height()/2);
+    }else{
+        xMiddle *= 1.1092896175;
+        
+        xMiddle *= 1.05;
+        //this->setTransformOriginPoint(this->boundingRect().width(), 0);
+
+        //this->setTransformOriginPoint(-0, 0);
+        m2.translate(this->boundingRect().width(), this->boundingRect().height()/2);
+        m2.rotate(xMiddle*0.1,Qt::YAxis);
+        m2.translate(-this->boundingRect().width(), -this->boundingRect().height()/2);
+        //scale = scale+(xMiddle*0.00001);
+        
+        
+        //m2.translate(-xMiddle, 0);
+        //m2.rotate(xMiddle*0.1,Qt::YAxis);
+        //m2.translate(xMiddle, 0);
+    }
+
+    //title = to_string(xMiddle);
+    
+    this->setTransform(m2);
+    
     this->QGraphicsItem::setScale(scale);
     this->update();
 
-}
-
-void CardItem::mousePressEvent(QGraphicsSceneMouseEvent *event){
-    
-}
-void CardItem::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
-    
 }

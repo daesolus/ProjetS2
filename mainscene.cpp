@@ -10,8 +10,8 @@
 
 QT_USE_NAMESPACE
 
-const int ANIMATION_TIME_MS = 250;
-const bool ENABLE_SOUND = true;
+const int ANIMATION_TIME_MS = 200;
+const bool ENABLE_SOUND = false;
 
 string PHILIPS_HUE_URL = "localhost";
 int PHILIPS_HUE_PORT = 8123;
@@ -228,7 +228,7 @@ void MainScene::refreshCurrentCards(){
         //affichage de l'arrière plan
         imageObject = new QImage();
         imageObject->load(manager->getPresetArray().at(currentSelection).imgPath.c_str());
-
+        
         image = QPixmap::fromImage(*imageObject);
         delete imageObject;
         //enlève l'ancien arrière plan
