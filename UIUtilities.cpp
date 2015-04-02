@@ -85,11 +85,11 @@ void UIUtilities::animateCard(CardItem* card, QPoint position, bool selected, bo
 
 void UIUtilities::blurBackgroundItem(QGraphicsItem *backgroundItem, QPixmap *referencePixmap){
     
+    float blurRadius = 80.f;
     
     //désactive le blur si le compileur compile pour un ordinateur qui n'est pas un
     //Mac pour des raisons (mystérieuses) de performance
 #ifdef __APPLE__
-    float blurRadius = 80.f;
     QGraphicsBlurEffect *effect = new QGraphicsBlurEffect();
     effect->setBlurHints(QGraphicsBlurEffect::PerformanceHint);
     effect->setBlurRadius(blurRadius);
