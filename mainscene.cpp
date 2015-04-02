@@ -182,7 +182,13 @@ void MainScene::loadSongs(){
 
     //prend chaque musique pour chaque preset
     for (int i = 0; i < manager->getPresetArray().count(); i++) {
+		
+#ifdef __APPLE__
         playlist->addMedia(QUrl::fromLocalFile(dir.path() + "/" +manager->getPresetArray().at(i).musicPath.c_str()));
+#else
+        playlist->addMedia(QUrl::fromLocalFile(manager->getPresetArray().at(i).musicPath.c_str()));
+#endif
+
     }
     
     //fort
