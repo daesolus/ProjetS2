@@ -89,7 +89,14 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
     //QFontDatabase::addApplicationFont ( ":font.ttf" );
     //QFont font("BN BenWitch Project", 52);
     
-    QFont font("Helvetica Neue", 52);
+    //QFont font("Helvetica Neue", 52);
+
+	QString police = "Calibri";
+#ifdef __APPLE__
+	police = "Helvetica Neue";
+#endif
+	QFont font(police, 52);
+
     font.setStyleName("Light");
     painter->setFont(font);
     painter->setPen(QPen(Qt::white));
