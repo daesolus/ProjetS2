@@ -1,6 +1,7 @@
 #include "cardItem.h"
 #include <QApplication>
 #include <QDesktopWidget>
+#include <QFontDatabase>
 
 /*
 CardItem::CardItem()
@@ -60,12 +61,13 @@ void CardItem::drawText(QPainter & painter, const QPointF & point, int flags,
     else flags |= Qt::AlignBottom;
     QRectF rect(corner, QSizeF(size, size));
     painter.drawText(rect, flags, text, boundingRect);
+ 
 }
 void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget){
     
     //active l'antialising si l'OS est Mac OS X
 #ifdef __APPLE__
-    painter->setRenderHint(QPainter::HighQualityAntialiasing);
+    //painter->setRenderHint(QPainter::HighQualityAntialiasing);
 #endif
     
     float cornerRadius = 20.f;
@@ -84,6 +86,9 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
     else
         painter->drawRoundRect( this->boundingRect().x(), this->boundingRect().y(), this->boundingRect().width(), this->boundingRect().height(), cornerRadius*(this->boundingRect().height()/this->boundingRect().width()), cornerRadius);
     
+    //QFontDatabase::addApplicationFont ( ":font.ttf" );
+    //QFont font("BN BenWitch Project", 52);
+    
     QFont font("Helvetica Neue", 52);
     font.setStyleName("Light");
     painter->setFont(font);
@@ -100,13 +105,14 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
     
 }
 void CardItem::setScale(qreal scale){
+    
     this->prepareGeometryChange();
     
     //distance par rapport au milieu
-    float xMiddle = ((this->pos().x()+28) + (this->boundingRect().width()/2))-(QApplication::desktop()->screenGeometry().width()/2);
+    float xMiddle = ((this->pos().x()-7) + (this->boundingRect().width()/2))-(1440/2);
     QTransform m2;
-    
-    if(xMiddle > 28){
+    qDebug() << "blblb" << (float)this->pos().x();
+    if(xMiddle > 7){
         
         //constante
         xMiddle *= 0.9103139013;
@@ -130,8 +136,12 @@ void CardItem::setScale(qreal scale){
     }
     
     this->setTransform(m2);
-    
-    //appelle la 'vraie' fonction 'setScale'
+#if TARGET_OS_IPHONE
     this->QGraphicsItem::setScale(scale);
+#else
+    this->QGraphicsItem::setScale(scale);
+
+#endif
+    //appelle la 'vraie' fonction 'setScale'
     
 }

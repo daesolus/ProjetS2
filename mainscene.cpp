@@ -7,13 +7,17 @@
 #include <QDebug>
 #include <QApplication>
 #include "mainscene.h"
+#include <QGestureRecognizer>
+#include <QGesture>
+#include <QSwipeGesture>
+
 
 QT_USE_NAMESPACE
 
 const int ANIMATION_TIME_MS = 200;
-const bool ENABLE_SOUND = false;
+const bool ENABLE_SOUND = true;
 
-string PHILIPS_HUE_URL = "10.0.1.34";
+string PHILIPS_HUE_URL = "10.0.1.34";//34
 string PHILIPS_HUE_USERNAME = "lapfelixlapfelixlapfelix";
 int PHILIPS_HUE_PORT = 80;
 
@@ -22,7 +26,6 @@ bool isConnected = false;
 
 QMediaPlayer *player;
 QMediaPlaylist *playlist;
-QNetworkAccessManager * netManager;
 
 struct cardProperties{
     float x;
@@ -30,10 +33,19 @@ struct cardProperties{
     float scale;
     bool selected;
 };
+
+
+QT_BEGIN_NAMESPACE
+extern Q_WIDGETS_EXPORT void qt_blurImage( QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0 );
+QT_END_NAMESPACE
+
 cardProperties cardPos[5];
 MainScene::MainScene()
 {
-    netManager = new QNetworkAccessManager(this);
+    
+    background = nullptr;
+    
+    QNetworkAccessManager *netManager = new QNetworkAccessManager(this);
 
     //enregistre le username "lapfelix" comme utilisateur des Philips Hue
     //(le 'Link Button' doit être enfoncé moins de 30 secondes avant le launch pour que ca fonctionne (si il y a un changement/reset)
@@ -45,8 +57,19 @@ MainScene::MainScene()
     
     //prend la taille de l'écran en points (pas en pixels)
     QRect rec = QApplication::desktop()->screenGeometry();
-    float screenHeight = rec.height();
-    float screenWidth =  rec.width();
+    
+    float heightConstant = 1;
+    qDebug() << "hellol" <<  (float)rec.height()/(float)rec.width();
+#if TARGET_OS_IPHONE
+    if( (float)rec.height()/(float)rec.width() == 0.75 )
+        //c'est un iPad
+        heightConstant = 1.23;
+    else
+        heightConstant = 2.7;
+#endif
+    
+    float screenHeight = rec.height() * heightConstant;
+    float screenWidth =  1440;//rec.width();
     
     
     //hardcore hardcoding, sorry
@@ -64,7 +87,7 @@ MainScene::MainScene()
     cardPos[3] = props;
     props.x = props.x + 200;
     cardPos[4] = props;
-    props.x = (screenWidth/2) - 203;
+    props.x = (screenWidth/2) - 196;
     props.y = (screenHeight/2) - 233;
     props.scale = 1;
     cardPos[2] = props;
@@ -82,7 +105,27 @@ MainScene::MainScene()
     manager = new SettingsManager();
     manager->readConfigFile();
     
+    //loadSongs();
+/*
+#ifdef __APPLE__
+    #include "TargetConditionals.h"
+    #ifdef TARGET_OS_IPHONE
+        // iOS
+    #elif TARGET_IPHONE_SIMULATOR
+        // iOS Simulator
+    #else
+        // Unsupported platform
+        loadSongs();
+    #endif
+#else
     loadSongs();
+#endif
+    */
+#if TARGET_OS_IPHONE
+    //nothing
+#else
+    loadSongs();
+#endif
     
     //nouveau seed pour que les fonctions aléatoires soient réellement aléatoires
     srand (time(NULL));
@@ -98,10 +141,21 @@ MainScene::MainScene()
     //centre les 2 items
     layout.centerInScreen(nextArrow);
     layout.centerInScreen(backArrow);
+    
+    qDebug() << "dat: " << qApp->devicePixelRatio();
     //les déplace à leur bonne position
-    backArrow->moveBy(-643,  -75 + (75*qApp->devicePixelRatio()));
+    /*backArrow->moveBy(-643,  -75 + (75*qApp->devicePixelRatio()));
     nextArrow->moveBy(643+(56*qApp->devicePixelRatio()), 67 + (75*qApp->devicePixelRatio()));
-
+*/
+//#if TARGET_OS_IPHONE
+    backArrow->moveBy(-643,  -75);// + (75*qApp->devicePixelRatio()));
+    nextArrow->moveBy(643+(56*qApp->devicePixelRatio()), 67);// + (75*qApp->devicePixelRatio()));
+//#else
+  //  backArrow->moveBy(-643,  -75 + (75*qApp->devicePixelRatio()));
+  //  nextArrow->moveBy(643+(56*qApp->devicePixelRatio()), 67 + (75*qApp->devicePixelRatio()));
+//#endif
+    //backArrow->moveBy(-643,  -75);// + (75*qApp->devicePixelRatio()));
+    
     float cardWidth = 406;
     float cardHeight = 466;
     float cardSmallScale = 0.8;
@@ -143,6 +197,9 @@ MainScene::~MainScene()
 #pragma mark - Audio
 
 void MainScene::loadSongs(){
+
+    qDebug() << "HERE";
+    
     //initialise player et playlist
     player = new QMediaPlayer;
     playlist = new QMediaPlaylist(player);
@@ -162,6 +219,8 @@ void MainScene::loadSongs(){
 		
 #ifdef __APPLE__
         playlist->addMedia(QUrl::fromLocalFile(dir.path() + "/" +manager->getPresetArray().at(i).musicPath.c_str()));
+        //playlist->addMedia(QUrl::fromLocalFile(manager->getPresetArray().at(i).musicPath.c_str()));
+
 #else
         playlist->addMedia(QUrl::fromLocalFile(manager->getPresetArray().at(i).musicPath.c_str()));
 #endif
@@ -172,7 +231,6 @@ void MainScene::loadSongs(){
     player->setVolume(100);
     //assigne le playlist au player
     player->setPlaylist(playlist);
-    
 
 }
 
@@ -203,28 +261,54 @@ void MainScene::refreshCurrentCards(){
     if (currentSelection < manager->getPresetArray().count()) {
         
         //affichage de l'arrière plan
-        imageObject = new QImage();
-        imageObject->load(manager->getPresetArray().at(currentSelection).imgPath.c_str());
+        imageObject = QImage();
+        imageObject.load(manager->getPresetArray().at(currentSelection).imgPath.c_str());
         
-        image = QPixmap::fromImage(*imageObject);
-        delete imageObject;
+        
+        //extern QImage srcImg;//source image
+        //QPixmap *pxDst( imageObject->size() );//blurred destination
+        image = QPixmap(imageObject.size());
+        image.fill( Qt::transparent );
+        {
+            QPainter painter( &image );
+            qt_blurImage( &painter, imageObject, 50, false, false );//blur radius: 2px
+        }
+        
+        
+        //image = QPixmap::fromImage(pxDst);
+        
+        image.setDevicePixelRatio(UIUtilities::getFullScreenPixelRatioForImage(&image)/2);
+        
+        //delete imageObject;
         //enlève l'ancien arrière plan
-        //this->removeItem(background);
+        //delete background;
+
+        this->removeItem(background);
         
-        if(background == NULL)
-            background = this->addPixmap(image);
-        else
-            background->setPixmap(image);
+        if(background)
+            delete background;
+        
+        background = nullptr;
+        //if(background == NULL)
+        background = this->addPixmap(image);
+        
+#if TARGET_OS_IPHONE
+        background->setOpacity(0.8);
+#endif
+        //else
+          //  background->setPixmap(image);
         
         //le met en arrière plan
         background->setZValue(-1);
         
         //aspect fill l'écran
-        image.setDevicePixelRatio(UIUtilities::getFullScreenPixelRatioForImage(&image));
         
         //rend l'arrière plan flou et cool
-        UIUtilities::blurBackgroundItem(background, &image);
+        //UIUtilities::blurBackgroundItem(background, &image);
         
+#if TARGET_OS_IPHONE
+        return;
+#endif
         //change de musique et la joue
         playlist->setCurrentIndex(currentSelection);
 
@@ -240,11 +324,15 @@ void MainScene::navBack(){
    if(currentSelection-1 >= 0){
         currentSelection--;
        
+#if TARGET_OS_IPHONE
+       //do nothing
+#else
        //change de musique et la joue
        playlist->setCurrentIndex(currentSelection);
        
        if(ENABLE_SOUND)
            player->play();
+#endif
        
        //et rafraichis les cartes
         refreshCurrentCards();
@@ -256,12 +344,15 @@ void MainScene::navForward(){
     if(currentSelection+1 < manager->getPresetArray().count()){
         currentSelection++;
         
+#if TARGET_OS_IPHONE
+        //do nothing
+#else
         //change de musique et la joue
         playlist->setCurrentIndex(currentSelection);
-
+        
         if(ENABLE_SOUND)
             player->play();
-        
+#endif
         refreshCurrentCards();
         sendCurrentColorToServer();
 
@@ -377,11 +468,12 @@ void MainScene::sendColorToPhilipsHue(int lightNumber, RGBColor color, int trans
     //monte la saturation de 25% pour simuler l'effet gamma d'un écran pour que les couleurs se ressemblent (écran et lumières)
     float moreSat = (colorHSB.brightness * 1.25)>1?1:colorHSB.brightness * 1.25;
     
-    string body = "{\"hue\":"+to_string((int)(colorHSB.hue * 65535))+", \"sat\":"+to_string((int)(colorHSB.saturation * 255))+", \"bri\":"+to_string((int)(moreSat * 255))+", \"transitiontime\":"+to_string(transitionTime)+"}";
+    string body = "{ \"on\": true, \"hue\":"+to_string((int)(colorHSB.hue * 65535))+", \"sat\":"+to_string((int)(colorHSB.saturation * 255))+", \"bri\":"+to_string((int)(moreSat * 255))+", \"transitiontime\":"+to_string(transitionTime)+"}";
     string URL = "http://"+PHILIPS_HUE_URL+":"+to_string(PHILIPS_HUE_PORT)+"/api/"+PHILIPS_HUE_USERNAME+"/lights/"+to_string(lightNumber)+"/state";
-    
+    qDebug() << body.c_str() << URL.c_str();
     QNetworkRequest *request = new QNetworkRequest(QUrl(URL.c_str()));
     request->setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    QNetworkAccessManager *netManager = new QNetworkAccessManager(this);
     netManager->put(*request, body.c_str());
 
 }

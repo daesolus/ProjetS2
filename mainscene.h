@@ -28,6 +28,8 @@ private Q_SLOTS:
     void wsMessageReceived(QString text);
 
 private:
+    
+    
     void navBack();
     void navForward();
     void navSelect();
@@ -38,7 +40,7 @@ private:
     SettingsManager *manager;
     UIUtilities layout;
     QPixmap image;
-    QImage  *imageObject;
+    QImage  imageObject;
     QVector<CardItem*> allCards;
     QGraphicsPixmapItem* background;
     void sendCurrentColorToServer();
