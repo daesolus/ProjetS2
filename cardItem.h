@@ -51,6 +51,7 @@ public:
     QRectF boundingRect() const;
     void drawText(QPainter & painter, const QPointF & point, int flags, const QString & text, QRectF * boundingRect);
     void configure(const Preset *prst);
+    void turnForSettings();
     virtual void setScale(qreal scale);
 
 protected:

@@ -362,7 +362,9 @@ void MainScene::navForward(){
 void MainScene::navSelect(){
     //TODO (!)
 }
-
+void MainScene::showSettingsForCurrentCard(){
+    allCards.at(currentSelection)->
+}
 void MainScene::keyPressEvent(QKeyEvent *event)
 {
     qDebug() << "KEY ID:" << event->key();

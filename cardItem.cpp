@@ -152,3 +152,14 @@ void CardItem::setScale(qreal scale){
     //appelle la 'vraie' fonction 'setScale'
     
 }
+void CardItem::turnForSettings(){
+    //NOPE, PAS BON, FAUT FAIRE CA SELON LE SCALE
+    
+    //TODO: IDÉE SELON UN SCALE PLUS GRAND QUE 1.0, la tourner
+    //ok bonne nuit
+    QTransform m2;
+    
+    m2.rotate(180,Qt::YAxis);
+    
+    this->setTransform(m2);
+}

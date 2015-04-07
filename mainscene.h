@@ -35,6 +35,7 @@ private:
     void navSelect();
     void refreshCurrentCards();
     void loadSongs();
+    void showSettingsForCurrentCard();
     
     QWebSocket *m_webSocket;
     SettingsManager *manager;
