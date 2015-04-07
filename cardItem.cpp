@@ -33,7 +33,7 @@ void CardItem::configure(const Preset *prst){
     this->setOpacity(1);
     title = prst->name;
     imgPath = prst->imgPath;
-    
+    inSettingsView = false;
     imageObject = new QImage();
     imageObject->load(imgPath.c_str());
     image = QPixmap::fromImage(*imageObject);
@@ -115,43 +115,58 @@ void CardItem::setScale(qreal scale){
     
     this->prepareGeometryChange();
     
-    //distance par rapport au milieu
-    float xMiddle = ((this->pos().x()-7) + (this->boundingRect().width()/2))-(1440/2);
     QTransform m2;
-    qDebug() << "blblb" << (float)this->pos().x();
-    if(xMiddle > 7){
+
+    if(scale > 1){
+        //set un angle approprié avec un scale de 1.0 à 1.1
         
-        //constante
-        xMiddle *= 0.9103139013;
+        float angle = (scale - 1) * 10 * 180;
         
-        //déplace l'objet avant de le rotater
-        m2.translate(0, this->boundingRect().height()/2);
-        //rotate
-        m2.rotate(xMiddle*0.1,Qt::YAxis);
-        //redéplace à la bonne position
-        m2.translate(0, -this->boundingRect().height()/2);
+        m2.translate(this->boundingRect().width()/1.9, this->boundingRect().height()/2);
+        m2.rotate(angle,Qt::YAxis);
+        m2.translate(-this->boundingRect().width()/1.9, -this->boundingRect().height()/2);
+        
     }else{
-        xMiddle *= 1.1092896175;
-        
-        //constante 2
-        xMiddle *= 1.05;
-        
-        m2.translate(this->boundingRect().width(), this->boundingRect().height()/2);
-        m2.rotate(xMiddle*0.1,Qt::YAxis);
-        m2.translate(-this->boundingRect().width(), -this->boundingRect().height()/2);
+        //distance par rapport au milieu
+        float xMiddle = ((this->pos().x()-7) + (this->boundingRect().width()/2))-(1440/2);
+        qDebug() << "blblb" << (float)this->pos().x();
+        if(xMiddle > 7){
+            
+            //constante
+            xMiddle *= 0.9103139013;
+            
+            //déplace l'objet avant de le rotater
+            m2.translate(0, this->boundingRect().height()/2);
+            //rotate
+            m2.rotate(xMiddle*0.1,Qt::YAxis);
+            //redéplace à la bonne position
+            m2.translate(0, -this->boundingRect().height()/2);
+        }else{
+            xMiddle *= 1.1092896175;
+            
+            //constante 2
+            xMiddle *= 1.05;
+            
+            m2.translate(this->boundingRect().width(), this->boundingRect().height()/2);
+            m2.rotate(xMiddle*0.1,Qt::YAxis);
+            m2.translate(-this->boundingRect().width(), -this->boundingRect().height()/2);
+            
+        }
         
     }
-    
     this->setTransform(m2);
-#if TARGET_OS_IPHONE
-    this->QGraphicsItem::setScale(scale);
-#else
-    this->QGraphicsItem::setScale(scale);
 
-#endif
+    this->QGraphicsItem::setScale(scale);
     //appelle la 'vraie' fonction 'setScale'
     
 }
+void CardItem::setInSettingsView(bool inSetView){
+    inSettingsView = inSetView;
+}
+bool CardItem::getInSettingsView(){
+    return inSettingsView;
+}
+
 void CardItem::turnForSettings(){
     //NOPE, PAS BON, FAUT FAIRE CA SELON LE SCALE
     

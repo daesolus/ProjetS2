@@ -361,9 +361,34 @@ void MainScene::navForward(){
 }
 void MainScene::navSelect(){
     //TODO (!)
+    
+    CardItem *currentCard = allCards.at(currentSelection);
+    
+    //si yé pas deja dans la vue settings...
+    if(!currentCard->getInSettingsView()){
+        
+        currentCard->setInSettingsView(true);
+    //initialise l'animation d'échelle
+        QPropertyAnimation *scaleAnimation = new QPropertyAnimation((QGraphicsObject*)currentCard, "scale");
+        scaleAnimation->setDuration(ANIMATION_TIME_MS);
+        scaleAnimation->setStartValue(currentCard->scale());
+        scaleAnimation->setEndValue(1.1);
+        scaleAnimation->start();
+        
+    }else{
+        
+        currentCard->setInSettingsView(false);
+        QPropertyAnimation *scaleAnimation = new QPropertyAnimation((QGraphicsObject*)currentCard, "scale");
+        scaleAnimation->setDuration(ANIMATION_TIME_MS);
+        scaleAnimation->setStartValue(currentCard->scale());
+        scaleAnimation->setEndValue(1.0);
+        scaleAnimation->start();
+    }
+
+    
 }
 void MainScene::showSettingsForCurrentCard(){
-    allCards.at(currentSelection)->
+    //allCards.at(currentSelection)->
 }
 void MainScene::keyPressEvent(QKeyEvent *event)
 {

@@ -46,6 +46,8 @@ public:
     ~CardItem();
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget);
     void setSelectedStyle(bool isSelected);
+    void setInSettingsView(bool inSettingsView);
+    bool getInSettingsView();
     //void dragMoveEvent ( QDragMoveEvent * event );
     //void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );
     QRectF boundingRect() const;
@@ -57,6 +59,7 @@ public:
 protected:
     QRectF rect;
     bool selected;
+    bool inSettingsView;
     string title;
     string imgPath;
     //QPixmap image;
