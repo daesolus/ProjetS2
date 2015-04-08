@@ -54,7 +54,7 @@ private:
     
     void sendColorToServer(string hexColor);
     
-    void sendColorToPhilipsHue(int lightNumber, RGBColor color, int transitionTime);
+    void sendColorToPhilipsHue(int lightNumber, const char* color, int transitionTime);
 
     
     //QSignalMapper *mapper;

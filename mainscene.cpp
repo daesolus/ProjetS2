@@ -34,6 +34,8 @@ bool isConnected = false;
 QMediaPlayer *player;
 QMediaPlaylist *playlist;
 QTimer *timer;
+QNetworkAccessManager *netManager;
+QNetworkRequest *request;
 
 QPoint backArrowOriginalPos;
 QPoint nextArrowOriginalPos;
@@ -56,13 +58,13 @@ MainScene::MainScene()
     
     background = nullptr;
     
-    QNetworkAccessManager *netManager = new QNetworkAccessManager(this);
+    netManager = new QNetworkAccessManager(this);
 
     //enregistre le username "lapfelix" comme utilisateur des Philips Hue
     //(le 'Link Button' doit être enfoncé moins de 30 secondes avant le launch pour que ca fonctionne (si il y a un changement/reset)
     string body = "{\"device type\":\"hue#ProjetS2\", \"username\":\""+PHILIPS_HUE_USERNAME+"\"}";
     string URL = "http://"+PHILIPS_HUE_URL+":"+to_string(PHILIPS_HUE_PORT)+"/api";
-    QNetworkRequest *request = new QNetworkRequest(QUrl(URL.c_str()));
+    request = new QNetworkRequest(QUrl(URL.c_str()));
     request->setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
     netManager->post(*request, body.c_str());
     
@@ -467,11 +469,6 @@ void MainScene::keyPressEvent(QKeyEvent *event)
         lcount++;
         navForward();
     }
-    //touche 1 (pour debuggage)
-    if (event->key() == 49) {
-        RGBColor color(rand() % 256, rand() % 256, rand() % 256);
-        sendColorToServer(color.getHex());
-    }
 }
 
 #pragma mark - WebSocket
@@ -493,10 +490,10 @@ void MainScene::sendCurrentColorToServer()
     (manager->getPresetArray().at(currentSelection).color4);
     sendColorToServer(str);
     
-    sendColorToPhilipsHue(1, RGBColor((manager->getPresetArray().at(currentSelection).color3).c_str()), 3);
-    sendColorToPhilipsHue(2, RGBColor((manager->getPresetArray().at(currentSelection).color4).c_str()), 3);
-    sendColorToPhilipsHue(3, RGBColor((manager->getPresetArray().at(currentSelection).color1).c_str()), 3);
-    sendColorToPhilipsHue(4, RGBColor((manager->getPresetArray().at(currentSelection).color2).c_str()), 3);
+    sendColorToPhilipsHue(1, (manager->getPresetArray().at(currentSelection).color3).c_str(), 3);
+    sendColorToPhilipsHue(2, (manager->getPresetArray().at(currentSelection).color4).c_str(), 3);
+    sendColorToPhilipsHue(3, (manager->getPresetArray().at(currentSelection).color1).c_str(), 3);
+    sendColorToPhilipsHue(4, (manager->getPresetArray().at(currentSelection).color2).c_str(), 3);
     
 }
 
@@ -572,52 +569,57 @@ void MainScene::updateHue()
     switch (thisCard->getColorSetting()) {
         case 1:
             //smooth
-            sendColorToPhilipsHue(((colorCycle+0)%4)+1, RGBColor((thisPreset->color1).c_str()), LIGHTS_ANIMATION_TIME);
-            sendColorToPhilipsHue(((colorCycle+1)%4)+1, RGBColor((thisPreset->color2).c_str()), LIGHTS_ANIMATION_TIME);
-            sendColorToPhilipsHue(((colorCycle+2)%4)+1, RGBColor((thisPreset->color3).c_str()), LIGHTS_ANIMATION_TIME);
-            sendColorToPhilipsHue(((colorCycle+3)%4)+1, RGBColor((thisPreset->color4).c_str()), LIGHTS_ANIMATION_TIME);
+            sendColorToPhilipsHue(((colorCycle+0)%4)+1, (thisPreset->color1).c_str(), LIGHTS_ANIMATION_TIME);
+            sendColorToPhilipsHue(((colorCycle+1)%4)+1, (thisPreset->color2).c_str(), LIGHTS_ANIMATION_TIME);
+            sendColorToPhilipsHue(((colorCycle+2)%4)+1, (thisPreset->color3).c_str(), LIGHTS_ANIMATION_TIME);
+            sendColorToPhilipsHue(((colorCycle+3)%4)+1, (thisPreset->color4).c_str(), LIGHTS_ANIMATION_TIME);
             
             break;
         case 2:
             //smooth
-            sendColorToPhilipsHue(((colorCycle+0)%4)+1, RGBColor((thisPreset->color1).c_str()), 0);
-            sendColorToPhilipsHue(((colorCycle+1)%4)+1, RGBColor((thisPreset->color2).c_str()), 0);
-            sendColorToPhilipsHue(((colorCycle+2)%4)+1, RGBColor((thisPreset->color3).c_str()), 0);
-            sendColorToPhilipsHue(((colorCycle+3)%4)+1, RGBColor((thisPreset->color4).c_str()), 0);
+            sendColorToPhilipsHue(((colorCycle+0)%4)+1, (thisPreset->color1).c_str(), 0);
+            sendColorToPhilipsHue(((colorCycle+1)%4)+1, (thisPreset->color2).c_str(), 0);
+            sendColorToPhilipsHue(((colorCycle+2)%4)+1, (thisPreset->color3).c_str(), 0);
+            sendColorToPhilipsHue(((colorCycle+3)%4)+1, (thisPreset->color4).c_str(), 0);
             
             
             break;
         case 3:
             //single color
             //smooth
-            sendColorToPhilipsHue(((colorCycle+0)%4)+1, RGBColor((thisPreset->color1).c_str()), LIGHTS_ANIMATION_TIME);
-            sendColorToPhilipsHue(((colorCycle+1)%4)+1, RGBColor((thisPreset->color2).c_str()), LIGHTS_ANIMATION_TIME);
-            sendColorToPhilipsHue(((colorCycle+2)%4)+1, RGBColor((thisPreset->color3).c_str()), LIGHTS_ANIMATION_TIME);
-            sendColorToPhilipsHue(((colorCycle+3)%4)+1, RGBColor((thisPreset->color4).c_str()), LIGHTS_ANIMATION_TIME);
+            sendColorToPhilipsHue(((0)%4)+1, (thisPreset->color1).c_str(), LIGHTS_ANIMATION_TIME);
+            sendColorToPhilipsHue(((1)%4)+1, (thisPreset->color2).c_str(), LIGHTS_ANIMATION_TIME);
+            sendColorToPhilipsHue(((2)%4)+1, (thisPreset->color3).c_str(), LIGHTS_ANIMATION_TIME);
+            sendColorToPhilipsHue(((3)%4)+1, (thisPreset->color4).c_str(), LIGHTS_ANIMATION_TIME);
             
             break;
         default:
             break;
     }
     
-    
+    thisCard = nullptr;
+    thisPreset = nullptr;
     
 }
-void MainScene::sendColorToPhilipsHue(int lightNumber, RGBColor color, int transitionTime){
+void MainScene::sendColorToPhilipsHue(int lightNumber, const char* color, int transitionTime){
+    
+    QColor couleur(color);
+    couleur.hue();
+    couleur.lightness();
+    
     //le temps de transition est multiplié par 100ms, donc 7 = 700ms;
     
     //prend la couleur en HSB
-    HsbColor colorHSB =  color.getHSB();
+    //HsbColor colorHSB =  color->getHSB();
     
     //monte la saturation de 25% pour simuler l'effet gamma d'un écran pour que les couleurs se ressemblent (écran et lumières)
-    float moreSat = (colorHSB.brightness * 1.25)>1?1:colorHSB.brightness * 1.25;
+    float moreSat = (couleur.saturationF() * 1.25)>1?1:couleur.saturationF() * 1.25;
     
-    string body = "{ \"on\": true, \"hue\":"+to_string((int)(colorHSB.hue * 65535))+", \"sat\":"+to_string((int)(colorHSB.saturation * 255))+", \"bri\":"+to_string((int)(moreSat * 255))+", \"transitiontime\":"+to_string(transitionTime)+"}";
+    string body = "{ \"on\": true, \"hue\":"+to_string((int)(couleur.hueF() * 65535))+", \"sat\":"+to_string((int)(moreSat * 255))+", \"bri\":"+to_string((int)(couleur.lightnessF() * 255))+", \"transitiontime\":"+to_string(transitionTime)+"}";
     string URL = "http://"+PHILIPS_HUE_URL+":"+to_string(PHILIPS_HUE_PORT)+"/api/"+PHILIPS_HUE_USERNAME+"/lights/"+to_string(lightNumber)+"/state";
     qDebug() << body.c_str() << URL.c_str();
-    QNetworkRequest *request = new QNetworkRequest(QUrl(URL.c_str()));
-    request->setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    QNetworkAccessManager *netManager = new QNetworkAccessManager(this);
-    netManager->put(*request, body.c_str());
+    //request = new QNetworkRequest(QUrl(URL.c_str()));
+    //request->setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    netManager->put(QNetworkRequest(QUrl(URL.c_str())), body.c_str());
 
 }

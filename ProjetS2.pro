@@ -19,7 +19,6 @@ SOURCES += main.cpp\
     NavArrow.cpp \
     UIUtilities.cpp \
     cardItem.cpp \
-    effects.cpp \
     settingsManager.cpp
 
 HEADERS  += \
@@ -28,7 +27,6 @@ HEADERS  += \
     NavArrow.h \
     UIUtilities.h \
     cardItem.h \
-    effects.h \
     settingsManager.h
 
 FORMS    += mainwindow.ui

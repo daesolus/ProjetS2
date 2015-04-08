@@ -5,14 +5,17 @@
 #include <QGraphicsView>
 #include <QGraphicsItem>
 #include <QWidget>
-#include "effects.h"
 #include <QVector>
 #include <QSettings>
+#include <QDebug>
 #include <QDir>
 
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <string>
+
+using namespace std;
 
 struct Preset {
     string name;
