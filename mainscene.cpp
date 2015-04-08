@@ -14,10 +14,10 @@
 
 QT_USE_NAMESPACE
 
-const int ANIMATION_TIME_MS = 200;
-const bool ENABLE_SOUND = true;
+const int ANIMATION_TIME_MS = 250;
+const bool ENABLE_SOUND = false;
 
-string PHILIPS_HUE_URL = "10.0.1.34";//34
+string PHILIPS_HUE_URL = "10.0.1.35";//34
 string PHILIPS_HUE_USERNAME = "lapfelixlapfelixlapfelix";
 int PHILIPS_HUE_PORT = 80;
 
@@ -26,6 +26,9 @@ bool isConnected = false;
 
 QMediaPlayer *player;
 QMediaPlaylist *playlist;
+
+QPoint backArrowOriginalPos;
+QPoint nextArrowOriginalPos;
 
 struct cardProperties{
     float x;
@@ -66,10 +69,12 @@ MainScene::MainScene()
         heightConstant = 1.23;
     else
         heightConstant = 2.7;
+    float screenWidth =  1440;
+#else
+    float screenWidth =  rec.width();
 #endif
     
     float screenHeight = rec.height() * heightConstant;
-    float screenWidth =  1440;//rec.width();
     
     
     //hardcore hardcoding, sorry
@@ -134,27 +139,20 @@ MainScene::MainScene()
     this->setSceneRect(0, 0, screenWidth, screenHeight);
     
     //charge les flèches back et next à partir du fichier svg
-    backArrow  = UIUtilities::pixmapItemFromSvg(":arrowLine.svg",this);
-    nextArrow  = UIUtilities::pixmapItemFromSvg(":arrowLine.svg",this);
+    
+    backArrow  = (NavArrow*)UIUtilities::pixmapItemFromSvg(":arrowLine.svg",this);
+    nextArrow  = (NavArrow*)UIUtilities::pixmapItemFromSvg(":arrowLine.svg",this);
     //rotate la flèche next
     nextArrow->setRotation(180);
     //centre les 2 items
     layout.centerInScreen(nextArrow);
     layout.centerInScreen(backArrow);
     
-    qDebug() << "dat: " << qApp->devicePixelRatio();
-    //les déplace à leur bonne position
-    /*backArrow->moveBy(-643,  -75 + (75*qApp->devicePixelRatio()));
-    nextArrow->moveBy(643+(56*qApp->devicePixelRatio()), 67 + (75*qApp->devicePixelRatio()));
-*/
-//#if TARGET_OS_IPHONE
-    backArrow->moveBy(-643,  -75);// + (75*qApp->devicePixelRatio()));
-    nextArrow->moveBy(643+(56*qApp->devicePixelRatio()), 67);// + (75*qApp->devicePixelRatio()));
-//#else
-  //  backArrow->moveBy(-643,  -75 + (75*qApp->devicePixelRatio()));
-  //  nextArrow->moveBy(643+(56*qApp->devicePixelRatio()), 67 + (75*qApp->devicePixelRatio()));
-//#endif
-    //backArrow->moveBy(-643,  -75);// + (75*qApp->devicePixelRatio()));
+    backArrow->moveBy(-643,  -75);
+    nextArrow->moveBy(643+(56*qApp->devicePixelRatio()), 67);
+    
+    backArrowOriginalPos = QPoint(backArrow->pos().x(), backArrow->pos().y());
+    nextArrowOriginalPos = QPoint(nextArrow->pos().x(), nextArrow->pos().y());
     
     float cardWidth = 406;
     float cardHeight = 466;
@@ -271,7 +269,7 @@ void MainScene::refreshCurrentCards(){
         image.fill( Qt::transparent );
         {
             QPainter painter( &image );
-            qt_blurImage( &painter, imageObject, 50, false, false );//blur radius: 2px
+            qt_blurImage( &painter, imageObject, 200, false, false );//blur radius: 2px
         }
         
         
@@ -292,9 +290,9 @@ void MainScene::refreshCurrentCards(){
         //if(background == NULL)
         background = this->addPixmap(image);
         
-#if TARGET_OS_IPHONE
-        background->setOpacity(0.8);
-#endif
+//#if TARGET_OS_IPHONE
+        background->setOpacity(0.7);
+//#endif
         //else
           //  background->setPixmap(image);
         
@@ -314,79 +312,117 @@ void MainScene::refreshCurrentCards(){
 
         if(ENABLE_SOUND)
             player->play();
-
     }
-    
 }
 
 //navigue par en arrière si possible
 void MainScene::navBack(){
-   if(currentSelection-1 >= 0){
-        currentSelection--;
-       
-#if TARGET_OS_IPHONE
-       //do nothing
-#else
-       //change de musique et la joue
-       playlist->setCurrentIndex(currentSelection);
-       
-       if(ENABLE_SOUND)
-           player->play();
-#endif
-       
-       //et rafraichis les cartes
-        refreshCurrentCards();
-       sendCurrentColorToServer();
-
-   }
+    
+    if(!allCards.at(currentSelection)->getInSettingsView()){
+       if(currentSelection-1 >= 0){
+            currentSelection--;
+           
+    #if TARGET_OS_IPHONE
+           //do nothing
+    #else
+           //change de musique et la joue
+           playlist->setCurrentIndex(currentSelection);
+           
+           if(ENABLE_SOUND)
+               player->play();
+    #endif
+           
+           //et rafraichis les cartes
+            refreshCurrentCards();
+           sendCurrentColorToServer();
+       }
+    }else{
+        //on est en settings view, fuck off
+    }
+    
 }
 void MainScene::navForward(){
-    if(currentSelection+1 < manager->getPresetArray().count()){
-        currentSelection++;
-        
-#if TARGET_OS_IPHONE
-        //do nothing
-#else
-        //change de musique et la joue
-        playlist->setCurrentIndex(currentSelection);
-        
-        if(ENABLE_SOUND)
-            player->play();
-#endif
-        refreshCurrentCards();
-        sendCurrentColorToServer();
+    if(!allCards.at(currentSelection)->getInSettingsView()){
+        if(currentSelection+1 < manager->getPresetArray().count()){
+            currentSelection++;
+            
+    #if TARGET_OS_IPHONE
+            //do nothing
+    #else
+            //change de musique et la joue
+            playlist->setCurrentIndex(currentSelection);
+            
+            if(ENABLE_SOUND)
+                player->play();
+    #endif
+            refreshCurrentCards();
+            sendCurrentColorToServer();
 
-        
+        }
+    }else{
+        //on est en settings view, fuck off
     }
 }
+
 void MainScene::navSelect(){
-    //TODO (!)
+        CardItem *currentCard = allCards.at(currentSelection);
+
+    /*
+    QPropertyAnimation *opacityAnimation2 = new QPropertyAnimation((QGraphicsObject*)nextArrow, "pos");
+    opacityAnimation2->setDuration(ANIMATION_TIME_MS);
+    opacityAnimation2->setStartValue(nextArrow->pos());
+    opacityAnimation1->setEndValue(currentCard->getInSettingsView()?nextArrowOriginalPos:QPointF(nextArrowOriginalPos.rx()+100, nextArrowOriginalPos.ry()));
+    opacityAnimation2->start();
+    */
     
-    CardItem *currentCard = allCards.at(currentSelection);
+    Q_FOREACH(CardItem *item, allCards){
+        if(item != currentCard){
+            //anime l'opacité à 0.6
+            QPropertyAnimation *opacityAnimation = new QPropertyAnimation((QGraphicsObject*)item, "opacity");
+            opacityAnimation->setDuration(ANIMATION_TIME_MS);
+            opacityAnimation->setStartValue(item->opacity());
+            opacityAnimation->setEndValue(currentCard->getInSettingsView()?1.0:0.4);
+            opacityAnimation->start();
+        }
+    }
+    
+    //initialise l'animation d'échelle
+    QPropertyAnimation *scaleAnimation = new QPropertyAnimation((QGraphicsObject*)currentCard, "scale");
+    scaleAnimation->setDuration(ANIMATION_TIME_MS);
+    scaleAnimation->setStartValue(currentCard->scale());
     
     //si yé pas deja dans la vue settings...
     if(!currentCard->getInSettingsView()){
-        
         currentCard->setInSettingsView(true);
-    //initialise l'animation d'échelle
-        QPropertyAnimation *scaleAnimation = new QPropertyAnimation((QGraphicsObject*)currentCard, "scale");
-        scaleAnimation->setDuration(ANIMATION_TIME_MS);
-        scaleAnimation->setStartValue(currentCard->scale());
         scaleAnimation->setEndValue(1.1);
-        scaleAnimation->start();
-        
+        backArrow->setOpacity(0.3);
+        nextArrow->setOpacity(0.3);
     }else{
-        
         currentCard->setInSettingsView(false);
-        QPropertyAnimation *scaleAnimation = new QPropertyAnimation((QGraphicsObject*)currentCard, "scale");
-        scaleAnimation->setDuration(ANIMATION_TIME_MS);
-        scaleAnimation->setStartValue(currentCard->scale());
         scaleAnimation->setEndValue(1.0);
-        scaleAnimation->start();
-    }
+        backArrow->setOpacity(1.0);
+        nextArrow->setOpacity(1.0);
 
+    }
     
+    
+    /*
+    QPropertyAnimation *opacityAnimation1 = new QPropertyAnimation((QGraphicsObject*)backArrow, "scale");
+    opacityAnimation1->setDuration(ANIMATION_TIME_MS);
+    opacityAnimation1->setStartValue(1.1);
+    opacityAnimation1->setEndValue(0.1);
+    opacityAnimation1->start();
+     */
+    scaleAnimation->start();
+    
+    /*
+    back
+    QPropertyAnimation animate = new QPropertyAnimation(backArrow, "windowOpacity");
+    
+    animate.setDuration(100); animate.setStartValue(1); animate.setEndValue(0); animate.start();
+     */
 }
+
 void MainScene::showSettingsForCurrentCard(){
     //allCards.at(currentSelection)->
 }

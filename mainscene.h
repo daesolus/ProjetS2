@@ -12,6 +12,7 @@
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include <QtWebSockets>
+#include "NavArrow.h"
 
 class MainScene : public QGraphicsScene
 {
@@ -45,7 +46,7 @@ private:
     QVector<CardItem*> allCards;
     QGraphicsPixmapItem* background;
     void sendCurrentColorToServer();
-
+    
     QGraphicsItem* ambienceCard(const char* title, const char* image);
     QGraphicsItem* backArrow;
     QGraphicsItem* nextArrow;

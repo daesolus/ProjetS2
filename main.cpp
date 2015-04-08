@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
         //c'est un iPhone
         scene.setSceneRect(0, 0, 1440, 900);
 #else
-    scene.setSceneRect(0, 0, 1440, 900);
+    scene.setSceneRect(0, 0, screenWidth, screenHeight);
 #endif
     
     QFont font("Helvetica Neue",30,-1,false);

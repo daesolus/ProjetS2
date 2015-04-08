@@ -14,10 +14,13 @@ void UIUtilities::centerInScreen(QGraphicsItem *item){
     }else{
         verticalAdjustment = 3.5;
     }
+    float screenWidth =  1440;
+#else
+    float screenWidth =  rec.width();
 #endif
     
     float screenHeight = (float)rec.height() * verticalAdjustment;
-    float screenWidth =  1440;//rec.width();
+    
     
     //prend les dimensions de l'item
     float width = item->boundingRect().width();
@@ -35,8 +38,15 @@ float UIUtilities::getFullScreenPixelRatioForImage(QPixmap* image){
     
     //va prendre les dimensions de l'écran
     QRect rec = QApplication::desktop()->screenGeometry();
+    
+    
+#if TARGET_OS_IPHONE
     float screenHeight = 900;//rec.height();
     float screenWidth =  1440;//rec.width();
+#else
+    float screenHeight = rec.height();
+    float screenWidth =  rec.width();
+#endif
     
     float heightRatio = imageHeight/screenHeight;
     float widthRatio = imageWidth/screenWidth;

@@ -37,9 +37,12 @@ MainView::MainView(MainScene* parent):QGraphicsView(parent)
     else
         //c'est un iPhone
         verticalAdjustment = 30;
-#endif
     
     this->setSceneRect(0, verticalAdjustment, 1440, 900);
+#else
+    this->setSceneRect(0, 0, screenWidth, screenHeight);
+#endif
+    
 
 }
 /*
