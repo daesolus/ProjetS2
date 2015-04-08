@@ -1,7 +1,0 @@
-<LayoutColor xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:background="#ffffff"
-    tools:context=".FullscreenColor"
-    android:id="@+id/framelayout">
-</LayoutColor>
-<!-- From: file:/C:/Users/DaeSoluS/Dropbox/usherbrooke/GenieInformatique/S2/Projet/ProjetS2/ProjetS2/remoteColor%20-%20Android/app/src/main/res/layout/activity_fullscreen_color.xml -->
