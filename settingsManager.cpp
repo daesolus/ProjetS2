@@ -22,11 +22,19 @@ void SettingsManager::readConfigFile(){
     //lis
     QByteArray saveData = loadFile.readAll();
     
+	QJsonParseError errorStatus;
     //place le tout dans un QJsonDocument (qu'on peut facilement parser)
-    QJsonDocument loadDoc((QJsonDocument::fromJson(saveData)));
-    
-    //parse le document lu
-    parseAndStore(loadDoc.object());
+	QJsonDocument loadDoc = QJsonDocument::fromJson(saveData, &errorStatus);
+	
+	if (errorStatus.error == QJsonParseError::NoError)
+	{
+		//parse le document lu
+		parseAndStore(loadDoc.object());
+	}
+	else
+	{
+		throw JsonException();
+	}
     
 }
 const QList<Preset> SettingsManager::getPresetArray(){

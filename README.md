@@ -1,1 +1,5 @@
 # ProjetS2
+
+MEILLEUR PROJET DE LA S2 2015
+CONÇU PAR FRANCIS LUSSIER, FELIX LAPALME, IAN LACHANCE ET ERIC MATTE
+(Les autres avaient juste a être en info)

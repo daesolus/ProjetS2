@@ -9,11 +9,12 @@
 #include <QSettings>
 #include <QDebug>
 #include <QDir>
-
+#include <QMessageBox>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <string>
+#include "JsonExeption.h"
 
 using namespace std;
 
@@ -38,6 +39,7 @@ public:
     const QList<Preset> getPresetArray();
 private:
     QList<Preset> presetArray;
+	JsonException jsonExeption;
     void parseAndStore(const QJsonObject &json);
 };
 

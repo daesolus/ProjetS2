@@ -1,13 +1,11 @@
 #include "mainview.h"
 #include "mainscene.h"
 #include <QDesktopWidget>
-
 #include <QApplication>
 #include <QGraphicsScene>
 #include <QWidget>
 #include <QDebug>
 #include <QEvent>
-
 
 MainView::MainView(MainScene* parent):QGraphicsView(parent)
 {

@@ -46,6 +46,16 @@
           ],
         "imgpath" : ":Irish.jpg",
         "musicpath" : "Irish.mp3",
-        "name" : "Irish"
+        "name" : "Test"
+      },
+	  { "colors" : [ "#07b407",
+            "#ffd700",
+            "#ff7800",
+            "#4ede1c",
+            "#ffffff"
+          ],
+        "imgpath" : ":Irish.jpg",
+        "musicpath" : "Irish.mp3",
+        "name" : "Test1"
       }
     ] }

@@ -10,7 +10,7 @@
 #include <QGestureRecognizer>
 #include <QGesture>
 #include <QSwipeGesture>
-
+#include <ctime>
 
 QT_USE_NAMESPACE
 
