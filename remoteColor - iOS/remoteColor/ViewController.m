@@ -70,7 +70,6 @@ int concurrentAnims;
     dispatch_async(dispatch_get_main_queue(), ^{
         allColors = [[message componentsSeparatedByString:@","] mutableCopy];
         [self animateAllColors];
-        //self.view.backgroundColor = [self colorWithHexString:message];
     });
 }
 -(void)animateAllColors{
