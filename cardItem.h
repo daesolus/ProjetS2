@@ -63,7 +63,12 @@ protected:
     bool selected;
     bool inSettingsView;
     bool hideContent;
-
+    
+    QColor color1;
+    QColor color2;
+    QColor color3;
+    QColor color4;
+    
     string title;
     string imgPath;
     //QPixmap image;

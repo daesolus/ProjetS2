@@ -2,6 +2,7 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QFontDatabase>
+#include <QLinearGradient>
 
 /*
 CardItem::CardItem()
@@ -30,6 +31,12 @@ CardItem::~CardItem()
     
 }
 void CardItem::configure(const Preset *prst){
+    
+    color1 = QColor(QString(prst->color1.c_str()));
+    color2 = QColor(QString(prst->color2.c_str()));
+    color3 = QColor(QString(prst->color3.c_str()));
+    color4 = QColor(QString(prst->color4.c_str()));
+    
     this->setOpacity(1);
     title = prst->name;
     imgPath = prst->imgPath;
@@ -110,18 +117,48 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
         float smallestDimension = image.width()<image.height()?image.width():image.height();
         painter->drawPixmap(QRect(this->boundingRect().x()+(this->boundingRect().width()/2)-(width/2), 30, width, height), image, QRect((smallestDimension-width)/4, 0, smallestDimension, smallestDimension));
     }else{
-        //les bebelles de settings
-        QString police = "Calibri";
-#ifdef __APPLE__
-        police = "Helvetica Neue";
-#endif
-        QFont font(police, 52);
+        //les bebelles de settings  
+    
+        float colorPresetWidth = 330;
+        float colorPresetHeight = 53;
+        cornerRadius = 10;
         
-        font.setStyleName("Light");
-        painter->setFont(font);
-        painter->setPen(QPen(Qt::black));
-        QPointF textCenter(this->boundingRect().width()/2,this->boundingRect().height()-(20+25));
-        drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "ALLOLOL");
+        QRect colorPresetRect = QRect(this->boundingRect().x()+38, this->boundingRect().y()+113, colorPresetWidth, colorPresetHeight);
+        
+        
+        painter->setPen(QPen(QBrush(Qt::white),8)); //no pen
+        
+        QLinearGradient gradient = QLinearGradient(QPoint(colorPresetRect.x(),colorPresetRect.y()),QPoint(colorPresetRect.x()+colorPresetRect.width(), colorPresetRect.y()));
+        
+        gradient.setColorAt(0.0, color1);
+        gradient.setColorAt(0.33, color2);
+        gradient.setColorAt(0.66, color3);
+        gradient.setColorAt(1, color4);
+        
+        painter->setBrush(QBrush(gradient));
+        
+        //if(this->boundingRect().width() > this->boundingRect().height())
+        painter->drawRoundRect( colorPresetRect, cornerRadius, cornerRadius*(colorPresetWidth/colorPresetHeight));
+        
+        gradient.setColorAt(0.249, color1);
+        gradient.setColorAt(0.25, color2);
+        gradient.setColorAt(0.499, color2);
+        gradient.setColorAt(0.501, color3);
+        gradient.setColorAt(0.749, color3);
+        gradient.setColorAt(0.750, color4);
+        
+        painter->setBrush(QBrush(gradient));
+
+        colorPresetRect = QRect(this->boundingRect().x()+38, this->boundingRect().y()+113+105, colorPresetWidth, colorPresetHeight);
+        
+        painter->drawRoundRect( colorPresetRect, cornerRadius, cornerRadius*(colorPresetWidth/colorPresetHeight));
+        
+        painter->setBrush(QBrush(color1));
+        
+        colorPresetRect = QRect(this->boundingRect().x()+38, this->boundingRect().y()+113+105+105, colorPresetWidth, colorPresetHeight);
+        
+        painter->drawRoundRect( colorPresetRect, cornerRadius, cornerRadius*(colorPresetWidth/colorPresetHeight));
+        
         
     }
     
@@ -147,8 +184,6 @@ void CardItem::setScale(qreal scale){
         m2.translate(this->boundingRect().width()/2, this->boundingRect().height()/2);
         m2.rotate(angle,Qt::YAxis);
         m2.translate(-this->boundingRect().width()/2 - (18 * (10*(scale-1))), -this->boundingRect().height()/2);
-        
-        
         
     }else{
 

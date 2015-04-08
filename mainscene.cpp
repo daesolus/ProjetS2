@@ -17,11 +17,16 @@ QT_USE_NAMESPACE
 const int ANIMATION_TIME_MS = 250;
 const bool ENABLE_SOUND = false;
 
-string PHILIPS_HUE_URL = "10.0.1.35";//34
+string PHILIPS_HUE_URL = "10.0.1.34";//34
 string PHILIPS_HUE_USERNAME = "lapfelixlapfelixlapfelix";
 int PHILIPS_HUE_PORT = 80;
 
 int currentSelection;
+
+int mcount = 0;
+int rcount = 0;
+int lcount = 0;
+
 bool isConnected = false;
 
 QMediaPlayer *player;
@@ -432,14 +437,20 @@ void MainScene::keyPressEvent(QKeyEvent *event)
     
     //arrière
     if (event->key() == 16777234) {
+        m_webSocket->sendTextMessage("!r");
+        rcount++;
         navBack();
     }
     //en bas
     if (event->key() == 16777237) {
+        m_webSocket->sendTextMessage("!m");
+        mcount++;
         navSelect();
     }
     //avant
     if (event->key() == 16777236) {
+        m_webSocket->sendTextMessage("!l");
+        lcount++;
         navForward();
     }
     //touche 1 (pour debuggage)
@@ -483,15 +494,24 @@ void MainScene::wsMessageReceived(QString text){
         switch (text.toStdString().c_str()[1]) {
                 
             case 'r':
-                navBack();
+                if(rcount == 0)
+                    navBack();
+                else
+                    rcount--;
                 break;
                 
             case 'l':
-                navForward();
+                if(lcount == 0)
+                    navForward();
+                else
+                    lcount--;
                 break;
                 
             case 'm':
-                navSelect();
+                if(mcount == 0)
+                    navSelect();
+                else
+                    mcount--;
                 break;
                 
             default:
