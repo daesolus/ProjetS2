@@ -32,6 +32,8 @@ CardItem::~CardItem()
 }
 void CardItem::configure(const Preset *prst){
     
+    colorSetting = 1;
+    
     color1 = QColor(QString(prst->color1.c_str()));
     color2 = QColor(QString(prst->color2.c_str()));
     color3 = QColor(QString(prst->color3.c_str()));
@@ -117,18 +119,17 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
         float smallestDimension = image.width()<image.height()?image.width():image.height();
         painter->drawPixmap(QRect(this->boundingRect().x()+(this->boundingRect().width()/2)-(width/2), 30, width, height), image, QRect((smallestDimension-width)/4, 0, smallestDimension, smallestDimension));
     }else{
-        //les bebelles de settings  
+        //les bebelles de settings
     
         float colorPresetWidth = 330;
         float colorPresetHeight = 53;
         cornerRadius = 10;
         
-        QRect colorPresetRect = QRect(this->boundingRect().x()+38, this->boundingRect().y()+113, colorPresetWidth, colorPresetHeight);
+        QRect transRect1 = QRect(this->boundingRect().x()+38, this->boundingRect().y()+113, colorPresetWidth, colorPresetHeight);
+        QRect transRect2 = QRect(this->boundingRect().x()+38, this->boundingRect().y()+113+105, colorPresetWidth, colorPresetHeight);
+        QRect transRect3 = QRect(this->boundingRect().x()+38, this->boundingRect().y()+113+105+105, colorPresetWidth, colorPresetHeight);
         
-        
-        painter->setPen(QPen(QBrush(Qt::white),8)); //no pen
-        
-        QLinearGradient gradient = QLinearGradient(QPoint(colorPresetRect.x(),colorPresetRect.y()),QPoint(colorPresetRect.x()+colorPresetRect.width(), colorPresetRect.y()));
+        QLinearGradient gradient = QLinearGradient(QPoint(transRect1.x(),transRect1.y()),QPoint(transRect1.x()+transRect1.width(), transRect1.y()));
         
         gradient.setColorAt(0.0, color1);
         gradient.setColorAt(0.33, color2);
@@ -137,8 +138,13 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
         
         painter->setBrush(QBrush(gradient));
         
+        if(colorSetting == 1)
+            painter->setPen(QPen(QBrush(Qt::white),10));
+        else
+            painter->setPen(QPen(QBrush(Qt::white),1));
+        
         //if(this->boundingRect().width() > this->boundingRect().height())
-        painter->drawRoundRect( colorPresetRect, cornerRadius, cornerRadius*(colorPresetWidth/colorPresetHeight));
+        painter->drawRoundRect( transRect1, cornerRadius, cornerRadius*(colorPresetWidth/colorPresetHeight));
         
         gradient.setColorAt(0.249, color1);
         gradient.setColorAt(0.25, color2);
@@ -149,15 +155,23 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
         
         painter->setBrush(QBrush(gradient));
 
-        colorPresetRect = QRect(this->boundingRect().x()+38, this->boundingRect().y()+113+105, colorPresetWidth, colorPresetHeight);
         
-        painter->drawRoundRect( colorPresetRect, cornerRadius, cornerRadius*(colorPresetWidth/colorPresetHeight));
+        if(colorSetting == 2)
+            painter->setPen(QPen(QBrush(Qt::white),10));
+        else
+            painter->setPen(QPen(QBrush(Qt::white),1));
+        
+        painter->drawRoundRect( transRect2, cornerRadius, cornerRadius*(colorPresetWidth/colorPresetHeight));
         
         painter->setBrush(QBrush(color1));
         
-        colorPresetRect = QRect(this->boundingRect().x()+38, this->boundingRect().y()+113+105+105, colorPresetWidth, colorPresetHeight);
         
-        painter->drawRoundRect( colorPresetRect, cornerRadius, cornerRadius*(colorPresetWidth/colorPresetHeight));
+        if(colorSetting == 3)
+            painter->setPen(QPen(QBrush(Qt::white),10));
+        else
+            painter->setPen(QPen(QBrush(Qt::white),1));
+        
+        painter->drawRoundRect( transRect3, cornerRadius, cornerRadius*(colorPresetWidth/colorPresetHeight));
         
         
     }
@@ -227,6 +241,25 @@ void CardItem::setScale(qreal scale){
     //appelle la 'vraie' fonction 'setScale'
     
 }
+void CardItem::changeColorSetting(bool up){
+    if (up) {
+        if (colorSetting != 3) {
+            colorSetting++;
+            this->update();
+        }
+    }else{
+        if (colorSetting != 1) {
+            colorSetting--;
+            this->update();
+        }
+    }
+}
+int CardItem::getColorSetting(){
+    return colorSetting;
+}
+void CardItem::setCurrentColorSetting(int currentColorSetting){
+    colorSetting = currentColorSetting;
+}
 void CardItem::setInSettingsView(bool inSetView){
     inSettingsView = inSetView;
 }
@@ -237,7 +270,6 @@ bool CardItem::getInSettingsView(){
 void CardItem::turnForSettings(){
     //NOPE, PAS BON, FAUT FAIRE CA SELON LE SCALE
     
-    //TODO: IDÉE SELON UN SCALE PLUS GRAND QUE 1.0, la tourner
     //ok bonne nuit
     QTransform m2;
     

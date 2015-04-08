@@ -6,6 +6,8 @@
 #include <QGraphicsItem>
 #include <QWidget>
 #include <QColor>
+#include <QTimer>
+
 #include "settingsManager.h"
 //#include "mainscene.h"
 
@@ -49,6 +51,9 @@ public:
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget);
     void setSelectedStyle(bool isSelected);
     void setInSettingsView(bool inSettingsView);
+    void setCurrentColorSetting(int currentColorSetting);
+    void changeColorSetting(bool up);
+    int getColorSetting();
     bool getInSettingsView();
     //void dragMoveEvent ( QDragMoveEvent * event );
     //void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );
@@ -63,6 +68,8 @@ protected:
     bool selected;
     bool inSettingsView;
     bool hideContent;
+    
+    int colorSetting;
     
     QColor color1;
     QColor color2;

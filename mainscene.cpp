@@ -16,7 +16,7 @@ QT_USE_NAMESPACE
 
 const int ANIMATION_TIME_MS = 250;
 const bool ENABLE_SOUND = false;
-
+const int LIGHTS_ANIMATION_TIME = 5;
 string PHILIPS_HUE_URL = "10.0.1.34";//34
 string PHILIPS_HUE_USERNAME = "lapfelixlapfelixlapfelix";
 int PHILIPS_HUE_PORT = 80;
@@ -27,10 +27,13 @@ int mcount = 0;
 int rcount = 0;
 int lcount = 0;
 
+int colorCycle = 0;
+
 bool isConnected = false;
 
 QMediaPlayer *player;
 QMediaPlaylist *playlist;
+QTimer *timer;
 
 QPoint backArrowOriginalPos;
 QPoint nextArrowOriginalPos;
@@ -189,9 +192,13 @@ MainScene::MainScene()
     
     //rafraichis et configure les cartes
     refreshCurrentCards();
-
+    
+    //démarre le QTimer pour les Philips Hue
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateHue()));
+    timer->start(1000);
+    
 }
-
 MainScene::~MainScene()
 {
     
@@ -343,6 +350,9 @@ void MainScene::navBack(){
        }
     }else{
         //on est en settings view, fuck off
+        //go down
+        CardItem *thisCard = allCards.at(currentSelection);
+        thisCard->changeColorSetting(false);
     }
     
 }
@@ -366,6 +376,10 @@ void MainScene::navForward(){
         }
     }else{
         //on est en settings view, fuck off
+        //go up
+        CardItem *thisCard = allCards.at(currentSelection);
+        thisCard->changeColorSetting(true);
+        
     }
 }
 
@@ -542,6 +556,53 @@ void MainScene::onDisconnect(){
 
 #pragma mark - Philips Hue
 
+void MainScene::updateHue()
+{
+    qDebug() << (colorCycle%2?"tic":"toc");
+    //colorCycle de 0 à 3 constamment
+    colorCycle++;
+    if (colorCycle == 4) {
+        colorCycle = 0;
+    }
+    
+    //se fait caller à chaque seconde
+    CardItem *thisCard = allCards.at(currentSelection);
+    const Preset *thisPreset = &manager->getPresetArray().at(currentSelection);
+    
+    switch (thisCard->getColorSetting()) {
+        case 1:
+            //smooth
+            sendColorToPhilipsHue(((colorCycle+0)%4)+1, RGBColor((thisPreset->color1).c_str()), LIGHTS_ANIMATION_TIME);
+            sendColorToPhilipsHue(((colorCycle+1)%4)+1, RGBColor((thisPreset->color2).c_str()), LIGHTS_ANIMATION_TIME);
+            sendColorToPhilipsHue(((colorCycle+2)%4)+1, RGBColor((thisPreset->color3).c_str()), LIGHTS_ANIMATION_TIME);
+            sendColorToPhilipsHue(((colorCycle+3)%4)+1, RGBColor((thisPreset->color4).c_str()), LIGHTS_ANIMATION_TIME);
+            
+            break;
+        case 2:
+            //smooth
+            sendColorToPhilipsHue(((colorCycle+0)%4)+1, RGBColor((thisPreset->color1).c_str()), 0);
+            sendColorToPhilipsHue(((colorCycle+1)%4)+1, RGBColor((thisPreset->color2).c_str()), 0);
+            sendColorToPhilipsHue(((colorCycle+2)%4)+1, RGBColor((thisPreset->color3).c_str()), 0);
+            sendColorToPhilipsHue(((colorCycle+3)%4)+1, RGBColor((thisPreset->color4).c_str()), 0);
+            
+            
+            break;
+        case 3:
+            //single color
+            //smooth
+            sendColorToPhilipsHue(((colorCycle+0)%4)+1, RGBColor((thisPreset->color1).c_str()), LIGHTS_ANIMATION_TIME);
+            sendColorToPhilipsHue(((colorCycle+1)%4)+1, RGBColor((thisPreset->color2).c_str()), LIGHTS_ANIMATION_TIME);
+            sendColorToPhilipsHue(((colorCycle+2)%4)+1, RGBColor((thisPreset->color3).c_str()), LIGHTS_ANIMATION_TIME);
+            sendColorToPhilipsHue(((colorCycle+3)%4)+1, RGBColor((thisPreset->color4).c_str()), LIGHTS_ANIMATION_TIME);
+            
+            break;
+        default:
+            break;
+    }
+    
+    
+    
+}
 void MainScene::sendColorToPhilipsHue(int lightNumber, RGBColor color, int transitionTime){
     //le temps de transition est multiplié par 100ms, donc 7 = 700ms;
     

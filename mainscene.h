@@ -26,6 +26,7 @@ public:
 private Q_SLOTS:
     void onConnected();
     void onDisconnect();
+    void updateHue();
     void wsMessageReceived(QString text);
 
 private:
@@ -55,6 +56,7 @@ private:
     
     void sendColorToPhilipsHue(int lightNumber, RGBColor color, int transitionTime);
 
+    
     //QSignalMapper *mapper;
 };
 
