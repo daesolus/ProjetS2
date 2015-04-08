@@ -12,6 +12,7 @@
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include <QtWebSockets>
+#include "NavArrow.h"
 
 class MainScene : public QGraphicsScene
 {
@@ -28,21 +29,24 @@ private Q_SLOTS:
     void wsMessageReceived(QString text);
 
 private:
+    
+    
     void navBack();
     void navForward();
     void navSelect();
     void refreshCurrentCards();
     void loadSongs();
+    void showSettingsForCurrentCard();
     
     QWebSocket *m_webSocket;
     SettingsManager *manager;
     UIUtilities layout;
     QPixmap image;
-    QImage  *imageObject;
+    QImage  imageObject;
     QVector<CardItem*> allCards;
     QGraphicsPixmapItem* background;
     void sendCurrentColorToServer();
-
+    
     QGraphicsItem* ambienceCard(const char* title, const char* image);
     QGraphicsItem* backArrow;
     QGraphicsItem* nextArrow;

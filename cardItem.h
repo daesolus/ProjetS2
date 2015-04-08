@@ -15,6 +15,8 @@ class CardItem : public QObject, public QGraphicsItem
     Q_OBJECT
     Q_PROPERTY(QPointF pos READ pos WRITE setPos)
     Q_PROPERTY(qreal scale READ scale WRITE setScale)
+    Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
+    
     //Q_OBJECT
     //Q_PROPERTY(qreal opacity READ opacity WRITE setOpacity)
     
@@ -46,16 +48,22 @@ public:
     ~CardItem();
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget);
     void setSelectedStyle(bool isSelected);
+    void setInSettingsView(bool inSettingsView);
+    bool getInSettingsView();
     //void dragMoveEvent ( QDragMoveEvent * event );
     //void mouseMoveEvent ( QGraphicsSceneMouseEvent * event );
     QRectF boundingRect() const;
     void drawText(QPainter & painter, const QPointF & point, int flags, const QString & text, QRectF * boundingRect);
     void configure(const Preset *prst);
+    void turnForSettings();
     virtual void setScale(qreal scale);
 
 protected:
     QRectF rect;
     bool selected;
+    bool inSettingsView;
+    bool hideContent;
+
     string title;
     string imgPath;
     //QPixmap image;

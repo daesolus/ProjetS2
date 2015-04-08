@@ -12,6 +12,8 @@ class MainView : public QGraphicsView
 public:
     MainView(MainScene*);
     ~MainView();
+private:
+    //virtual bool event(QEvent *event);
 };
 
 #endif // MAINVIEW_H

@@ -16,6 +16,7 @@ TARGET = ProjetS2
 SOURCES += main.cpp\
     mainview.cpp \
     mainscene.cpp \
+    NavArrow.cpp \
     UIUtilities.cpp \
     cardItem.cpp \
     effects.cpp \
@@ -24,11 +25,11 @@ SOURCES += main.cpp\
 HEADERS  += \
     mainview.h \
     mainscene.h \
+    NavArrow.h \
     UIUtilities.h \
     cardItem.h \
     effects.h \
-    settingsManager.h \
-CommunicationFPGA.h
+    settingsManager.h
 
 FORMS    += mainwindow.ui
 
@@ -39,10 +40,7 @@ RESOURCES += \
 
 # non à la discrimination d'OS ! 1 .pro pour tous !
 win32 {
-    CONFIG(debug, debug|release) {
-        LIBS	+= libs/CommunicationFPGA.lib
-
-    }
+    
 TEMPLATE = vcapp
 
 }

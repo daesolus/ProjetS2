@@ -3,9 +3,24 @@
 void UIUtilities::centerInScreen(QGraphicsItem *item){
     
     //prend les dimensions de l'écran
+    //item->pare
     QRect rec = QApplication::desktop()->screenGeometry();
-    float screenHeight = rec.height();
+    float verticalAdjustment = 1.3;
+    
+#if TARGET_OS_IPHONE
+    if( (float)rec.height()/(float)rec.width() == 0.75 ){
+        //c'est un iPad
+        verticalAdjustment = 1.57;
+    }else{
+        verticalAdjustment = 3.5;
+    }
+    float screenWidth =  1440;
+#else
     float screenWidth =  rec.width();
+#endif
+    
+    float screenHeight = (float)rec.height() * verticalAdjustment;
+    
     
     //prend les dimensions de l'item
     float width = item->boundingRect().width();
@@ -23,14 +38,21 @@ float UIUtilities::getFullScreenPixelRatioForImage(QPixmap* image){
     
     //va prendre les dimensions de l'écran
     QRect rec = QApplication::desktop()->screenGeometry();
+    
+    
+#if TARGET_OS_IPHONE
+    float screenHeight = 900;//rec.height();
+    float screenWidth =  1440;//rec.width();
+#else
     float screenHeight = rec.height();
     float screenWidth =  rec.width();
+#endif
     
     float heightRatio = imageHeight/screenHeight;
     float widthRatio = imageWidth/screenWidth;
     
     //rapporte le ratio le plus petit pour que ca rentre sans qu'il reste de blanc
-    return (heightRatio<widthRatio)?heightRatio:widthRatio;
+    return (heightRatio<widthRatio)?heightRatio*2:widthRatio*2;
 }
 
 QGraphicsItem* UIUtilities::pixmapItemFromSvg(const char* svgTitle, QGraphicsScene *parentScene){
@@ -59,7 +81,12 @@ QGraphicsItem* UIUtilities::pixmapItemFromSvg(const char* svgTitle, QGraphicsSce
 }
 
 void UIUtilities::animateCard(CardItem* card, QPoint position, bool selected, bool visible, const int ANIMATION_TIME_MS){
-    
+#if TARGET_OS_IPHONE
+    //card->pos() = position;
+    //card->setScale(selected?1:0.8);
+    //card->setOpacity(visible?1.0:0.0);
+    //return;
+#endif
     //initialise l'animation de position
     QPropertyAnimation *positionAnimation = new QPropertyAnimation((QGraphicsObject*)card, "pos");
     positionAnimation->setDuration(ANIMATION_TIME_MS);
@@ -91,8 +118,12 @@ void UIUtilities::animateCard(CardItem* card, QPoint position, bool selected, bo
     scaleAnimation->start();
 }
 
-
+/*
 void UIUtilities::blurBackgroundItem(QGraphicsItem *backgroundItem, QPixmap *referencePixmap){
+    
+#ifdef TARGET_OS_IPHONE
+    return;
+#endif
     
     float blurRadius = 80.f;
     
@@ -100,7 +131,7 @@ void UIUtilities::blurBackgroundItem(QGraphicsItem *backgroundItem, QPixmap *ref
     //Mac pour des raisons (mystérieuses(?)) de performance
 //#ifdef __APPLE__
     QGraphicsBlurEffect *effect = new QGraphicsBlurEffect();
-    effect->setBlurHints(QGraphicsBlurEffect::PerformanceHint);
+    effect->setBlurHints(QGraphicsBlurEffect::AnimationHint);
     effect->setBlurRadius(blurRadius);
     
     //assigne l'effet à l'item approprié
@@ -108,9 +139,10 @@ void UIUtilities::blurBackgroundItem(QGraphicsItem *backgroundItem, QPixmap *ref
 //#endif
     
     //rend le scale plus grand pour cacher les bordures blanches
-    backgroundItem->setScale((1/getFullScreenPixelRatioForImage(referencePixmap))*1.2);
+    //backgroundItem->setScale((1/getFullScreenPixelRatioForImage(referencePixmap))*1.2);
     //cache les bordures en haut et à gauche
     backgroundItem->setX(-blurRadius/0.5);
     backgroundItem->setY(-blurRadius/0.5);
     
 }
+ */
