@@ -11,7 +11,7 @@
 QT_USE_NAMESPACE
 
 const int ANIMATION_TIME_MS = 200;
-const bool ENABLE_SOUND = false;
+const bool ENABLE_SOUND = true;
 
 string PHILIPS_HUE_URL = "10.0.1.34";
 string PHILIPS_HUE_USERNAME = "lapfelixlapfelixlapfelix";
