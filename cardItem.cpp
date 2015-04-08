@@ -77,7 +77,9 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
     
     //active l'antialising si l'OS est Mac OS X
 #ifdef __APPLE__
-    //painter->setRenderHint(QPainter::HighQualityAntialiasing);
+    painter->setRenderHint(QPainter::HighQualityAntialiasing);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
+    painter->setRenderHint(QPainter::TextAntialiasing);
 #endif
     
     float cornerRadius = 20.f;
@@ -131,10 +133,10 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
         
         QLinearGradient gradient = QLinearGradient(QPoint(transRect1.x(),transRect1.y()),QPoint(transRect1.x()+transRect1.width(), transRect1.y()));
         
-        gradient.setColorAt(0.0, color1);
+        gradient.setColorAt(0.00, color1);
         gradient.setColorAt(0.33, color2);
         gradient.setColorAt(0.66, color3);
-        gradient.setColorAt(1, color4);
+        gradient.setColorAt(1.00, color4);
         
         painter->setBrush(QBrush(gradient));
         
@@ -147,7 +149,7 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
         painter->drawRoundRect( transRect1, cornerRadius, cornerRadius*(colorPresetWidth/colorPresetHeight));
         
         gradient.setColorAt(0.249, color1);
-        gradient.setColorAt(0.25, color2);
+        gradient.setColorAt(0.250, color2);
         gradient.setColorAt(0.499, color2);
         gradient.setColorAt(0.501, color3);
         gradient.setColorAt(0.749, color3);
@@ -172,8 +174,14 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
             painter->setPen(QPen(QBrush(Qt::white),1));
         
         painter->drawRoundRect( transRect3, cornerRadius, cornerRadius*(colorPresetWidth/colorPresetHeight));
+        /*
+        painter->setBrush(QBrush("#FFFFFF"));
+        painter->setOpacity(0.76);
         
-        
+        float diameter = 25;
+        painter->setPen(QPen(QBrush(Qt::white),10));
+        painter->drawEllipse(this->boundingRect().x()-30, this->boundingRect().y()-30, diameter*2, diameter*2);
+        */
     }
     
     

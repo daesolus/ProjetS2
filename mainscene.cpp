@@ -14,7 +14,7 @@
 
 QT_USE_NAMESPACE
 
-const int ANIMATION_TIME_MS = 250;
+const int ANIMATION_TIME_MS = 300;
 const bool ENABLE_SOUND = false;
 const int LIGHTS_ANIMATION_TIME = 5;
 string PHILIPS_HUE_URL = "10.0.1.34";//34
@@ -78,7 +78,7 @@ MainScene::MainScene()
         //c'est un iPad
         heightConstant = 1.23;
     else
-        heightConstant = 2.7;
+        heightConstant = 3.4;
     float screenWidth =  1440;
 #else
     float screenWidth =  rec.width();
@@ -416,6 +416,7 @@ void MainScene::navSelect(){
     if(!currentCard->getInSettingsView()){
         currentCard->setInSettingsView(true);
         scaleAnimation->setEndValue(1.1);
+        scaleAnimation->setEasingCurve(QEasingCurve::OutBack);
         backArrow->setOpacity(0.3);
         nextArrow->setOpacity(0.3);
     }else{
@@ -434,6 +435,7 @@ void MainScene::navSelect(){
     opacityAnimation1->setEndValue(0.1);
     opacityAnimation1->start();
      */
+    
     scaleAnimation->start();
     
     /*

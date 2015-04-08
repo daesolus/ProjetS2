@@ -12,7 +12,7 @@ void UIUtilities::centerInScreen(QGraphicsItem *item){
         //c'est un iPad
         verticalAdjustment = 1.57;
     }else{
-        verticalAdjustment = 3.5;
+        verticalAdjustment = 4.2;
     }
     float screenWidth =  1440;
 #else
@@ -93,11 +93,14 @@ void UIUtilities::animateCard(CardItem* card, QPoint position, bool selected, bo
     positionAnimation->setStartValue(card->pos());
     positionAnimation->setEndValue(position);
     
+    positionAnimation->setEasingCurve(QEasingCurve::OutCirc);
+    
     //initialise l'animation d'échelle
     QPropertyAnimation *scaleAnimation = new QPropertyAnimation((QGraphicsObject*)card, "scale");
     scaleAnimation->setDuration(ANIMATION_TIME_MS);
     scaleAnimation->setStartValue(card->scale());
     scaleAnimation->setEndValue(selected?1:0.8);
+    scaleAnimation->setEasingCurve(positionAnimation->easingCurve());
     float currentOpacity = 0;
     
     //prend en note l'opacité courante
@@ -111,6 +114,7 @@ void UIUtilities::animateCard(CardItem* card, QPoint position, bool selected, bo
     opacityAnimation->setDuration(ANIMATION_TIME_MS);
     opacityAnimation->setStartValue(currentOpacity);
     opacityAnimation->setEndValue( visible?1.0:0.0 );
+    opacityAnimation->setEasingCurve(positionAnimation->easingCurve());
     
     //démarre toute les animations
     opacityAnimation->start();

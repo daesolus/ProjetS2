@@ -57,8 +57,22 @@ int main(int argc, char *argv[])
         view.fitInView(QRect(0, 0, rec.height()*2.1, rec.width()*2.05), Qt::KeepAspectRatio);
 #endif
     
+    
+#ifdef __APPLE__
+    #if TARGET_OS_IPHONE
+        view.setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+        view.setFrameShape(QFrame::NoFrame);
+    #else
+        //rien. le défaut est parfait sur Mac
+    #endif
+#else
+    view.setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+    view.setFrameShape(QFrame::NoFrame);
+#endif
+    
     //view.setTransform(m);
     view.showFullScreen();
+    
     //view.show();
     return a.exec();
 
