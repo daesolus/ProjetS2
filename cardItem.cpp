@@ -90,13 +90,21 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
     float alphaConstant = (scale() * 1.25) - 0.55;
     transparentWhite.setAlpha(255*alphaConstant);
     
-    painter->setPen(QPen(Qt::transparent)); //no pen
-    painter->setBrush(QBrush(transparentWhite, Qt::SolidPattern));
-    
+    if(!hideContent){
+        painter->setPen(QPen(Qt::transparent)); //no border
+        painter->setBrush(QBrush(transparentWhite, Qt::SolidPattern));
+    }else{
+        painter->setPen(QPen(Qt::white)); //no border
+        painter->setBrush(QBrush(QColor("#111111")));
+        painter->setOpacity(0.6);
+    }
+
     if(this->boundingRect().width() > this->boundingRect().height())
         painter->drawRoundRect( this->boundingRect().x(), this->boundingRect().y(), this->boundingRect().width(), this->boundingRect().height(), cornerRadius, cornerRadius*(this->boundingRect().width()/this->boundingRect().height()));
     else
         painter->drawRoundRect( this->boundingRect().x(), this->boundingRect().y(), this->boundingRect().width(), this->boundingRect().height(), cornerRadius*(this->boundingRect().height()/this->boundingRect().width()), cornerRadius);
+    
+    painter->setOpacity(1.0);
     
     //QFontDatabase::addApplicationFont ( ":font.ttf" );
     //QFont font("BN BenWitch Project", 52);

@@ -15,7 +15,7 @@
 QT_USE_NAMESPACE
 
 const int ANIMATION_TIME_MS = 300;
-const bool ENABLE_SOUND = true;
+const bool ENABLE_SOUND = false;
 const int LIGHTS_ANIMATION_TIME = 5;
 string PHILIPS_HUE_URL = "10.0.1.34";//34
 string PHILIPS_HUE_USERNAME = "lapfelixlapfelixlapfelix";
@@ -283,13 +283,12 @@ void MainScene::refreshCurrentCards(){
         image.fill( Qt::transparent );
         {
             QPainter painter( &image );
-            qt_blurImage( &painter, imageObject, 200, false, false );//blur radius: 2px
+            qt_blurImage( &painter, imageObject, 300*((float)image.height()*(float)image.width()/1000000)/qApp->devicePixelRatio(), false, false );//blur radius: 2px
         }
         
         
         //image = QPixmap::fromImage(pxDst);
         
-        image.setDevicePixelRatio(UIUtilities::getFullScreenPixelRatioForImage(&image)/2);
         
         //delete imageObject;
         //enlève l'ancien arrière plan
@@ -312,7 +311,8 @@ void MainScene::refreshCurrentCards(){
         
         //le met en arrière plan
         background->setZValue(-1);
-        
+        background->setScale(UIUtilities::getFullScreenPixelRatioForImage(&image)*qApp->devicePixelRatio());
+        //image.setDevicePixelRatio(UIUtilities::getFullScreenPixelRatioForImage(&image)*3);
         //aspect fill l'écran
         
         //rend l'arrière plan flou et cool

@@ -50,9 +50,9 @@ float UIUtilities::getFullScreenPixelRatioForImage(QPixmap* image){
     
     float heightRatio = imageHeight/screenHeight;
     float widthRatio = imageWidth/screenWidth;
-    
+    qDebug() << "thatt " << ((heightRatio<widthRatio)?heightRatio*qApp->devicePixelRatio():widthRatio*qApp->devicePixelRatio());
     //rapporte le ratio le plus petit pour que ca rentre sans qu'il reste de blanc
-    return (heightRatio<widthRatio)?heightRatio*2:widthRatio*2;
+    return 1/((heightRatio<widthRatio)?heightRatio:widthRatio);
 }
 
 QGraphicsItem* UIUtilities::pixmapItemFromSvg(const char* svgTitle, QGraphicsScene *parentScene){
