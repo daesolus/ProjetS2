@@ -14,7 +14,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <string>
-#include "JsonExeption.h"
+#include "JsonException.h"
 
 using namespace std;
 

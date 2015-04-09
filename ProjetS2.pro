@@ -27,7 +27,8 @@ HEADERS  += \
     NavArrow.h \
     UIUtilities.h \
     cardItem.h \
-    settingsManager.h
+    settingsManager.h \
+    JsonException.h
 
 FORMS    += mainwindow.ui
 
