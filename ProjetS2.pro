@@ -38,8 +38,8 @@ RESOURCES += \
 
 # non à la discrimination d'OS ! 1 .pro pour tous !
 win32 {
-    
-TEMPLATE = vcapp
+    RC_ICONS = genius.ico
+	TEMPLATE = vcapp
 
 }
 CONFIG += c++11

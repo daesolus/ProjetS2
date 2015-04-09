@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>genius.ico</file>
         <file>arrowLine.svg</file>
         <file>Config.ini</file>
         <file>Etoile.jpg</file>
