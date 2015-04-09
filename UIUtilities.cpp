@@ -6,7 +6,11 @@ void UIUtilities::centerInScreen(QGraphicsItem *item){
     //item->pare
     QRect rec = QApplication::desktop()->screenGeometry();
     float verticalAdjustment = 1.3;
-    
+
+	float screenWidth;
+#ifdef  _WIN32
+	verticalAdjustment = 1.15;
+#endif
 #if TARGET_OS_IPHONE
     if( (float)rec.height()/(float)rec.width() == 0.75 ){
         //c'est un iPad
@@ -14,11 +18,11 @@ void UIUtilities::centerInScreen(QGraphicsItem *item){
     }else{
         verticalAdjustment = 4.2;
     }
-    float screenWidth =  1440;
+	screenWidth =  1440;
 #else
-    float screenWidth =  rec.width();
+	screenWidth = rec.width();
 #endif
-    
+	
     float screenHeight = (float)rec.height() * verticalAdjustment;
     
     
