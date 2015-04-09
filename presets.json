@@ -57,5 +57,15 @@
         "imgpath" : ":got.jpg",
         "musicpath" : "got.mp3",
         "name" : "GOT"
+      },
+	  { "colors" : [ "#F348A6",
+            "#67D45C",
+            "#F20000",
+            "#00B3ED",
+            "#FDA200"
+          ],
+        "imgpath" : ":acid.jpg",
+        "musicpath" : "acid.mp3",
+        "name" : "Acid"
       }
     ] }
