@@ -48,11 +48,11 @@
         "musicpath" : "Irish.mp3",
         "name" : "Irish"
       },
-	  { "colors" : [ "#07b407",
-            "#ffd700",
-            "#ff7800",
-            "#4ede1c",
-            "#ffffff"
+	  { "colors" : [ "#324658",
+            "#494953",
+            "#AF8844",
+            "#778586",
+            "#324658"
           ],
         "imgpath" : ":got.jpg",
         "musicpath" : "got.mp3",
