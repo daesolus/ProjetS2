@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QGraphicsView>
+#include <QGestureEvent>
 #include <QWidget>
 
 #include "mainscene.h"
@@ -13,7 +14,12 @@ public:
     MainView(MainScene*);
     ~MainView();
 private:
-    //virtual bool event(QEvent *event);
+    MainScene *theScene;
+    
+    bool viewportEvent(QEvent *event);
+
+    void tapTriggered();
+    void swipeTriggered(QSwipeGesture *gesture);
 };
 
 #endif // MAINVIEW_H

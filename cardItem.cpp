@@ -47,7 +47,7 @@ void CardItem::configure(const Preset *prst){
     imageObject = new QImage();
     imageObject->load(imgPath.c_str());
     image = QPixmap::fromImage(*imageObject);
-    delete imageObject;
+    //delete imageObject;
 
 }
 
@@ -259,6 +259,12 @@ void CardItem::setScale(qreal scale){
     this->QGraphicsItem::setScale(scale);
     //appelle la 'vraie' fonction 'setScale'
     
+}
+QImage& CardItem::getImage(){
+    return *imageObject;
+}
+QPixmap* CardItem::getPixmap(){
+    return &image;
 }
 void CardItem::changeColorSetting(bool up){
     if (up) {

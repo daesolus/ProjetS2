@@ -11,6 +11,7 @@
 #include <QGesture>
 #include <QSwipeGesture>
 #include <ctime>
+#include <QTouchEvent>
 #include <QMessageBox>
 
 QT_USE_NAMESPACE
@@ -514,7 +515,21 @@ void MainScene::keyPressEvent(QKeyEvent *event)
 		navForward();
 	}
 }
-
+void MainScene::navSendR(){
+    m_webSocket->sendTextMessage("!r");
+    rcount++;
+    navBack();
+}
+void MainScene::navSendL(){
+    m_webSocket->sendTextMessage("!l");
+    lcount++;
+    navForward();
+}
+void MainScene::navSendM(){
+    m_webSocket->sendTextMessage("!m");
+    mcount++;
+    navSelect();
+}
 #pragma mark - WebSocket
 
 void MainScene::sendColorToServer(string hexColor){
@@ -667,3 +682,4 @@ void MainScene::sendColorToPhilipsHue(int lightNumber, const char* color, int tr
 	netManager->put(QNetworkRequest(QUrl(URL.c_str())), body.c_str());
 
 }
+

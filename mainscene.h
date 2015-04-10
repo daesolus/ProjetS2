@@ -21,7 +21,9 @@ public:
     explicit MainScene();
     ~MainScene();
     void keyPressEvent(QKeyEvent *event);
-    
+    void navSendR();
+    void navSendL();
+    void navSendM();
     
 private Q_SLOTS:
     void onConnected();

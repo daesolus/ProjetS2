@@ -53,6 +53,9 @@ public:
     void setInSettingsView(bool inSettingsView);
     void setCurrentColorSetting(int currentColorSetting);
     void changeColorSetting(bool up);
+    QImage& getImage();
+    QPixmap* getPixmap();
+
     int getColorSetting();
     bool getInSettingsView();
     //void dragMoveEvent ( QDragMoveEvent * event );
