@@ -33,11 +33,11 @@ private Q_SLOTS:
 
 private:
     
-
     void navBack();
     void navForward();
     void navSelect();
     void refreshCurrentCards();
+	void refreshBackground();
     void loadSongs();
     void showSettingsForCurrentCard();
     
@@ -57,7 +57,7 @@ private:
     void sendColorToServer(string hexColor);
     
     void sendColorToPhilipsHue(int lightNumber, const char* color, int transitionTime);
-
+	bool ENABLE_SOUND = false;
     
     //QSignalMapper *mapper;
 };
