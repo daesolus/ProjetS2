@@ -55,7 +55,7 @@ private:
     void sendColorToServer(string hexColor);
     
     void sendColorToPhilipsHue(int lightNumber, const char* color, int transitionTime);
-	bool ENABLE_SOUND = false;
+	bool ENABLE_SOUND = true;
     
     //QSignalMapper *mapper;
 };

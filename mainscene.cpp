@@ -214,10 +214,6 @@ MainScene::MainScene()
 		}
 		refreshBackground();
 	}
-
-	//rafraichis et configure les cartes
-	//refreshCurrentCards();
-
 	//démarre le QTimer pour les Philips Hue
 	timer = new QTimer(this);
 	connect(timer, SIGNAL(timeout()), this, SLOT(updateHue()));
