@@ -11,11 +11,12 @@
 #include <QGesture>
 #include <QSwipeGesture>
 #include <ctime>
+#include <QTouchEvent>
 
 QT_USE_NAMESPACE
 
 const int ANIMATION_TIME_MS = 300;
-const bool ENABLE_SOUND = false;
+const bool ENABLE_SOUND = true;
 const int LIGHTS_ANIMATION_TIME = 5;
 string PHILIPS_HUE_URL = "10.0.1.34";//34
 string PHILIPS_HUE_USERNAME = "lapfelixlapfelixlapfelix";
@@ -138,6 +139,8 @@ MainScene::MainScene()
     */
 #if TARGET_OS_IPHONE
     //nothing
+    loadSongs();
+
 #else
     loadSongs();
 #endif
@@ -221,10 +224,12 @@ void MainScene::loadSongs(){
     
     //navigue au bon dossier
     QDir dir = QDir(QCoreApplication::applicationDirPath());
+#if !TARGET_OS_IPHONE
     dir.cdUp();
     dir.cdUp();
     dir.cdUp();
     dir.cdUp();
+#endif
 
     //prend chaque musique pour chaque preset
     for (int i = 0; i < manager->getPresetArray().count(); i++) {
@@ -273,18 +278,21 @@ void MainScene::refreshCurrentCards(){
     if (currentSelection < manager->getPresetArray().count()) {
         
         //affichage de l'arrière plan
-        imageObject = QImage();
-        imageObject.load(manager->getPresetArray().at(currentSelection).imgPath.c_str());
+        //imageObject = QImage();
+        //imageObject.load(manager->getPresetArray().at(currentSelection).imgPath.c_str());
+        CardItem *thisCard = allCards.at(currentSelection);
         
+        //imageObject = *thisCard->getImage();
         
         //extern QImage srcImg;//source image
         //QPixmap *pxDst( imageObject->size() );//blurred destination
-        image = QPixmap(imageObject.size());
+        image = QPixmap(thisCard->getImage().size()*qApp->devicePixelRatio());
         image.fill( Qt::transparent );
         {
             QPainter painter( &image );
-            qt_blurImage( &painter, imageObject, 300*((float)image.height()*(float)image.width()/1000000)/qApp->devicePixelRatio(), false, false );//blur radius: 2px
+            qt_blurImage( &painter, thisCard->getImage(), 50*((float)image.height()*(float)image.width()/1000000)/qApp->devicePixelRatio(), false, false );//blur radius: 2px
         }
+        
         
         
         //image = QPixmap::fromImage(pxDst);
@@ -319,7 +327,7 @@ void MainScene::refreshCurrentCards(){
         //UIUtilities::blurBackgroundItem(background, &image);
         
 #if TARGET_OS_IPHONE
-        return;
+        //return;
 #endif
         //change de musique et la joue
         playlist->setCurrentIndex(currentSelection);
@@ -336,15 +344,15 @@ void MainScene::navBack(){
        if(currentSelection-1 >= 0){
             currentSelection--;
            
-    #if TARGET_OS_IPHONE
+    //#if TARGET_OS_IPHONE
            //do nothing
-    #else
+   // #else
            //change de musique et la joue
            playlist->setCurrentIndex(currentSelection);
            
            if(ENABLE_SOUND)
                player->play();
-    #endif
+   // #endif
            
            //et rafraichis les cartes
             refreshCurrentCards();
@@ -363,15 +371,15 @@ void MainScene::navForward(){
         if(currentSelection+1 < manager->getPresetArray().count()){
             currentSelection++;
             
-    #if TARGET_OS_IPHONE
+    //#if TARGET_OS_IPHONE
             //do nothing
-    #else
+    //#else
             //change de musique et la joue
             playlist->setCurrentIndex(currentSelection);
             
             if(ENABLE_SOUND)
                 player->play();
-    #endif
+   // #endif
             refreshCurrentCards();
             sendCurrentColorToServer();
 
@@ -424,7 +432,6 @@ void MainScene::navSelect(){
         scaleAnimation->setEndValue(1.0);
         backArrow->setOpacity(1.0);
         nextArrow->setOpacity(1.0);
-
     }
     
     
@@ -455,24 +462,32 @@ void MainScene::keyPressEvent(QKeyEvent *event)
     
     //arrière
     if (event->key() == 16777234) {
-        m_webSocket->sendTextMessage("!r");
-        rcount++;
-        navBack();
+        navSendR();
     }
     //en bas
     if (event->key() == 16777237) {
-        m_webSocket->sendTextMessage("!m");
-        mcount++;
-        navSelect();
+        navSendM();
     }
     //avant
     if (event->key() == 16777236) {
-        m_webSocket->sendTextMessage("!l");
-        lcount++;
-        navForward();
+        navSendL();
     }
 }
-
+void MainScene::navSendR(){
+    m_webSocket->sendTextMessage("!r");
+    rcount++;
+    navBack();
+}
+void MainScene::navSendL(){
+    m_webSocket->sendTextMessage("!l");
+    lcount++;
+    navForward();
+}
+void MainScene::navSendM(){
+    m_webSocket->sendTextMessage("!m");
+    mcount++;
+    navSelect();
+}
 #pragma mark - WebSocket
 
 void MainScene::sendColorToServer(string hexColor){
@@ -557,7 +572,7 @@ void MainScene::onDisconnect(){
 
 void MainScene::updateHue()
 {
-    qDebug() << (colorCycle%2?"tic":"toc");
+   // qDebug() << (colorCycle%2?"tic":"toc");
     //colorCycle de 0 à 3 constamment
     colorCycle++;
     if (colorCycle == 4) {
@@ -619,9 +634,10 @@ void MainScene::sendColorToPhilipsHue(int lightNumber, const char* color, int tr
     
     string body = "{ \"on\": true, \"hue\":"+to_string((int)(couleur.hueF() * 65535))+", \"sat\":"+to_string((int)(moreSat * 255))+", \"bri\":"+to_string((int)(couleur.lightnessF() * 255))+", \"transitiontime\":"+to_string(transitionTime)+"}";
     string URL = "http://"+PHILIPS_HUE_URL+":"+to_string(PHILIPS_HUE_PORT)+"/api/"+PHILIPS_HUE_USERNAME+"/lights/"+to_string(lightNumber)+"/state";
-    qDebug() << body.c_str() << URL.c_str();
+    //qDebug() << body.c_str() << URL.c_str();
     //request = new QNetworkRequest(QUrl(URL.c_str()));
     //request->setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
     netManager->put(QNetworkRequest(QUrl(URL.c_str())), body.c_str());
 
 }
+

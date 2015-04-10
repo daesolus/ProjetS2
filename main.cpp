@@ -11,7 +11,9 @@ QImage imageObject;
 int main(int argc, char *argv[])
 {
 
+    
 	QApplication a(argc, argv);
+    
 	try
 	{
 		MainScene scene;
@@ -76,6 +78,7 @@ int main(int argc, char *argv[])
 		//view.setTransform(m);
 		view.showFullScreen();
 
+        
 		//view.show();
 		return a.exec();
 	}
