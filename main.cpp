@@ -7,6 +7,8 @@
 #include <QImage>
 #include <QMessageBox>
 #include <QPixmap>
+#include <QGLWidget>
+
 QImage imageObject;
 int main(int argc, char *argv[])
 {
@@ -50,23 +52,30 @@ int main(int argc, char *argv[])
 								    	m.translate(-x,-990);
 										    	*/
 
-		MainView view(&scene);
-		qDebug() << screenHeight / screenWidth;
+		
+        MainView *view = new MainView(&scene);
+        
+        view->setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)));
+
+        //view->setScene(&scene);
+        
+        
+		//qDebug() << screenHeight / screenWidth;
 
 #if TARGET_OS_IPHONE
 		if( screenHeight/screenWidth == 0.75 )
 			//c'est un iPad
-			view.fitInView(QRect(0, 0, rec.height()/1.9, rec.width()/1.57), Qt::KeepAspectRatio);
+			view->fitInView(QRect(0, 0, rec.height()/1.9, rec.width()/1.57), Qt::KeepAspectRatio);
 		else
 			//c'est un iPhone
-			view.fitInView(QRect(0, 0, rec.height()*2.1, rec.width()*2.05), Qt::KeepAspectRatio);
+			view->fitInView(QRect(0, 0, rec.height()*2.1, rec.width()*2.1), Qt::KeepAspectRatio);
 #endif
 
 
 #ifdef __APPLE__
 #if TARGET_OS_IPHONE
-		view.setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
-		view.setFrameShape(QFrame::NoFrame);
+		view->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+		view->setFrameShape(QFrame::NoFrame);
 #else
 		//rien. le défaut est parfait sur Mac
 #endif
@@ -76,7 +85,7 @@ int main(int argc, char *argv[])
 #endif
 
 		//view.setTransform(m);
-		view.showFullScreen();
+		view->showFullScreen();
 
         
 		//view.show();

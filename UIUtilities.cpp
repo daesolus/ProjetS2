@@ -91,39 +91,45 @@ void UIUtilities::animateCard(CardItem* card, QPoint position, bool selected, bo
     //card->setOpacity(visible?1.0:0.0);
     //return;
 #endif
-    //initialise l'animation de position
-    QPropertyAnimation *positionAnimation = new QPropertyAnimation((QGraphicsObject*)card, "pos");
-    positionAnimation->setDuration(ANIMATION_TIME_MS);
-    positionAnimation->setStartValue(card->pos());
-    positionAnimation->setEndValue(position);
-    
-    positionAnimation->setEasingCurve(QEasingCurve::OutCirc);
-    
-    //initialise l'animation d'échelle
-    QPropertyAnimation *scaleAnimation = new QPropertyAnimation((QGraphicsObject*)card, "scale");
-    scaleAnimation->setDuration(ANIMATION_TIME_MS);
-    scaleAnimation->setStartValue(card->scale());
-    scaleAnimation->setEndValue(selected?1:0.8);
-    scaleAnimation->setEasingCurve(positionAnimation->easingCurve());
-    float currentOpacity = 0;
-    
-    //prend en note l'opacité courante
-    if((QGraphicsOpacityEffect*)card->graphicsEffect())
-        currentOpacity = ((QGraphicsOpacityEffect*)card->graphicsEffect())->opacity();
-    
-    //initialise l'animation d'opacité
-    QGraphicsOpacityEffect *opacity = new QGraphicsOpacityEffect;
-    QPropertyAnimation *opacityAnimation = new QPropertyAnimation(opacity, "opacity" );
-    card->setGraphicsEffect( opacity );
-    opacityAnimation->setDuration(ANIMATION_TIME_MS);
-    opacityAnimation->setStartValue(currentOpacity);
-    opacityAnimation->setEndValue( visible?1.0:0.0 );
-    opacityAnimation->setEasingCurve(positionAnimation->easingCurve());
-    
-    //démarre toute les animations
-    opacityAnimation->start();
-    positionAnimation->start();
-    scaleAnimation->start();
+    if(ANIMATION_TIME_MS == 0){
+        card->setPos(position);
+        card->setScale(selected?1:0.8);
+        card->setOpacity(visible?1.0:0.0);
+    }else{
+        //initialise l'animation de position
+        QPropertyAnimation *positionAnimation = new QPropertyAnimation((QGraphicsObject*)card, "pos");
+        positionAnimation->setDuration(ANIMATION_TIME_MS);
+        positionAnimation->setStartValue(card->pos());
+        positionAnimation->setEndValue(position);
+        
+        positionAnimation->setEasingCurve(QEasingCurve::OutCirc);
+        
+        //initialise l'animation d'échelle
+        QPropertyAnimation *scaleAnimation = new QPropertyAnimation((QGraphicsObject*)card, "scale");
+        scaleAnimation->setDuration(ANIMATION_TIME_MS);
+        scaleAnimation->setStartValue(card->scale());
+        scaleAnimation->setEndValue(selected?1:0.8);
+        scaleAnimation->setEasingCurve(positionAnimation->easingCurve());
+        float currentOpacity = 0;
+        
+        //prend en note l'opacité courante
+        if((QGraphicsOpacityEffect*)card->graphicsEffect())
+            currentOpacity = ((QGraphicsOpacityEffect*)card->graphicsEffect())->opacity();
+        
+        //initialise l'animation d'opacité
+        QGraphicsOpacityEffect *opacity = new QGraphicsOpacityEffect;
+        QPropertyAnimation *opacityAnimation = new QPropertyAnimation(opacity, "opacity" );
+        card->setGraphicsEffect( opacity );
+        opacityAnimation->setDuration(ANIMATION_TIME_MS);
+        opacityAnimation->setStartValue(currentOpacity);
+        opacityAnimation->setEndValue( visible?1.0:0.0 );
+        opacityAnimation->setEasingCurve(positionAnimation->easingCurve());
+        
+        //démarre toute les animations
+        opacityAnimation->start();
+        positionAnimation->start();
+        scaleAnimation->start();
+    }
 }
 
 /*

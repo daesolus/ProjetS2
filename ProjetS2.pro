@@ -8,6 +8,7 @@ QT       += core gui
 QT       += svg
 QT       += multimedia
 QT       += websockets
+QT       += opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

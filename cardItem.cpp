@@ -4,6 +4,12 @@
 #include <QFontDatabase>
 #include <QLinearGradient>
 
+
+QT_BEGIN_NAMESPACE
+extern Q_WIDGETS_EXPORT void qt_blurImage(QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0);
+QT_END_NAMESPACE
+
+
 /*
 CardItem::CardItem()
 {
@@ -47,6 +53,22 @@ void CardItem::configure(const Preset *prst){
     imageObject = new QImage();
     imageObject->load(imgPath.c_str());
     image = QPixmap::fromImage(*imageObject);
+    
+    //background transparent
+    //affichage de l'arrière plan
+    //imageObject = QImage();
+    //imageObject.load(manager->getPresetArray().at(currentSelection).imgPath.c_str());
+    
+    
+    //extern QImage srcImg;//source image
+    //QPixmap *pxDst( imageObject->size() );//blurred destination
+    blurredBackground = QPixmap(imageObject->size()*qApp->devicePixelRatio());
+    blurredBackground.fill(Qt::transparent);
+    {
+        QPainter painter(&blurredBackground);
+        qt_blurImage(&painter, *imageObject, 200 * ((float)image.height()*(float)image.width() / 1000000) / qApp->devicePixelRatio(), false, false);//blur radius: 2px
+    }
+    
     //delete imageObject;
 
 }
@@ -76,11 +98,12 @@ void CardItem::drawText(QPainter & painter, const QPointF & point, int flags,
 void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget){
     
     //active l'antialising si l'OS est Mac OS X
-#ifdef __APPLE__
+/*#ifdef __APPLE__
     painter->setRenderHint(QPainter::HighQualityAntialiasing);
     painter->setRenderHint(QPainter::SmoothPixmapTransform);
     painter->setRenderHint(QPainter::TextAntialiasing);
 #endif
+ */
     
     float cornerRadius = 20.f;
 
@@ -229,7 +252,6 @@ void CardItem::setScale(qreal scale){
         float xMiddle = ((this->pos().x()-7) + (this->boundingRect().width()/2))-(QApplication::desktop()->screenGeometry().width()/2);
 #endif
         
-        qDebug() << "blblb" << (float)this->pos().x();
         if(xMiddle > 7){
             
             //constante
@@ -265,6 +287,9 @@ QImage& CardItem::getImage(){
 }
 QPixmap* CardItem::getPixmap(){
     return &image;
+}
+QPixmap* CardItem::getBlurredBackground(){
+    return &blurredBackground;
 }
 void CardItem::changeColorSetting(bool up){
     if (up) {

@@ -48,11 +48,6 @@ struct cardProperties{
 	bool selected;
 };
 
-
-QT_BEGIN_NAMESPACE
-extern Q_WIDGETS_EXPORT void qt_blurImage(QPainter *p, QImage &blurImage, qreal radius, bool quality, bool alphaOnly, int transposed = 0);
-QT_END_NAMESPACE
-
 cardProperties cardPos[5];
 MainScene::MainScene()
 {
@@ -73,7 +68,7 @@ MainScene::MainScene()
 	QRect rec = QApplication::desktop()->screenGeometry();
 
 	float heightConstant = 1;
-	qDebug() << "hellol" << (float)rec.height() / (float)rec.width();
+	//qDebug() << "hellol" << (float)rec.height() / (float)rec.width();
 #if TARGET_OS_IPHONE
 	if( (float)rec.height()/(float)rec.width() == 0.75 )
 		//c'est un iPad
@@ -138,11 +133,12 @@ MainScene::MainScene()
 	loadSongs();
 	#endif
 	*/
-#if TARGET_OS_IPHONE
+//#if TARGET_OS_IPHONE
 	//nothing
-#else
-	loadSongs();
-#endif
+//#else
+    if(ENABLE_SOUND)
+        loadSongs();
+//#endif
 
 	//nouveau seed pour que les fonctions aléatoires soient réellement aléatoires
 	srand(time(NULL));
@@ -213,9 +209,10 @@ MainScene::MainScene()
 			//cache à droite
 			UIUtilities::animateCard(allCards.at(i), QPoint(cardPos[4].x, cardPos[4].y), false, false, ANIMATION_TIME_MS);
 		}
-		refreshBackground();
 	}
-
+    
+    refreshBackground();
+    
 	//rafraichis et configure les cartes
 	//refreshCurrentCards();
 
@@ -234,7 +231,7 @@ MainScene::~MainScene()
 
 void MainScene::loadSongs(){
 
-	qDebug() << "HERE";
+	//qDebug() << "HERE";
 
 	//initialise player et playlist
 	player = new QMediaPlayer;
@@ -245,10 +242,12 @@ void MainScene::loadSongs(){
 
 	//navigue au bon dossier
 	QDir dir = QDir(QCoreApplication::applicationDirPath());
-	dir.cdUp();
-	dir.cdUp();
-	dir.cdUp();
-	dir.cdUp();
+#if !TARGET_OS_IPHONE
+    dir.cdUp();
+    dir.cdUp();
+    dir.cdUp();
+    dir.cdUp();
+#endif
 
 	//prend chaque musique pour chaque preset
 	for (int i = 0; i < manager->getPresetArray().count(); i++) {
@@ -273,6 +272,7 @@ void MainScene::loadSongs(){
 #pragma mark - Cartes/Navigation
 
 void MainScene::refreshBackground(){
+    /*
 	//affichage de l'arrière plan
 	imageObject = QImage();
 	imageObject.load(manager->getPresetArray().at(currentSelection).imgPath.c_str());
@@ -280,39 +280,34 @@ void MainScene::refreshBackground(){
 
 	//extern QImage srcImg;//source image
 	//QPixmap *pxDst( imageObject->size() );//blurred destination
-	image = QPixmap(imageObject.size());
+	image = QPixmap(imageObject.size()*qApp->devicePixelRatio());
 	image.fill(Qt::transparent);
 	{
 		QPainter painter(&image);
-		qt_blurImage(&painter, imageObject, 300 * ((float)image.height()*(float)image.width() / 1000000) / qApp->devicePixelRatio(), false, false);//blur radius: 2px
+		qt_blurImage(&painter, imageObject, 200 * ((float)image.height()*(float)image.width() / 1000000) / qApp->devicePixelRatio(), false, false);//blur radius: 2px
 	}
+     */
+    
+	//this->removeItem(background);
 
+	//if (background)
+	//	delete background;
 
-	//image = QPixmap::fromImage(pxDst);
-
-
-	//delete imageObject;
-	//enlève l'ancien arrière plan
-	//delete background;
-
-	this->removeItem(background);
-
-	if (background)
-		delete background;
-
-	background = nullptr;
-	//if(background == NULL)
-	background = this->addPixmap(image);
+	//background = nullptr;
+	if(background == NULL)
+        background = this->addPixmap(*allCards.at(currentSelection)->getBlurredBackground());
+    else
+        background->setPixmap(*allCards.at(currentSelection)->getBlurredBackground());
 
 	//#if TARGET_OS_IPHONE
 	background->setOpacity(0.7);
 	//#endif
 	//else
-	//  background->setPixmap(image);
+	background->setPixmap(*allCards.at(currentSelection)->getBlurredBackground());
 
 	//le met en arrière plan
 	background->setZValue(-1);
-	background->setScale(UIUtilities::getFullScreenPixelRatioForImage(&image)*qApp->devicePixelRatio());
+	background->setScale(UIUtilities::getFullScreenPixelRatioForImage(&*allCards.at(currentSelection)->getBlurredBackground())*qApp->devicePixelRatio());
 	//image.setDevicePixelRatio(UIUtilities::getFullScreenPixelRatioForImage(&image)*3);
 	//aspect fill l'écran
 
@@ -320,13 +315,14 @@ void MainScene::refreshBackground(){
 	//UIUtilities::blurBackgroundItem(background, &image);
 
 #if TARGET_OS_IPHONE
-	return;
+	//return;
 #endif
-	//change de musique et la joue
-	playlist->setCurrentIndex(currentSelection);
-
-	if (ENABLE_SOUND)
+    
+    //change de musique et la joue
+    if (ENABLE_SOUND){
+        playlist->setCurrentIndex(currentSelection);
 		player->play();
+    }
 
 }
 
@@ -366,42 +362,50 @@ void MainScene::refreshCurrentCards(){
 		UIUtilities::animateCard(allCards.at(0), QPoint(cardPos[4].x, cardPos[4].y), false, false, ANIMATION_TIME_MS);
 	else
 		UIUtilities::animateCard(allCards.at(currentSelection + 2), QPoint(cardPos[4].x, cardPos[4].y), false, false, ANIMATION_TIME_MS);
+    
+    
 	refreshBackground();
 }
 
 //navigue par en arrière si possible
 void MainScene::navBack(){
-
-	if (!allCards.at(currentSelection)->getInSettingsView()){
-		if (currentSelection == 0)
-		{
-			currentSelection = allCards.length() - 1;
-		}
-		else
-			currentSelection--;
-
-#if TARGET_OS_IPHONE
-		//do nothing
-#else
-		//change de musique et la joue
-		playlist->setCurrentIndex(currentSelection);
-
-		if (ENABLE_SOUND)
-			player->play();
-#endif
-
-		//et rafraichis les cartes
-		refreshCurrentCards();
-		sendCurrentColorToServer();
-
-	}
-	else{
-		//on est en settings view, fuck off
-		//go down
-		CardItem *thisCard = allCards.at(currentSelection);
-		thisCard->changeColorSetting(false);
-	}
-
+    
+    if (!allCards.at(currentSelection)->getInSettingsView()){
+        if (currentSelection == 0)
+        {
+            currentSelection = allCards.length() - 1;
+        }
+        else
+            currentSelection--;
+        
+    /*
+     if(!allCards.at(currentSelection)->getInSettingsView()){
+       if(currentSelection-1 >= 0){
+            currentSelection--;
+     */
+           
+    //#if TARGET_OS_IPHONE
+           //do nothing
+   // #else
+           //change de musique et la joue
+           
+           if(ENABLE_SOUND){
+               playlist->setCurrentIndex(currentSelection);
+               player->play();
+           }
+   // #endif
+           
+           //et rafraichis les cartes
+            refreshCurrentCards();
+           sendCurrentColorToServer();
+       }
+    else{
+        //on est en settings view, fuck off
+        //go down
+        CardItem *thisCard = allCards.at(currentSelection);
+        thisCard->changeColorSetting(false);
+    }
+    
 }
 void MainScene::navForward(){
 	if (!allCards.at(currentSelection)->getInSettingsView()){
@@ -410,15 +414,15 @@ void MainScene::navForward(){
 		else
 			currentSelection++;
 
-#if TARGET_OS_IPHONE
+//#if TARGET_OS_IPHONE
 		//do nothing
-#else
+//#else
 		//change de musique et la joue
-		playlist->setCurrentIndex(currentSelection);
-
-		if (ENABLE_SOUND)
-			player->play();
-#endif
+        if(ENABLE_SOUND){
+            playlist->setCurrentIndex(currentSelection);
+            player->play();
+        }
+//#endif
 		refreshCurrentCards();
 		sendCurrentColorToServer();
 	}
@@ -498,26 +502,20 @@ void MainScene::showSettingsForCurrentCard(){
 }
 void MainScene::keyPressEvent(QKeyEvent *event)
 {
-	qDebug() << "KEY ID:" << event->key();
-
-	//arrière
-	if (event->key() == 16777234) {
-		m_webSocket->sendTextMessage("!r");
-		rcount++;
-		navBack();
-	}
-	//en bas
-	if (event->key() == 16777237) {
-		m_webSocket->sendTextMessage("!m");
-		mcount++;
-		navSelect();
-	}
-	//avant
-	if (event->key() == 16777236) {
-		m_webSocket->sendTextMessage("!l");
-		lcount++;
-		navForward();
-	}
+    //qDebug() << "KEY ID:" << event->key();
+    
+    //arrière
+    if (event->key() == 16777234) {
+        navSendR();
+    }
+    //en bas
+    if (event->key() == 16777237) {
+        navSendM();
+    }
+    //avant
+    if (event->key() == 16777236) {
+        navSendL();
+    }
 }
 void MainScene::navSendR(){
     m_webSocket->sendTextMessage("!r");
@@ -680,8 +678,8 @@ void MainScene::sendColorToPhilipsHue(int lightNumber, const char* color, int tr
 
 	string body = "{ \"on\": true, \"hue\":" + to_string((int)(couleur.hueF() * 65535)) + ", \"sat\":" + to_string((int)(moreSat * 255)) + ", \"bri\":" + to_string((int)(couleur.lightnessF() * 255)) + ", \"transitiontime\":" + to_string(transitionTime) + "}";
 	string URL = "http://" + PHILIPS_HUE_URL + ":" + to_string(PHILIPS_HUE_PORT) + "/api/" + PHILIPS_HUE_USERNAME + "/lights/" + to_string(lightNumber) + "/state";
-	qDebug() << body.c_str() << URL.c_str();
-	//request = new QNetworkRequest(QUrl(URL.c_str()));
+
+    //request = new QNetworkRequest(QUrl(URL.c_str()));
 	//request->setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 	netManager->put(QNetworkRequest(QUrl(URL.c_str())), body.c_str());
 

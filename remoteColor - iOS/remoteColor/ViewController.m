@@ -77,7 +77,7 @@ int concurrentAnims;
     
     [UIView animateWithDuration:allColors.count>1?1:0.5 delay:0 options:UIViewAnimationOptionAllowUserInteraction
                         animations:^{
-                            self.view.backgroundColor =[self colorWithHexString:[allColors objectAtIndex:i]];
+                            self.view.backgroundColor =[self colorWithHexString:allColors[i]];
                         }
                      completion:^(BOOL  completed){
                          i++;

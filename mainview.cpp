@@ -8,9 +8,11 @@
 #include <QEvent>
 
 QPointF oldPoint;
+bool ignoreNextEnd = false;
 
 MainView::MainView(MainScene* parent):QGraphicsView(parent)
 {
+    
     theScene = parent;
     
     oldPoint = QPointF(-1, -1);
@@ -50,24 +52,20 @@ bool MainView::viewportEvent(QEvent *event)
             oldPoint = (static_cast<QTouchEvent *>(event))->touchPoints().first().pos();
             return true;
         }
-        case QEvent::TouchEnd:
-        {
+        case QEvent::TouchUpdate:{
             
             QTouchEvent *touchEvent = static_cast<QTouchEvent *>(event);
             QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->touchPoints();
             QPointF newPoint = touchPoints.first().pos();
             
-            if(oldPoint.rx() < 0){
-                //wtf "TouchBegin" n'a jamais existé
-                return true;
-            }else{
-                int xDiff = oldPoint.rx() - newPoint.rx(), yDiff = oldPoint.ry() - newPoint.ry();
+            int xDiff = oldPoint.rx() - newPoint.rx(), yDiff = oldPoint.ry() - newPoint.ry();
+            
+            if(sqrt(pow(abs(xDiff),2)+pow(abs(yDiff),2)) > 80){
                 
-                if(sqrt(pow(abs(xDiff),2)+pow(abs(yDiff),2)) < 10){
-                    //IT'S A TAP!
-                    theScene->navSendM();
-                    return true;
-                }
+                ignoreNextEnd = true;
+                
+                //IT'S A SWIPE!
+                oldPoint = newPoint;
                 
                 if ((abs(xDiff)/abs(yDiff)) > 1) {
                     //horizontal swipe
@@ -91,6 +89,57 @@ bool MainView::viewportEvent(QEvent *event)
                         
                     }
                 }
+            }
+            
+            
+            return true;
+        }
+        case QEvent::TouchEnd:
+        {
+            if (ignoreNextEnd) {
+                ignoreNextEnd = false;
+                return true;
+            }
+            
+            QTouchEvent *touchEvent = static_cast<QTouchEvent *>(event);
+            QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->touchPoints();
+            QPointF newPoint = touchPoints.first().pos();
+            
+            if(oldPoint.rx() < 0){
+                //wtf "TouchBegin" n'a jamais existé
+                return true;
+            }else{
+                int xDiff = oldPoint.rx() - newPoint.rx(), yDiff = oldPoint.ry() - newPoint.ry();
+                
+                if(sqrt(pow(abs(xDiff),2)+pow(abs(yDiff),2)) < 10){
+                    //IT'S A TAP!
+                    theScene->navSendM();
+                    return true;
+                }
+                /*
+                if ((abs(xDiff)/abs(yDiff)) > 1) {
+                    //horizontal swipe
+                    if(xDiff > 0){
+                        //left
+                        theScene->navSendL();
+                    }else{
+                        //right
+                        theScene->navSendR();
+                        
+                    }
+                }else{
+                    //vertical swipe
+                    if(yDiff > 0){
+                        //down
+                        theScene->navSendR();
+                        
+                    }else{
+                        //up
+                        theScene->navSendL();
+                        
+                    }
+                }
+                 */
                 
             }
             return true;

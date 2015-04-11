@@ -55,6 +55,7 @@ public:
     void changeColorSetting(bool up);
     QImage& getImage();
     QPixmap* getPixmap();
+    QPixmap* getBlurredBackground();
 
     int getColorSetting();
     bool getInSettingsView();
@@ -84,6 +85,7 @@ protected:
     //QPixmap image;
     QImage *imageObject;
     QPixmap image;
+    QPixmap blurredBackground;
 };
 
 #endif // CARDITEM_H
