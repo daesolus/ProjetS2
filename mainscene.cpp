@@ -225,11 +225,6 @@ MainScene::MainScene()
 	timer->start(1000);
 
 }
-MainScene::~MainScene()
-{
-
-}
-
 #pragma mark - Audio
 
 void MainScene::loadSongs(){

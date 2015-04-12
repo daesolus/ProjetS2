@@ -32,10 +32,6 @@ CardItem::CardItem(float xPos, float yPos, float width, float height, string tex
     delete imageObject;
 }*/
 
-CardItem::~CardItem()
-{
-    
-}
 void CardItem::configure(const Preset *prst){
     
     colorSetting = 1;

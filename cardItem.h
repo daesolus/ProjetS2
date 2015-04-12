@@ -47,7 +47,6 @@ public:
         delete imageObject;
     }
 
-    ~CardItem();
     void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget);
     void setSelectedStyle(bool isSelected);
     void setInSettingsView(bool inSettingsView);

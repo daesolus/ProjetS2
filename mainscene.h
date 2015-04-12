@@ -19,7 +19,6 @@ class MainScene : public QGraphicsScene
     Q_OBJECT
 public:
     explicit MainScene();
-    ~MainScene();
     void keyPressEvent(QKeyEvent *event);
     void navSendR();
     void navSendL();

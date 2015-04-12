@@ -9,10 +9,6 @@
 #include "NavArrow.h"
 #include <QDebug>
 
-NavArrow::~NavArrow()
-{
-    
-}
 void NavArrow::setScale(qreal scale){
     qDebug() << "heylol";
     this->QGraphicsItem::setScale(scale);

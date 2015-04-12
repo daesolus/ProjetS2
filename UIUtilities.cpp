@@ -15,10 +15,6 @@ UIUtilities::UIUtilities(){
     opacityAnimation->setEasingCurve(positionAnimation->easingCurve());
 }
 
-UIUtilities::~UIUtilities(){
-    
-}
-
 void UIUtilities::centerInScreen(QGraphicsItem *item){
     
     //prend les dimensions de l'écran
