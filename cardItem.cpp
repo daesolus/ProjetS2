@@ -158,7 +158,7 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
 #ifdef __APPLE__
         QFont font("Helvetica Neue", 40);
 #else
-        QFont font("Calibri", 42,QFont::Normal,true);
+        QFont font("Calibri", 28,QFont::Normal,true);
 #endif
         
         font.setStyleName("Thin");
@@ -194,21 +194,29 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
         painter->setPen(QPen(Qt::white));
         painter->setOpacity(1.00);
         QPointF textCenter;
+
+
+		//SECTION Felix
+		float constanteDegueulasse1 = 5.95 / 7;
+		float constanteDegueulasse2 = 40 / 7;
+
+		
         switch (colorSetting) {
             case 1:
-                textCenter = QPointF(backTransRect2.x()+(backTransRect2.width()*5.95/7),backTransRect2.y()+(backTransRect2.height()/2)-(40/7));
+				//5.95/7
+				textCenter = QPointF(backTransRect2.x() + (backTransRect2.width()*constanteDegueulasse1), backTransRect2.y() + (backTransRect2.height() >> 1) - (constanteDegueulasse2));
                 drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«o»");
                 break;
                 
             case 2:
-                textCenter = QPointF(backTransRect1.x()+(backTransRect1.width()*5.95/7),backTransRect1.y()+(backTransRect1.height()/2)-(40/7));
+				textCenter = QPointF(backTransRect1.x() + (backTransRect1.width()*constanteDegueulasse1), backTransRect1.y() + (backTransRect1.height() >> 1) - (constanteDegueulasse2));
                 drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«u»");
-                textCenter = QPointF(backTransRect3.x()+(backTransRect3.width()*5.95/7),backTransRect3.y()+(backTransRect3.height()/2)-(40/7));
+				textCenter = QPointF(backTransRect3.x() + (backTransRect3.width()*constanteDegueulasse1), backTransRect3.y() + (backTransRect3.height() >> 1) - (constanteDegueulasse2));
                 drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«o»");
                 break;
                 
             case 3:
-                textCenter = QPointF(backTransRect2.x()+(backTransRect2.width()*5.95/7),backTransRect2.y()+(backTransRect2.height()/2)-(40/7));
+				textCenter = QPointF(backTransRect2.x() + (backTransRect2.width()*constanteDegueulasse1), backTransRect2.y() + (backTransRect2.height() >> 1) - (constanteDegueulasse2));
                 drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«u»");
                 break;
                 
