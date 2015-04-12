@@ -543,7 +543,7 @@ void MainScene::sendCurrentColorToServer()
 {
 
 	//envoye les couleurs du thème au serveur
-	string str = (manager->getPresetArray().at(currentSelection).color1) + "," +
+	string str = ( manager->getPresetArray().at(currentSelection).color1) + "," +
 		(manager->getPresetArray().at(currentSelection).color2) + "," +
 		(manager->getPresetArray().at(currentSelection).color3) + "," +
 		(manager->getPresetArray().at(currentSelection).color4);
