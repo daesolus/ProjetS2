@@ -23,7 +23,6 @@ class NavArrow : public QObject, public QGraphicsItem
 public:
     NavArrow() : QObject(), QGraphicsItem(){
     }
-    ~NavArrow();
     virtual void setScale(qreal scale);
 
 };

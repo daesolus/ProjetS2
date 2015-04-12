@@ -150,8 +150,3 @@ bool MainView::viewportEvent(QEvent *event)
     return QGraphicsView::viewportEvent(event);
 }
 
-MainView::~MainView()
-{
-
-}
-

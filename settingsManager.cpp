@@ -5,10 +5,6 @@ SettingsManager::SettingsManager(){
     presetArray = QList<Preset>();
 }
 
-SettingsManager::~SettingsManager(){
-    
-}
-
 void SettingsManager::readConfigFile(){
     
     //charge le fichier json

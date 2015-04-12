@@ -34,7 +34,6 @@ class SettingsManager //: public QGraphicsItem
 {
 public:
     SettingsManager();
-    ~SettingsManager();
     void readConfigFile();
     const QList<Preset> getPresetArray();
 private:
@@ -48,7 +47,6 @@ class Preset //: public QGraphicsItem
 {
 public:
     SettingsManager();
-    ~SettingsManager();
 private:
     
 };

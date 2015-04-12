@@ -12,7 +12,6 @@ class MainView : public QGraphicsView
 {
 public:
     MainView(MainScene*);
-    ~MainView();
 private:
     MainScene *theScene;
     

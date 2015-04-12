@@ -13,7 +13,6 @@ class UIUtilities
 {
 public:
     UIUtilities();
-    ~UIUtilities();
     void centerInScreen(QGraphicsItem *item);
     float getFullScreenPixelRatioForImage(QPixmap* image);
     QGraphicsItem* pixmapItemFromSvg(const char* svgTitle, QGraphicsScene *parentScene);
