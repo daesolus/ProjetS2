@@ -80,8 +80,8 @@ int main(int argc, char *argv[])
 		//rien. le défaut est parfait sur Mac
 #endif
 #else
-		view.setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
-		view.setFrameShape(QFrame::NoFrame);
+		view->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
+		view->setFrameShape(QFrame::NoFrame);
 #endif
 
 		//view.setTransform(m);
