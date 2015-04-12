@@ -12,11 +12,16 @@
 class UIUtilities
 {
 public:
-    //UIUtilities();
-    //~UIUtilities();
-    static void centerInScreen(QGraphicsItem *item);
-    static float getFullScreenPixelRatioForImage(QPixmap* image);
-    static QGraphicsItem* pixmapItemFromSvg(const char* svgTitle, QGraphicsScene *parentScene);
-    static void animateCard(CardItem* card, QPoint position, bool selected, bool visible, int ANIMATION_TIME_MS);
+    UIUtilities();
+    ~UIUtilities();
+    void centerInScreen(QGraphicsItem *item);
+    float getFullScreenPixelRatioForImage(QPixmap* image);
+    QGraphicsItem* pixmapItemFromSvg(const char* svgTitle, QGraphicsScene *parentScene);
+    void animateCard(CardItem* card, QPoint position, bool selected, bool visible, int ANIMATION_TIME_MS);
     //static void blurBackgroundItem(QGraphicsItem *backgroundItem, QPixmap *referencePixmap);
+    
+private:
+    QPropertyAnimation *opacityAnimation;
+    QPropertyAnimation *positionAnimation;
+    QPropertyAnimation *scaleAnimation;
 };

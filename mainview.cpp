@@ -67,7 +67,7 @@ bool MainView::viewportEvent(QEvent *event)
                 //IT'S A SWIPE!
                 oldPoint = newPoint;
                 
-                if ((abs(xDiff)/abs(yDiff)) > 1) {
+                if ((abs(xDiff)/(abs(yDiff)+1)) > 1) {
                     //horizontal swipe
                     if(xDiff > 0){
                         //left

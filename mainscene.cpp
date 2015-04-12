@@ -16,7 +16,7 @@
 
 QT_USE_NAMESPACE
 
-const int ANIMATION_TIME_MS = 300;
+const int ANIMATION_TIME_MS = 250;
 const int LIGHTS_ANIMATION_TIME = 5;
 string PHILIPS_HUE_URL = "10.0.1.34";//34
 string PHILIPS_HUE_USERNAME = "lapfelixlapfelixlapfelix";
@@ -37,6 +37,7 @@ QMediaPlaylist *playlist;
 QTimer *timer;
 QNetworkAccessManager *netManager;
 QNetworkRequest *request;
+UIUtilities *UIManager;
 
 QPoint backArrowOriginalPos;
 QPoint nextArrowOriginalPos;
@@ -52,6 +53,8 @@ cardProperties cardPos[5];
 MainScene::MainScene()
 {
 
+    UIManager = new UIUtilities();
+    
 	background = nullptr;
 
 	netManager = new QNetworkAccessManager(this);
@@ -148,8 +151,8 @@ MainScene::MainScene()
 
 	//charge les flèches back et next à partir du fichier svg
 
-	backArrow = (NavArrow*)UIUtilities::pixmapItemFromSvg(":arrowLine.svg", this);
-	nextArrow = (NavArrow*)UIUtilities::pixmapItemFromSvg(":arrowLine.svg", this);
+	backArrow = (NavArrow*)UIManager->pixmapItemFromSvg(":arrowLine.svg", this);
+	nextArrow = (NavArrow*)UIManager->pixmapItemFromSvg(":arrowLine.svg", this);
 	//rotate la flèche next
 	nextArrow->setRotation(180);
 	//centre les 2 items
@@ -191,23 +194,23 @@ MainScene::MainScene()
 
 		if (i < currentSelection - 1) {
 			//cache à gauche
-			UIUtilities::animateCard(allCards.at(i), QPoint(cardPos[0].x, cardPos[0].y), false, false, ANIMATION_TIME_MS);
+			UIManager->animateCard(allCards.at(i), QPoint(cardPos[0].x, cardPos[0].y), false, false, ANIMATION_TIME_MS);
 		}
 		else if (i == currentSelection - 1){
 			//place à gauche
-			UIUtilities::animateCard(allCards.at(i), QPoint(cardPos[1].x, cardPos[1].y), false, true, ANIMATION_TIME_MS);
+			UIManager->animateCard(allCards.at(i), QPoint(cardPos[1].x, cardPos[1].y), false, true, ANIMATION_TIME_MS);
 		}
 		else if (i == currentSelection){
 			//place au milieu
-			UIUtilities::animateCard(allCards.at(i), QPoint(cardPos[2].x, cardPos[2].y), true, true, ANIMATION_TIME_MS);
+			UIManager->animateCard(allCards.at(i), QPoint(cardPos[2].x, cardPos[2].y), true, true, ANIMATION_TIME_MS);
 		}
 		else if (i == currentSelection + 1){
 			//place à droite
-			UIUtilities::animateCard(allCards.at(i), QPoint(cardPos[3].x, cardPos[3].y), false, true, ANIMATION_TIME_MS);
+			UIManager->animateCard(allCards.at(i), QPoint(cardPos[3].x, cardPos[3].y), false, true, ANIMATION_TIME_MS);
 		}
 		else if (i > currentSelection + 1){
 			//cache à droite
-			UIUtilities::animateCard(allCards.at(i), QPoint(cardPos[4].x, cardPos[4].y), false, false, ANIMATION_TIME_MS);
+			UIManager->animateCard(allCards.at(i), QPoint(cardPos[4].x, cardPos[4].y), false, false, ANIMATION_TIME_MS);
 		}
 	}
     
@@ -307,12 +310,12 @@ void MainScene::refreshBackground(){
 
 	//le met en arrière plan
 	background->setZValue(-1);
-	background->setScale(UIUtilities::getFullScreenPixelRatioForImage(&*allCards.at(currentSelection)->getBlurredBackground())*qApp->devicePixelRatio());
-	//image.setDevicePixelRatio(UIUtilities::getFullScreenPixelRatioForImage(&image)*3);
+	background->setScale(UIManager->getFullScreenPixelRatioForImage(&*allCards.at(currentSelection)->getBlurredBackground())*qApp->devicePixelRatio());
+	//image.setDevicePixelRatio(UIManager->getFullScreenPixelRatioForImage(&image)*3);
 	//aspect fill l'écran
 
 	//rend l'arrière plan flou et cool
-	//UIUtilities::blurBackgroundItem(background, &image);
+	//UIManager->blurBackgroundItem(background, &image);
 
 #if TARGET_OS_IPHONE
 	//return;
@@ -333,35 +336,35 @@ void MainScene::refreshCurrentCards(){
 	int lastPosition = manager->getPresetArray().count() - 1;
 	
 	//cache à gauche
-
-	if (currentSelection - 2 == -2)
-		UIUtilities::animateCard(allCards.at(lastPosition - 1), QPoint(cardPos[0].x, cardPos[0].y), false, false, ANIMATION_TIME_MS);
+	if (currentSelection == 0)
+		UIManager->animateCard(allCards.at(lastPosition - 1), QPoint(cardPos[0].x, cardPos[0].y), false, false, ANIMATION_TIME_MS);
 	else if (currentSelection - 2 == -1)
-		UIUtilities::animateCard(allCards.at(lastPosition), QPoint(cardPos[0].x, cardPos[0].y), false, false, ANIMATION_TIME_MS);
+		UIManager->animateCard(allCards.at(lastPosition), QPoint(cardPos[0].x, cardPos[0].y), false, false, ANIMATION_TIME_MS);
 	else
-		UIUtilities::animateCard(allCards.at(currentSelection - 2), QPoint(cardPos[0].x, cardPos[0].y), false, false, ANIMATION_TIME_MS);
+		UIManager->animateCard(allCards.at(currentSelection - 2), QPoint(cardPos[0].x, cardPos[0].y), false, false, ANIMATION_TIME_MS);
+    
 	//place à gauche
-	if (currentSelection - 1 == -1)
-		UIUtilities::animateCard(allCards.at(lastPosition), QPoint(cardPos[1].x, cardPos[1].y), false, true, ANIMATION_TIME_MS);
+	if (currentSelection == 0)
+		UIManager->animateCard(allCards.at(lastPosition), QPoint(cardPos[1].x, cardPos[1].y), false, true, ANIMATION_TIME_MS);
 	else
-		UIUtilities::animateCard(allCards.at(currentSelection - 1), QPoint(cardPos[1].x, cardPos[1].y), false, true, ANIMATION_TIME_MS);
+		UIManager->animateCard(allCards.at(currentSelection - 1), QPoint(cardPos[1].x, cardPos[1].y), false, true, ANIMATION_TIME_MS);
 
 	//place au milieu
-	UIUtilities::animateCard(allCards.at(currentSelection), QPoint(cardPos[2].x, cardPos[2].y), true, true, ANIMATION_TIME_MS);
+	UIManager->animateCard(allCards.at(currentSelection), QPoint(cardPos[2].x, cardPos[2].y), true, true, ANIMATION_TIME_MS);
 
 	//place à droite
 	if (currentSelection + 1 == lastPosition + 1)
-		UIUtilities::animateCard(allCards.at(0), QPoint(cardPos[3].x, cardPos[3].y), false, true, ANIMATION_TIME_MS);
+		UIManager->animateCard(allCards.at(0), QPoint(cardPos[3].x, cardPos[3].y), false, true, ANIMATION_TIME_MS);
 	else
-		UIUtilities::animateCard(allCards.at(currentSelection + 1), QPoint(cardPos[3].x, cardPos[3].y), false, true, ANIMATION_TIME_MS);
+		UIManager->animateCard(allCards.at(currentSelection + 1), QPoint(cardPos[3].x, cardPos[3].y), false, true, ANIMATION_TIME_MS);
 
 	//cache à droite
 	if (currentSelection + 2 == lastPosition + 2)
-		UIUtilities::animateCard(allCards.at(1), QPoint(cardPos[4].x, cardPos[4].y), false, false, ANIMATION_TIME_MS);
+		UIManager->animateCard(allCards.at(1), QPoint(cardPos[4].x, cardPos[4].y), false, false, ANIMATION_TIME_MS);
 	else if (currentSelection + 2 == lastPosition + 1)
-		UIUtilities::animateCard(allCards.at(0), QPoint(cardPos[4].x, cardPos[4].y), false, false, ANIMATION_TIME_MS);
+		UIManager->animateCard(allCards.at(0), QPoint(cardPos[4].x, cardPos[4].y), false, false, ANIMATION_TIME_MS);
 	else
-		UIUtilities::animateCard(allCards.at(currentSelection + 2), QPoint(cardPos[4].x, cardPos[4].y), false, false, ANIMATION_TIME_MS);
+		UIManager->animateCard(allCards.at(currentSelection + 2), QPoint(cardPos[4].x, cardPos[4].y), false, false, ANIMATION_TIME_MS);
     
     
 	refreshBackground();
@@ -629,6 +632,7 @@ void MainScene::updateHue()
 
 	switch (thisCard->getColorSetting()) {
 	case 1:
+            timer->setInterval(1000);
 		//smooth
 		sendColorToPhilipsHue(((colorCycle + 0) % 4) + 1, (thisPreset->color1).c_str(), LIGHTS_ANIMATION_TIME);
 		sendColorToPhilipsHue(((colorCycle + 1) % 4) + 1, (thisPreset->color2).c_str(), LIGHTS_ANIMATION_TIME);
@@ -637,17 +641,23 @@ void MainScene::updateHue()
 
 		break;
 	case 2:
-		//smooth
+		//hard
+            
+            
+            sendColorToPhilipsHue(((colorCycle + 0) % 4) + 1, (thisPreset->color1).c_str(), 0);
+            sendColorToPhilipsHue(((colorCycle + 1) % 4) + 1, (thisPreset->color2).c_str(), 0);
+            sendColorToPhilipsHue(((colorCycle + 2) % 4) + 1, (thisPreset->color3).c_str(), 0);
+           // sendColorToPhilipsHue(((colorCycle + 3) % 4) + 1, (thisPreset->color4).c_str(), LIGHTS_ANIMATION_TIME);
+            /*
 		sendColorToPhilipsHue(((colorCycle + 0) % 4) + 1, (thisPreset->color1).c_str(), 0);
 		sendColorToPhilipsHue(((colorCycle + 1) % 4) + 1, (thisPreset->color2).c_str(), 0);
 		sendColorToPhilipsHue(((colorCycle + 2) % 4) + 1, (thisPreset->color3).c_str(), 0);
 		sendColorToPhilipsHue(((colorCycle + 3) % 4) + 1, (thisPreset->color4).c_str(), 0);
-
+*/
 
 		break;
 	case 3:
 		//single color
-		//smooth
 		sendColorToPhilipsHue(((0) % 4) + 1, (thisPreset->color1).c_str(), LIGHTS_ANIMATION_TIME);
 		sendColorToPhilipsHue(((1) % 4) + 1, (thisPreset->color2).c_str(), LIGHTS_ANIMATION_TIME);
 		sendColorToPhilipsHue(((2) % 4) + 1, (thisPreset->color3).c_str(), LIGHTS_ANIMATION_TIME);

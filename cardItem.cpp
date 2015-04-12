@@ -66,7 +66,7 @@ void CardItem::configure(const Preset *prst){
     blurredBackground.fill(Qt::transparent);
     {
         QPainter painter(&blurredBackground);
-        qt_blurImage(&painter, *imageObject, 200 * ((float)image.height()*(float)image.width() / 1000000) / qApp->devicePixelRatio(), false, false);//blur radius: 2px
+        qt_blurImage(&painter, *imageObject, 1000 * ((float)image.height()*(float)image.width() / 1000000.f) / qApp->devicePixelRatio(), true, false);//blur radius: 2px
     }
     
     //delete imageObject;
@@ -97,16 +97,13 @@ void CardItem::drawText(QPainter & painter, const QPointF & point, int flags,
 }
 void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget){
     
-    //active l'antialising si l'OS est Mac OS X
-/*#ifdef __APPLE__
-    painter->setRenderHint(QPainter::HighQualityAntialiasing);
-    painter->setRenderHint(QPainter::SmoothPixmapTransform);
-    painter->setRenderHint(QPainter::TextAntialiasing);
-#endif
- */
+    painter->setRenderHint(QPainter::Antialiasing, true);
+    painter->setRenderHint(QPainter::HighQualityAntialiasing, true);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
+    painter->setRenderHint(QPainter::TextAntialiasing, true);
     
     float cornerRadius = 20.f;
-
+    
     QColor transparentWhite = QColor(255, 255, 255);
     
     //constante alpha pour que l'animation fonctionne selon le scale lors du repaint
@@ -121,7 +118,7 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
         painter->setBrush(QBrush(QColor("#111111")));
         painter->setOpacity(0.6);
     }
-
+    
     if(this->boundingRect().width() > this->boundingRect().height())
         painter->drawRoundRect( this->boundingRect().x(), this->boundingRect().y(), this->boundingRect().width(), this->boundingRect().height(), cornerRadius, cornerRadius*(this->boundingRect().width()/this->boundingRect().height()));
     else
@@ -134,6 +131,7 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
     
     //QFont font("Helvetica Neue", 52);
     if(!hideContent){
+        
         QString police = "Calibri";
     #ifdef __APPLE__
         police = "Helvetica Neue";
@@ -156,14 +154,67 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
         painter->drawPixmap(QRect(this->boundingRect().x()+(this->boundingRect().width()/2)-(width/2), 30, width, height), image, QRect((smallestDimension-width)/4, 0, smallestDimension, smallestDimension));
     }else{
         //les bebelles de settings
-    
-        float colorPresetWidth = 330;
-        float colorPresetHeight = 53;
-        cornerRadius = 10;
         
-        QRect transRect1 = QRect(this->boundingRect().x()+38, this->boundingRect().y()+113, colorPresetWidth, colorPresetHeight);
-        QRect transRect2 = QRect(this->boundingRect().x()+38, this->boundingRect().y()+113+105, colorPresetWidth, colorPresetHeight);
-        QRect transRect3 = QRect(this->boundingRect().x()+38, this->boundingRect().y()+113+105+105, colorPresetWidth, colorPresetHeight);
+#ifdef __APPLE__
+        QFont font("Helvetica Neue", 40);
+#else
+        QFont font("Calibri", 42,QFont::Normal,true);
+#endif
+        
+        font.setStyleName("Thin");
+        painter->setFont(font);
+        
+        float colorPresetWidth = 280;
+        float colorPresetHeight = 90;
+        float firstY = 100;
+        float distanceBetween = 30;
+        cornerRadius = 15;
+        QRect transRect1 = QRect(this->boundingRect().x()+27, this->boundingRect().y()+firstY, colorPresetWidth, colorPresetHeight);
+        QRect transRect2 = QRect(this->boundingRect().x()+27, this->boundingRect().y()+firstY+(distanceBetween+colorPresetHeight), colorPresetWidth, colorPresetHeight);
+        QRect transRect3 = QRect(this->boundingRect().x()+27, this->boundingRect().y()+firstY+((distanceBetween+colorPresetHeight)*2), colorPresetWidth, colorPresetHeight);
+        QRect backTransRect1 = QRect(this->boundingRect().x()+27+78, this->boundingRect().y()+firstY, colorPresetWidth, colorPresetHeight);
+        QRect backTransRect2 = QRect(this->boundingRect().x()+27+78, this->boundingRect().y()+firstY+(distanceBetween+colorPresetHeight), colorPresetWidth, colorPresetHeight);
+        QRect backTransRect3 = QRect(this->boundingRect().x()+27+78, this->boundingRect().y()+firstY+((distanceBetween+colorPresetHeight)*2), colorPresetWidth, colorPresetHeight);
+        
+        painter->setPen(QPen(QBrush(Qt::transparent),1));
+        painter->setBrush(QBrush(Qt::white));
+        painter->setOpacity(0.44);
+        
+        float backCornerRadius = cornerRadius*2.5;
+        if (colorSetting != 2)
+            painter->drawRoundRect( backTransRect2, backCornerRadius, backCornerRadius*(colorPresetWidth/colorPresetHeight));
+        if (colorSetting == 2){
+            painter->drawRoundRect( backTransRect1, backCornerRadius, backCornerRadius*(colorPresetWidth/colorPresetHeight));
+            painter->drawRoundRect( backTransRect3, backCornerRadius, backCornerRadius*(colorPresetWidth/colorPresetHeight));
+        }
+        
+        painter->setOpacity(1.0);
+        
+        //dessine le "o"
+        painter->setPen(QPen(Qt::white));
+        painter->setOpacity(1.00);
+        QPointF textCenter;
+        switch (colorSetting) {
+            case 1:
+                textCenter = QPointF(backTransRect2.x()+(backTransRect2.width()*5.95/7),backTransRect2.y()+(backTransRect2.height()/2)-(40/7));
+                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«o»");
+                break;
+                
+            case 2:
+                textCenter = QPointF(backTransRect1.x()+(backTransRect1.width()*5.95/7),backTransRect1.y()+(backTransRect1.height()/2)-(40/7));
+                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«u»");
+                textCenter = QPointF(backTransRect3.x()+(backTransRect3.width()*5.95/7),backTransRect3.y()+(backTransRect3.height()/2)-(40/7));
+                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«o»");
+                break;
+                
+            case 3:
+                textCenter = QPointF(backTransRect2.x()+(backTransRect2.width()*5.95/7),backTransRect2.y()+(backTransRect2.height()/2)-(40/7));
+                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«u»");
+                break;
+                
+            default:
+                break;
+        }
         
         QLinearGradient gradient = QLinearGradient(QPoint(transRect1.x(),transRect1.y()),QPoint(transRect1.x()+transRect1.width(), transRect1.y()));
         
@@ -177,7 +228,7 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
         if(colorSetting == 1)
             painter->setPen(QPen(QBrush(Qt::white),10));
         else
-            painter->setPen(QPen(QBrush(Qt::white),1));
+            painter->setPen(QPen(QBrush(Qt::transparent),2));
         
         //if(this->boundingRect().width() > this->boundingRect().height())
         painter->drawRoundRect( transRect1, cornerRadius, cornerRadius*(colorPresetWidth/colorPresetHeight));
@@ -195,7 +246,7 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
         if(colorSetting == 2)
             painter->setPen(QPen(QBrush(Qt::white),10));
         else
-            painter->setPen(QPen(QBrush(Qt::white),1));
+            painter->setPen(QPen(QBrush(Qt::transparent),2));
         
         painter->drawRoundRect( transRect2, cornerRadius, cornerRadius*(colorPresetWidth/colorPresetHeight));
         
@@ -205,17 +256,42 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
         if(colorSetting == 3)
             painter->setPen(QPen(QBrush(Qt::white),10));
         else
-            painter->setPen(QPen(QBrush(Qt::white),1));
+            painter->setPen(QPen(QBrush(Qt::transparent),2));
         
         painter->drawRoundRect( transRect3, cornerRadius, cornerRadius*(colorPresetWidth/colorPresetHeight));
-        /*
+        
+        /*------------------------------*/
+        
         painter->setBrush(QBrush("#FFFFFF"));
+        painter->setOpacity(0.44);
+        painter->setPen(QPen(QBrush(Qt::transparent),1));
+        cornerRadius = 42    ;
+        QRect exitRect = QRect(this->boundingRect().x()+14, this->boundingRect().y()+14, 146, 60);
+        painter->drawRoundRect( exitRect, cornerRadius, cornerRadius*(146.f/60.f));
+
+        painter->setBrush(QBrush("#000000"));
         painter->setOpacity(0.76);
         
-        float diameter = 25;
-        painter->setPen(QPen(QBrush(Qt::white),10));
-        painter->drawEllipse(this->boundingRect().x()-30, this->boundingRect().y()-30, diameter*2, diameter*2);
-        */
+        float diameter = 27;
+        //painter->setPen(QPen(QBrush(Qt::white),10));
+        painter->drawEllipse(exitRect.x()+4, exitRect.y()+3, diameter*2, diameter*2);
+        
+        /*------------------------------*/
+        
+    
+        //dessine le "a"
+        painter->setPen(QPen(Qt::white));
+        painter->setOpacity(1.00);
+        textCenter = QPointF(exitRect.x()+(exitRect.width()*2/3),exitRect.y()+(exitRect.height()/2)-(40/7));
+        drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«a»");
+        
+        //dessine le X
+        font.setPointSize(35);
+        painter->setPen(QPen(Qt::white));
+        painter->setOpacity(0.73);
+        textCenter = QPointF(exitRect.x()+(exitRect.width()*3/14),exitRect.y()+(exitRect.height()/2));//+(40/4));
+        drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "X");
+        
     }
     
     
