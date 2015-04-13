@@ -65,6 +65,8 @@ int concurrentAnims;
 - (void)webSocket:(PSWebSocket*)webSocket didReceiveMessage:(id)message
 {
     i = 1;
+    [UIView setAnimationsEnabled:NO];
+    [UIView setAnimationsEnabled:YES];
     
     if ([((NSString*)message) characterAtIndex:0] == '!') {
         return;
@@ -85,7 +87,7 @@ int concurrentAnims;
 -(void)animateAllColors{
     concurrentAnims++;
     
-    [UIView animateWithDuration:allColors.count>1?((animationType == 2)?0:1):0.5 delay:(animationType == 2)?1:0 options:UIViewAnimationOptionAllowUserInteraction
+    [UIView animateWithDuration:allColors.count>1?((animationType == 1)?1:0):0.5 delay:(animationType == 1)?0:1 options:UIViewAnimationOptionAllowUserInteraction
      
                         animations:^{
                             self.view.backgroundColor =[self colorWithHexString:allColors[i]];
@@ -97,7 +99,7 @@ int concurrentAnims;
                              i = 1;
                          
                          concurrentAnims--;
-                         if(concurrentAnims < 1)
+                         if(concurrentAnims < 1 && animationType!=3)
                              [self animateAllColors];
                      }];
 }
