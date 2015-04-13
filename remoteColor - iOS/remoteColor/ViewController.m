@@ -75,7 +75,7 @@ int concurrentAnims;
         if(animationType == 3)
             allColors = [NSMutableArray arrayWithObjects:
                          [allColors objectAtIndex:0],
-                         [allColors objectAtIndex:1],
+                         [allColors objectAtIndex:(1+(arc4random() % (allColors.count-2)))],
                          nil];
         [self animateAllColors];
     });
