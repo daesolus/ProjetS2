@@ -119,7 +119,7 @@ MainScene::MainScene()
 	//lis les reglages
 	manager = new SettingsManager();
 	manager->readConfigFile();
-
+    
 	//loadSongs();
 	/*
 	#ifdef __APPLE__
@@ -144,7 +144,7 @@ MainScene::MainScene()
 //#endif
 
 	//nouveau seed pour que les fonctions aléatoires soient réellement aléatoires
-	srand(time(NULL));
+	//srand(time(NULL));
 
 	//set la taille de la scène pour que ca soit plein écran
 	this->setSceneRect(0, 0, screenWidth, screenHeight);
@@ -166,14 +166,14 @@ MainScene::MainScene()
 	nextArrowOriginalPos = QPoint(nextArrow->pos().x(), nextArrow->pos().y());
 
 	//////////////////////////////////////////////////
-	QPointF textCenter;
+    /*
+     
+     QPointF textCenter;
 	textCenter = QPointF(backArrow->pos().x(), backTransRect2.y() + (backTransRect2.height() / 2) - (40 / 7));
 	drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«o»");
-
-
-
-
-
+    
+     */
+    
 	float cardWidth = 406;
 	float cardHeight = 466;
 	float cardSmallScale = 0.8;
@@ -224,6 +224,23 @@ MainScene::MainScene()
 	}
     
     refreshBackground();
+    
+    //affiche les phonemes
+    PhonemeItem *phonemeA = new PhonemeItem();
+    PhonemeItem *phonemeO = new PhonemeItem();
+    PhonemeItem *phonemeU = new PhonemeItem();
+    
+    this->addItem(phonemeA);
+    this->addItem(phonemeO);
+    this->addItem(phonemeU);
+    
+    UIManager->centerInScreen(phonemeA);
+    UIManager->centerInScreen(phonemeO);
+    UIManager->centerInScreen(phonemeU);
+    
+    phonemeA->moveBy(0,-420);
+    phonemeO->moveBy(-370,-400);
+    phonemeU->moveBy(370,-400);
     
 	//rafraichis et configure les cartes
 	//refreshCurrentCards();
@@ -375,7 +392,8 @@ void MainScene::refreshCurrentCards(){
 }
 
 //navigue par en arrière si possible
-void MainScene::navBack(){
+void MainScene::navBack(bool shouldSendColor){
+    
     
     if (!allCards.at(currentSelection)->getInSettingsView()){
         if (currentSelection == 0)
@@ -404,7 +422,6 @@ void MainScene::navBack(){
            
            //et rafraichis les cartes
             refreshCurrentCards();
-           sendCurrentColorToServer();
        }
     else{
         //on est en settings view, fuck off
@@ -413,8 +430,13 @@ void MainScene::navBack(){
         thisCard->changeColorSetting(false);
     }
     
+    if(shouldSendColor)
+        sendCurrentColorToServer();
+    
 }
-void MainScene::navForward(){
+void MainScene::navForward(bool shouldSendColor){
+    
+    
 	if (!allCards.at(currentSelection)->getInSettingsView()){
 		if (currentSelection + 1 == manager->getPresetArray().count())
 			currentSelection = 0;
@@ -431,8 +453,8 @@ void MainScene::navForward(){
         }
 //#endif
 		refreshCurrentCards();
-		sendCurrentColorToServer();
-	}
+    
+    }
 	else{
 		//on est en settings view, fuck off
 		//go up
@@ -440,9 +462,12 @@ void MainScene::navForward(){
 		thisCard->changeColorSetting(true);
 
 	}
+    
+    if(shouldSendColor)
+        sendCurrentColorToServer();
 }
 
-void MainScene::navSelect(){
+void MainScene::navSelect(bool shouldSendColor){
 	CardItem *currentCard = allCards.at(currentSelection);
 
 	/*
@@ -527,22 +552,23 @@ void MainScene::keyPressEvent(QKeyEvent *event)
 void MainScene::navSendR(){
     m_webSocket->sendTextMessage("!r");
     rcount++;
-    navBack();
+    navBack(true);
 }
 void MainScene::navSendL(){
     m_webSocket->sendTextMessage("!l");
     lcount++;
-    navForward();
+    navForward(true);
 }
 void MainScene::navSendM(){
     m_webSocket->sendTextMessage("!m");
     mcount++;
-    navSelect();
+    navSelect(true);
 }
 #pragma mark - WebSocket
 
 void MainScene::sendColorToServer(string hexColor){
 
+    qDebug() << "Sending this:" << hexColor.c_str();
 	if (m_webSocket->state() == QAbstractSocket::ConnectedState){
 		m_webSocket->sendTextMessage(QString(hexColor.c_str()));
 	}
@@ -552,7 +578,7 @@ void MainScene::sendCurrentColorToServer()
 {
 
 	//envoye les couleurs du thème au serveur
-	string str = ( manager->getPresetArray().at(currentSelection).color1) + "," +
+	string str = (to_string(allCards.at(currentSelection)->getColorSetting()) + "," + manager->getPresetArray().at(currentSelection).color1) + "," +
 		(manager->getPresetArray().at(currentSelection).color2) + "," +
 		(manager->getPresetArray().at(currentSelection).color3) + "," +
 		(manager->getPresetArray().at(currentSelection).color4);
@@ -574,21 +600,21 @@ void MainScene::wsMessageReceived(QString text){
 
 		case 'r':
 			if (rcount == 0)
-				navBack();
+				navBack(false);
 			else
 				rcount--;
 			break;
 
 		case 'l':
 			if (lcount == 0)
-				navForward();
+				navForward(false);
 			else
 				lcount--;
 			break;
 
 		case 'm':
 			if (mcount == 0)
-				navSelect();
+				navSelect(false);
 			else
 				mcount--;
 			break;
@@ -623,7 +649,7 @@ void MainScene::onDisconnect(){
 
 void MainScene::updateHue()
 {
-	qDebug() << (colorCycle % 2 ? "tic" : "toc");
+	//qDebug() << (colorCycle % 2 ? "tic" : "toc");
 	//colorCycle de 0 à 3 constamment
 	colorCycle++;
 	if (colorCycle == 4) {

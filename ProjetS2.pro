@@ -16,6 +16,7 @@ TARGET = ProjetS2
 
 SOURCES += main.cpp\
     mainview.cpp \
+    PhonemeItem.cpp \
     mainscene.cpp \
     NavArrow.cpp \
     UIUtilities.cpp \
@@ -29,7 +30,8 @@ HEADERS  += \
     UIUtilities.h \
     cardItem.h \
     settingsManager.h \
-    JsonException.h
+    JsonException.h \
+    PhonemeItem.h
 
 FORMS    += mainwindow.ui
 

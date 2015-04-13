@@ -15,6 +15,7 @@
 @implementation ViewController
 NSMutableArray *allColors;
 int i;
+int animationType;
 int concurrentAnims;
 - (void)viewDidLoad
 {
@@ -37,7 +38,8 @@ int concurrentAnims;
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tap:)];
     [self.view addGestureRecognizer:tap];
     
-    i = 0;
+    i = 1;
+    animationType = 1;
     concurrentAnims = 0;
 
     // Do any additional setup after loading the view, typically from a nib.
@@ -69,20 +71,29 @@ int concurrentAnims;
     NSLog(@"The websocket received a message: %@", message);
     dispatch_async(dispatch_get_main_queue(), ^{
         allColors = [[message componentsSeparatedByString:@","] mutableCopy];
+        animationType = [[allColors objectAtIndex:0] intValue];
+        if(animationType == 3)
+            allColors = [NSMutableArray arrayWithObjects:
+                         [allColors objectAtIndex:0],
+                         [allColors objectAtIndex:1],
+                         nil];
         [self animateAllColors];
     });
 }
 -(void)animateAllColors{
     concurrentAnims++;
     
-    [UIView animateWithDuration:allColors.count>1?1:0.5 delay:0 options:UIViewAnimationOptionAllowUserInteraction
+    [UIView animateWithDuration:allColors.count>1?((animationType == 2)?0:1):0.5 delay:(animationType == 2)?1:0 options:UIViewAnimationOptionAllowUserInteraction
+     
                         animations:^{
                             self.view.backgroundColor =[self colorWithHexString:allColors[i]];
                         }
+     
                      completion:^(BOOL  completed){
                          i++;
                          if(i == allColors.count)
-                             i = 0;
+                             i = 1;
+                         
                          concurrentAnims--;
                          if(concurrentAnims < 1)
                              [self animateAllColors];

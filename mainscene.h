@@ -13,6 +13,7 @@
 #include <QMediaPlaylist>
 #include <QtWebSockets>
 #include "NavArrow.h"
+#include "PhonemeItem.h"
 
 class MainScene : public QGraphicsScene
 {
@@ -32,9 +33,9 @@ private Q_SLOTS:
 
 private:
     
-    void navBack();
-    void navForward();
-    void navSelect();
+    void navBack(bool shouldSendColor);
+    void navForward(bool shouldSendColor);
+    void navSelect(bool shouldSendColor);
     void refreshCurrentCards();
 	void refreshBackground();
     void loadSongs();
