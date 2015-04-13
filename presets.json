@@ -143,6 +143,18 @@
             "imgpath": ":Psychedelic.jpg",
             "musicpath": "Psychedelic.mp3",
             "name": "Psychedelic"
+        },
+        {
+            "colors": [
+                "#E84D86",
+                "#C767BC",
+                "#CAF25A",
+                "#F5A773",
+                "#FFFFFF"
+            ],
+            "imgpath": ":Moustache.png",
+            "musicpath": "Moustache.mp3",
+            "name": "Moustache"
         }
     ]
 }

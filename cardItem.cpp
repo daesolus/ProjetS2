@@ -137,7 +137,7 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
     //QFont font("Helvetica Neue", 52);
     if(!hideContent){
         
-        
+        painter->setOpacity(this->opacity());
         
 #ifdef __APPLE__
         QFont font("Helvetica Neue", 52);
