@@ -53,8 +53,8 @@ cardProperties cardPos[5];
 MainScene::MainScene()
 {
 
-    UIManager = new UIUtilities();
-    
+	UIManager = new UIUtilities();
+
 	background = nullptr;
 
 	netManager = new QNetworkAccessManager(this);
@@ -73,12 +73,12 @@ MainScene::MainScene()
 	float heightConstant = 1;
 	//qDebug() << "hellol" << (float)rec.height() / (float)rec.width();
 #if TARGET_OS_IPHONE
-	if( (float)rec.height()/(float)rec.width() == 0.75 )
+	if ((float)rec.height() / (float)rec.width() == 0.75)
 		//c'est un iPad
 		heightConstant = 1.23;
 	else
 		heightConstant = 3.4;
-	float screenWidth =  1440;
+	float screenWidth = 1440;
 #else
 	float screenWidth = rec.width();
 #endif
@@ -136,15 +136,15 @@ MainScene::MainScene()
 	loadSongs();
 	#endif
 	*/
-//#if TARGET_OS_IPHONE
+	//#if TARGET_OS_IPHONE
 	//nothing
-//#else
-    if(ENABLE_SOUND)
-        loadSongs();
-//#endif
+	//#else
+	if (ENABLE_SOUND)
+		loadSongs();
+	//#endif
 
 	//nouveau seed pour que les fonctions aléatoires soient réellement aléatoires
-	srand(time(NULL));
+	//srand(time(NULL));
 
 	//set la taille de la scène pour que ca soit plein écran
 	this->setSceneRect(0, 0, screenWidth, screenHeight);
@@ -213,9 +213,26 @@ MainScene::MainScene()
 			UIManager->animateCard(allCards.at(i), QPoint(cardPos[4].x, cardPos[4].y), false, false, ANIMATION_TIME_MS);
 		}
 	}
-    
-    refreshBackground();
-    
+
+	refreshBackground();
+
+	//affiche les phonemes
+	PhonemeItem *phonemeA = new PhonemeItem();
+	PhonemeItem *phonemeO = new PhonemeItem();
+	PhonemeItem *phonemeU = new PhonemeItem();
+
+	this->addItem(phonemeA);
+	this->addItem(phonemeO);
+	this->addItem(phonemeU);
+
+	UIManager->centerInScreen(phonemeA);
+	UIManager->centerInScreen(phonemeO);
+	UIManager->centerInScreen(phonemeU);
+
+	phonemeA->moveBy(0, -420);
+	phonemeO->moveBy(-370, -400);
+	phonemeU->moveBy(370, -400);
+
 	//rafraichis et configure les cartes
 	//refreshCurrentCards();
 
@@ -241,17 +258,17 @@ void MainScene::loadSongs(){
 	//navigue au bon dossier
 	QDir dir = QDir(QCoreApplication::applicationDirPath());
 #if !TARGET_OS_IPHONE
-    dir.cdUp();
-    dir.cdUp();
-    dir.cdUp();
-    dir.cdUp();
+	dir.cdUp();
+	dir.cdUp();
+	dir.cdUp();
+	dir.cdUp();
 #endif
 
 	//prend chaque musique pour chaque preset
 	for (int i = 0; i < manager->getPresetArray().count(); i++) {
 
 #ifdef __APPLE__
-		playlist->addMedia(QUrl::fromLocalFile(dir.path() + "/" +manager->getPresetArray().at(i).musicPath.c_str()));
+		playlist->addMedia(QUrl::fromLocalFile(dir.path() + "/" + manager->getPresetArray().at(i).musicPath.c_str()));
 		//playlist->addMedia(QUrl::fromLocalFile(manager->getPresetArray().at(i).musicPath.c_str()));
 
 #else
@@ -270,7 +287,7 @@ void MainScene::loadSongs(){
 #pragma mark - Cartes/Navigation
 
 void MainScene::refreshBackground(){
-    /*
+	/*
 	//affichage de l'arrière plan
 	imageObject = QImage();
 	imageObject.load(manager->getPresetArray().at(currentSelection).imgPath.c_str());
@@ -281,21 +298,21 @@ void MainScene::refreshBackground(){
 	image = QPixmap(imageObject.size()*qApp->devicePixelRatio());
 	image.fill(Qt::transparent);
 	{
-		QPainter painter(&image);
-		qt_blurImage(&painter, imageObject, 200 * ((float)image.height()*(float)image.width() / 1000000) / qApp->devicePixelRatio(), false, false);//blur radius: 2px
+	QPainter painter(&image);
+	qt_blurImage(&painter, imageObject, 200 * ((float)image.height()*(float)image.width() / 1000000) / qApp->devicePixelRatio(), false, false);//blur radius: 2px
 	}
-     */
-    
+	*/
+
 	//this->removeItem(background);
 
 	//if (background)
 	//	delete background;
 
 	//background = nullptr;
-	if(background == NULL)
-        background = this->addPixmap(*allCards.at(currentSelection)->getBlurredBackground());
-    else
-        background->setPixmap(*allCards.at(currentSelection)->getBlurredBackground());
+	if (background == NULL)
+		background = this->addPixmap(*allCards.at(currentSelection)->getBlurredBackground());
+	else
+		background->setPixmap(*allCards.at(currentSelection)->getBlurredBackground());
 
 	//#if TARGET_OS_IPHONE
 	background->setOpacity(0.7);
@@ -315,12 +332,12 @@ void MainScene::refreshBackground(){
 #if TARGET_OS_IPHONE
 	//return;
 #endif
-    
-    //change de musique et la joue
-    if (ENABLE_SOUND){
-        playlist->setCurrentIndex(currentSelection);
+
+	//change de musique et la joue
+	if (ENABLE_SOUND){
+		playlist->setCurrentIndex(currentSelection);
 		player->play();
-    }
+	}
 
 }
 
@@ -329,7 +346,7 @@ void MainScene::refreshCurrentCards(){
 	//get the new positions
 	//cache à gauche
 	int lastPosition = manager->getPresetArray().count() - 1;
-	
+
 	//cache à gauche
 	if (currentSelection == 0)
 		UIManager->animateCard(allCards.at(lastPosition - 1), QPoint(cardPos[0].x, cardPos[0].y), false, false, ANIMATION_TIME_MS);
@@ -337,7 +354,7 @@ void MainScene::refreshCurrentCards(){
 		UIManager->animateCard(allCards.at(lastPosition), QPoint(cardPos[0].x, cardPos[0].y), false, false, ANIMATION_TIME_MS);
 	else
 		UIManager->animateCard(allCards.at(currentSelection - 2), QPoint(cardPos[0].x, cardPos[0].y), false, false, ANIMATION_TIME_MS);
-    
+
 	//place à gauche
 	if (currentSelection == 0)
 		UIManager->animateCard(allCards.at(lastPosition), QPoint(cardPos[1].x, cardPos[1].y), false, true, ANIMATION_TIME_MS);
@@ -360,69 +377,74 @@ void MainScene::refreshCurrentCards(){
 		UIManager->animateCard(allCards.at(0), QPoint(cardPos[4].x, cardPos[4].y), false, false, ANIMATION_TIME_MS);
 	else
 		UIManager->animateCard(allCards.at(currentSelection + 2), QPoint(cardPos[4].x, cardPos[4].y), false, false, ANIMATION_TIME_MS);
-    
-    
+
+
 	refreshBackground();
 }
 
 //navigue par en arrière si possible
-void MainScene::navBack(){
-    
-    if (!allCards.at(currentSelection)->getInSettingsView()){
-        if (currentSelection == 0)
-        {
-            currentSelection = allCards.length() - 1;
-        }
-        else
-            currentSelection--;
-        
-    /*
-     if(!allCards.at(currentSelection)->getInSettingsView()){
-       if(currentSelection-1 >= 0){
-            currentSelection--;
-     */
-           
-    //#if TARGET_OS_IPHONE
-           //do nothing
-   // #else
-           //change de musique et la joue
-           
-           if(ENABLE_SOUND){
-               playlist->setCurrentIndex(currentSelection);
-               player->play();
-           }
-   // #endif
-           
-           //et rafraichis les cartes
-            refreshCurrentCards();
-           sendCurrentColorToServer();
-       }
-    else{
-        //on est en settings view, fuck off
-        //go down
-        CardItem *thisCard = allCards.at(currentSelection);
-        thisCard->changeColorSetting(false);
-    }
-    
+void MainScene::navBack(bool shouldSendColor){
+
+
+	if (!allCards.at(currentSelection)->getInSettingsView()){
+		if (currentSelection == 0)
+		{
+			currentSelection = allCards.length() - 1;
+		}
+		else
+			currentSelection--;
+
+		/*
+		if(!allCards.at(currentSelection)->getInSettingsView()){
+		if(currentSelection-1 >= 0){
+		currentSelection--;
+		*/
+
+		//#if TARGET_OS_IPHONE
+		//do nothing
+		// #else
+		//change de musique et la joue
+
+		if (ENABLE_SOUND){
+			playlist->setCurrentIndex(currentSelection);
+			player->play();
+		}
+		// #endif
+
+		//et rafraichis les cartes
+		refreshCurrentCards();
+	}
+	else{
+		//on est en settings view, fuck off
+		//go down
+		CardItem *thisCard = allCards.at(currentSelection);
+		thisCard->changeColorSetting(false);
+	}
+
+	if (shouldSendColor)
+		sendCurrentColorToServer();
+
 }
-void MainScene::navForward(){
+void MainScene::navForward(bool shouldSendColor){
+
+
 	if (!allCards.at(currentSelection)->getInSettingsView()){
 		if (currentSelection + 1 == manager->getPresetArray().count())
 			currentSelection = 0;
 		else
 			currentSelection++;
 
-//#if TARGET_OS_IPHONE
+		//#if TARGET_OS_IPHONE
 		//do nothing
-//#else
+		//#else
 		//change de musique et la joue
-        if(ENABLE_SOUND){
-            playlist->setCurrentIndex(currentSelection);
-            player->play();
-        }
-//#endif
+		if (ENABLE_SOUND){
+			playlist->setCurrentIndex(currentSelection);
+			player->play();
+		}
+		//#endif
 		refreshCurrentCards();
-		sendCurrentColorToServer();
+
 	}
 	else{
 		//on est en settings view, fuck off
@@ -431,9 +453,12 @@ void MainScene::navForward(){
 		thisCard->changeColorSetting(true);
 
 	}
+
+	if (shouldSendColor)
+		sendCurrentColorToServer();
 }
 
-void MainScene::navSelect(){
+void MainScene::navSelect(bool shouldSendColor){
 	CardItem *currentCard = allCards.at(currentSelection);
 
 	/*
@@ -500,40 +525,41 @@ void MainScene::showSettingsForCurrentCard(){
 }
 void MainScene::keyPressEvent(QKeyEvent *event)
 {
-    //qDebug() << "KEY ID:" << event->key();
-    
-    //arrière
-    if (event->key() == 16777234) {
-        navSendR();
-    }
-    //en bas
-    if (event->key() == 16777237) {
-        navSendM();
-    }
-    //avant
-    if (event->key() == 16777236) {
-        navSendL();
-    }
+	//qDebug() << "KEY ID:" << event->key();
+
+	//arrière
+	if (event->key() == 16777234) {
+		navSendR();
+	}
+	//en bas
+	if (event->key() == 16777237) {
+		navSendM();
+	}
+	//avant
+	if (event->key() == 16777236) {
+		navSendL();
+	}
 }
 void MainScene::navSendR(){
-    m_webSocket->sendTextMessage("!r");
-    rcount++;
-    navBack();
+	m_webSocket->sendTextMessage("!r");
+	rcount++;
+	navBack(true);
 }
 void MainScene::navSendL(){
-    m_webSocket->sendTextMessage("!l");
-    lcount++;
-    navForward();
+	m_webSocket->sendTextMessage("!l");
+	lcount++;
+	navForward(true);
 }
 void MainScene::navSendM(){
-    m_webSocket->sendTextMessage("!m");
-    mcount++;
-    navSelect();
+	m_webSocket->sendTextMessage("!m");
+	mcount++;
+	navSelect(true);
 }
 #pragma mark - WebSocket
 
 void MainScene::sendColorToServer(string hexColor){
 
+	qDebug() << "Sending this:" << hexColor.c_str();
 	if (m_webSocket->state() == QAbstractSocket::ConnectedState){
 		m_webSocket->sendTextMessage(QString(hexColor.c_str()));
 	}
@@ -543,7 +569,7 @@ void MainScene::sendCurrentColorToServer()
 {
 
 	//envoye les couleurs du thème au serveur
-	string str = ( manager->getPresetArray().at(currentSelection).color1) + "," +
+	string str = (to_string(allCards.at(currentSelection)->getColorSetting()) + "," + manager->getPresetArray().at(currentSelection).color1) + "," +
 		(manager->getPresetArray().at(currentSelection).color2) + "," +
 		(manager->getPresetArray().at(currentSelection).color3) + "," +
 		(manager->getPresetArray().at(currentSelection).color4);
@@ -565,21 +591,21 @@ void MainScene::wsMessageReceived(QString text){
 
 		case 'r':
 			if (rcount == 0)
-				navBack();
+				navBack(false);
 			else
 				rcount--;
 			break;
 
 		case 'l':
 			if (lcount == 0)
-				navForward();
+				navForward(false);
 			else
 				lcount--;
 			break;
 
 		case 'm':
 			if (mcount == 0)
-				navSelect();
+				navSelect(false);
 			else
 				mcount--;
 			break;
@@ -614,7 +640,7 @@ void MainScene::onDisconnect(){
 
 void MainScene::updateHue()
 {
-	qDebug() << (colorCycle % 2 ? "tic" : "toc");
+	//qDebug() << (colorCycle % 2 ? "tic" : "toc");
 	//colorCycle de 0 à 3 constamment
 	colorCycle++;
 	if (colorCycle == 4) {
@@ -627,7 +653,7 @@ void MainScene::updateHue()
 
 	switch (thisCard->getColorSetting()) {
 	case 1:
-            timer->setInterval(1000);
+		timer->setInterval(1000);
 		//smooth
 		sendColorToPhilipsHue(((colorCycle + 0) % 4) + 1, (thisPreset->color1).c_str(), LIGHTS_ANIMATION_TIME);
 		sendColorToPhilipsHue(((colorCycle + 1) % 4) + 1, (thisPreset->color2).c_str(), LIGHTS_ANIMATION_TIME);
@@ -637,18 +663,18 @@ void MainScene::updateHue()
 		break;
 	case 2:
 		//hard
-            
-            
-            sendColorToPhilipsHue(((colorCycle + 0) % 4) + 1, (thisPreset->color1).c_str(), 0);
-            sendColorToPhilipsHue(((colorCycle + 1) % 4) + 1, (thisPreset->color2).c_str(), 0);
-            sendColorToPhilipsHue(((colorCycle + 2) % 4) + 1, (thisPreset->color3).c_str(), 0);
-           // sendColorToPhilipsHue(((colorCycle + 3) % 4) + 1, (thisPreset->color4).c_str(), LIGHTS_ANIMATION_TIME);
-            /*
+
+
+		sendColorToPhilipsHue(((colorCycle + 0) % 4) + 1, (thisPreset->color1).c_str(), 0);
+		sendColorToPhilipsHue(((colorCycle + 1) % 4) + 1, (thisPreset->color2).c_str(), 0);
+		sendColorToPhilipsHue(((colorCycle + 2) % 4) + 1, (thisPreset->color3).c_str(), 0);
+		// sendColorToPhilipsHue(((colorCycle + 3) % 4) + 1, (thisPreset->color4).c_str(), LIGHTS_ANIMATION_TIME);
+		/*
 		sendColorToPhilipsHue(((colorCycle + 0) % 4) + 1, (thisPreset->color1).c_str(), 0);
 		sendColorToPhilipsHue(((colorCycle + 1) % 4) + 1, (thisPreset->color2).c_str(), 0);
 		sendColorToPhilipsHue(((colorCycle + 2) % 4) + 1, (thisPreset->color3).c_str(), 0);
 		sendColorToPhilipsHue(((colorCycle + 3) % 4) + 1, (thisPreset->color4).c_str(), 0);
-*/
+		*/
 
 		break;
 	case 3:
@@ -684,7 +710,7 @@ void MainScene::sendColorToPhilipsHue(int lightNumber, const char* color, int tr
 	string body = "{ \"on\": true, \"hue\":" + to_string((int)(couleur.hueF() * 65535)) + ", \"sat\":" + to_string((int)(moreSat * 255)) + ", \"bri\":" + to_string((int)(couleur.lightnessF() * 255)) + ", \"transitiontime\":" + to_string(transitionTime) + "}";
 	string URL = "http://" + PHILIPS_HUE_URL + ":" + to_string(PHILIPS_HUE_PORT) + "/api/" + PHILIPS_HUE_USERNAME + "/lights/" + to_string(lightNumber) + "/state";
 
-    //request = new QNetworkRequest(QUrl(URL.c_str()));
+	//request = new QNetworkRequest(QUrl(URL.c_str()));
 	//request->setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 	netManager->put(QNetworkRequest(QUrl(URL.c_str())), body.c_str());
 
