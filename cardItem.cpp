@@ -192,11 +192,11 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
 #endif
         string phonemeString = "";
         if (abs(xMiddle) < 50) {
-            phonemeString = "«u»";
+            phonemeString = "«o»";
         }else if(xMiddle > 0){
             phonemeString = "«a»";
         }else{
-            phonemeString = "«o»";
+            phonemeString = "«u»";
         }
         
         painter->setFont(font);
@@ -265,19 +265,19 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
             case 1:
 				//5.95/7
 				textCenter = QPointF(backTransRect2.x() + (backTransRect2.width()*constanteDegueulasseMaisTellementCool1), backTransRect2.y() + (backTransRect2.height() >> 1) - (constanteDegueulasseMaisTellementCool2));
-                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«o»");
+                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«u»");
                 break;
                 
             case 2:
 				textCenter = QPointF(backTransRect1.x() + (backTransRect1.width()*constanteDegueulasseMaisTellementCool1), backTransRect1.y() + (backTransRect1.height() >> 1) - (constanteDegueulasseMaisTellementCool2));
-                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«u»");
+                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«a»");
 				textCenter = QPointF(backTransRect3.x() + (backTransRect3.width()*constanteDegueulasseMaisTellementCool1), backTransRect3.y() + (backTransRect3.height() >> 1) - (constanteDegueulasseMaisTellementCool2));
-                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«o»");
+                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«u»");
                 break;
                 
             case 3:
 				textCenter = QPointF(backTransRect2.x() + (backTransRect2.width()*constanteDegueulasseMaisTellementCool1), backTransRect2.y() + (backTransRect2.height() >> 1) - (constanteDegueulasseMaisTellementCool2));
-                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«u»");
+                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«a»");
                 break;
                 
             default:
@@ -351,7 +351,7 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
         painter->setPen(QPen(Qt::white));
         painter->setOpacity(1.00);
         textCenter = QPointF(exitRect.x()+(exitRect.width()*2/3),exitRect.y()+(exitRect.height()/2)-(40/7));
-        drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«a»");
+        drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«o»");
         
         //dessine le X
         font.setPointSize(35);
