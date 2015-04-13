@@ -64,6 +64,8 @@ int concurrentAnims;
 }
 - (void)webSocket:(PSWebSocket*)webSocket didReceiveMessage:(id)message
 {
+    i = 1;
+    
     if ([((NSString*)message) characterAtIndex:0] == '!') {
         return;
     }
