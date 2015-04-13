@@ -133,10 +133,10 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
         police = "Helvetica Neue";
 		QFont font(police, 52);
 	#elif _WIN32
-		QFont font(police, 42,QFont::Normal,true);
-    #endif
+		QFont font(police, 38,QFont::Normal,true);
+		font.setItalic(false);
+	#endif
         
-
         font.setStyleName("Light");
         painter->setFont(font);
         painter->setPen(QPen(Qt::white));
@@ -154,7 +154,8 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
 #ifdef __APPLE__
         QFont font("Helvetica Neue", 40);
 #else
-        QFont font("Calibri", 28,QFont::Normal,true);
+        QFont font("Calibri", 24,QFont::Normal,true);
+		font.setItalic(false);
 #endif
         
         font.setStyleName("Thin");

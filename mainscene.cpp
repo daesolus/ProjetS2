@@ -165,15 +165,6 @@ MainScene::MainScene()
 	backArrowOriginalPos = QPoint(backArrow->pos().x(), backArrow->pos().y());
 	nextArrowOriginalPos = QPoint(nextArrow->pos().x(), nextArrow->pos().y());
 
-	//////////////////////////////////////////////////
-	QPointF textCenter;
-	textCenter = QPointF(backArrow->pos().x(), backTransRect2.y() + (backTransRect2.height() / 2) - (40 / 7));
-	drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«o»");
-
-
-
-
-
 	float cardWidth = 406;
 	float cardHeight = 466;
 	float cardSmallScale = 0.8;

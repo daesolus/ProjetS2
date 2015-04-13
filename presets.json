@@ -1,71 +1,148 @@
-{ "presets" : [ { "colors" : [ "#ff0400",
-            "#00aeff",
-            "#e64cff",
-            "#05e500",
-            "#ffd700"
-          ],
-        "imgpath" : ":Star_Wars.jpg",
-        "musicpath" : "Star_Wars.mp3",
-        "name" : "Star Wars"
-      },
-      { "colors" : [ "#1a6521",
-            "#ffa200",
-            "#ecdb21",
-            "#df0909",
-            "#723c02"
-          ],
-        "imgpath" : ":Autumn.jpg",
-        "musicpath" : "Autumn.mp3",
-        "name" : "Autumn"
-      },
-      { "colors" : [ "#de0000",
-            "#15e0f1",
-            "#71fc00",
-            "#f300ff",
-            "#ffffff"
-          ],
-        "imgpath" : ":Party.jpg",
-        "musicpath" : "Party.mp3",
-        "name" : "Party"
-      },
-      { "colors" : [ "#f5fcff",
-            "#98d4f3",
-            "#b6bbc1",
-            "#c0dcea",
-            "#bed1e3"
-          ],
-        "imgpath" : ":winter.jpg",
-        "musicpath" : "winter.mp3",
-        "name" : "Winter"
-      },
-      { "colors" : [ "#07b407",
-            "#ffd700",
-            "#ff7800",
-            "#4ede1c",
-            "#ffffff"
-          ],
-        "imgpath" : ":Irish.jpg",
-        "musicpath" : "Irish.mp3",
-        "name" : "Irish"
-      },
-	  { "colors" : [ "#324658",
-            "#494953",
-            "#AF8844",
-            "#778586",
-            "#324658"
-          ],
-        "imgpath" : ":got.jpg",
-        "musicpath" : "got.mp3",
-        "name" : "GOT"
-      },
-	  { "colors" : [ "#F348A6",
-            "#67D45C",
-            "#F20000",
-            "#00B3ED",
-            "#FDA200"
-          ],
-        "imgpath" : ":acid.jpg",
-        "musicpath" : "acid.mp3",
-        "name" : "Acid"
-      }
-    ] }
+{
+    "presets": [
+        {
+            "colors": [
+                "#ff0400",
+                "#00aeff",
+                "#e64cff",
+                "#05e500",
+                "#ffd700"
+            ],
+            "imgpath": ":Star_Wars.jpg",
+            "musicpath": "Star_Wars.mp3",
+            "name": "Star Wars"
+        },
+        {
+            "colors": [
+                "#60D0F7",
+                "#D1AB71",
+                "#02A607",
+                "#FFD000",
+                "#FFFFFF"
+            ],
+            "imgpath": ":Summer.jpg",
+            "musicpath": "Summer.mp3",
+            "name": "Summer"
+        },
+        {
+            "colors": [
+                "#1a6521",
+                "#ffa200",
+                "#ecdb21",
+                "#df0909",
+                "#723c02"
+            ],
+            "imgpath": ":Autumn.jpg",
+            "musicpath": "Autumn.mp3",
+            "name": "Autumn"
+        },
+        {
+            "colors": [
+                "#f5fcff",
+                "#98d4f3",
+                "#b6bbc1",
+                "#c0dcea",
+                "#bed1e3"
+            ],
+            "imgpath": ":Winter.jpg",
+            "musicpath": "Winter.mp3",
+            "name": "Winter"
+        },
+        {
+            "colors": [
+                "#4EA4F5",
+                "#9FB53A",
+                "#BA9356",
+                "#EDC991",
+                "#FFFFFF"
+            ],
+            "imgpath": ":Spring.jpg",
+            "musicpath": "Spring.mp3",
+            "name": "Spring"
+        },
+        {
+            "colors": [
+                "#de0000",
+                "#15e0f1",
+                "#71fc00",
+                "#f300ff",
+                "#ffffff"
+            ],
+            "imgpath": ":Party.jpg",
+            "musicpath": "Party.mp3",
+            "name": "Party"
+        },
+        {
+            "colors": [
+                "#07b407",
+                "#ffd700",
+                "#ff7800",
+                "#4ede1c",
+                "#ffffff"
+            ],
+            "imgpath": ":Irish.jpg",
+            "musicpath": "Irish.mp3",
+            "name": "Irish"
+        },
+        {
+            "colors": [
+                "#E30BA9",
+                "#FF00E1",
+                "#E805E4",
+                "#FF45C7",
+                "#FA25BA"
+            ],
+            "imgpath": ":Love.jpg",
+            "musicpath": "Love.mp3",
+            "name": "Love"
+        },
+        {
+            "colors": [
+                "#324658",
+                "#494953",
+                "#AF8844",
+                "#778586",
+                "#324658"
+            ],
+            "imgpath": ":GOT.jpg",
+            "musicpath": "GOT.mp3",
+            "name": "GOT"
+        },
+		{
+            "colors": [
+                "#9E7721",
+                "#8A8167",
+                "#802A2A",
+                "#D9A027",
+                "#FFFFFF"
+            ],
+            "imgpath": ":LOTR.jpg",
+            "musicpath": "LOTR.mp3",
+            "name": "LOTR"
+        },
+		{
+            "colors": [
+                "#0C9417",
+                "#2C5EA3",
+                "#DEDE23",
+                "#BDBDBD",
+                "#FFFFFF"
+            ],
+            "imgpath": ":Zelda.jpg",
+            "musicpath": "Zelda.mp3",
+            "name": "Zelda"
+        },
+        {
+            "colors": [
+                "#F348A6",
+                "#67D45C",
+                "#F20000",
+                "#00B3ED",
+                "#FDA200"
+            ],
+            "imgpath": ":Psychedelic.jpg",
+            "musicpath": "Psychedelic.mp3",
+            "name": "Psychedelic"
+        }
+    ]
+}

@@ -5,11 +5,16 @@
         <file>Etoile.jpg</file>
         <file>presets.json</file>
         <file>Autumn.jpg</file>
+		<file>Summer.jpg</file>
+		<file>Spring.jpg</file>
         <file>Irish.jpg</file>
         <file>Party.jpg</file>
+        <file>LOTR.jpg</file>
         <file>Star_Wars.jpg</file>
-        <file>winter.jpg</file>
-        <file>got.jpg</file>
-        <file>acid.jpg</file>
+        <file>Winter.jpg</file>
+        <file>GOT.jpg</file>
+        <file>Zelda.jpg</file>
+        <file>Love.jpg</file>
+        <file>Psychedelic.jpg</file>
     </qresource>
 </RCC>
