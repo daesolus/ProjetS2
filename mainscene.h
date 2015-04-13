@@ -13,7 +13,6 @@
 #include <QMediaPlaylist>
 #include <QtWebSockets>
 #include "NavArrow.h"
-#include "PhonemeItem.h"
 
 class MainScene : public QGraphicsScene
 {

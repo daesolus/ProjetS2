@@ -216,23 +216,6 @@ MainScene::MainScene()
 
 	refreshBackground();
 
-	//affiche les phonemes
-	PhonemeItem *phonemeA = new PhonemeItem();
-	PhonemeItem *phonemeO = new PhonemeItem();
-	PhonemeItem *phonemeU = new PhonemeItem();
-
-	this->addItem(phonemeA);
-	this->addItem(phonemeO);
-	this->addItem(phonemeU);
-
-	UIManager->centerInScreen(phonemeA);
-	UIManager->centerInScreen(phonemeO);
-	UIManager->centerInScreen(phonemeU);
-
-	phonemeA->moveBy(0, -420);
-	phonemeO->moveBy(-370, -400);
-	phonemeU->moveBy(370, -400);
-
 	//rafraichis et configure les cartes
 	//refreshCurrentCards();
 
