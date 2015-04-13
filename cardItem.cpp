@@ -180,7 +180,7 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
         font = QFont("Helvetica Neue", 40);
         font.setStyleName("Thin");
 #else
-        font = QFont("Calibri", 35,QFont::Normal,true);
+        font = QFont("Calibri", 26,QFont::Normal,true);
         font.setItalic(false);
 #endif
         
