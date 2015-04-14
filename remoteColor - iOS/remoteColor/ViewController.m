@@ -35,6 +35,14 @@ int concurrentAnims;
     right.direction = UISwipeGestureRecognizerDirectionRight ;
     [self.view addGestureRecognizer:right];
     
+    UISwipeGestureRecognizer *up = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeRight:)];
+    up.direction = UISwipeGestureRecognizerDirectionUp ;
+    [self.view addGestureRecognizer:up];
+    
+    UISwipeGestureRecognizer *down = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(swipeLeft:)];
+    down.direction = UISwipeGestureRecognizerDirectionDown ;
+    [self.view addGestureRecognizer:down];
+    
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(tap:)];
     [self.view addGestureRecognizer:tap];
     
