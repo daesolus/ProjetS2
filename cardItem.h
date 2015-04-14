@@ -9,6 +9,8 @@
 #include <QTimer>
 
 #include "settingsManager.h"
+#include "DownloadManager.h"
+
 //#include "mainscene.h"
 
 class CardItem : public QObject, public QGraphicsItem
@@ -66,8 +68,16 @@ public:
     void turnForSettings();
     virtual void setScale(qreal scale);
 
+Q_SIGNALS:
+    void cardLoaded();
+    
+private Q_SLOTS:
+    void processPictures();
+    
 protected:
+    
     QRectF rect;
+    
     bool selected;
     bool inSettingsView;
     bool hideContent;
@@ -78,6 +88,7 @@ protected:
     QColor color2;
     QColor color3;
     QColor color4;
+    DownloadManager *dlManager;
     
     string title;
     string imgPath;

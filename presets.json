@@ -8,8 +8,8 @@
                 "#05e500",
                 "#ffd700"
             ],
-            "imgpath": ":Star_Wars.jpg",
-            "musicpath": "Star_Wars.mp3",
+            "imgpath": "http://107.170.171.251/GeniUS/Images/Star_Wars.jpg",
+            "musicpath": "http://107.170.171.251/GeniUS/Music/Star_Wars.mp3",
             "name": "Star Wars"
         },
         {
@@ -20,8 +20,8 @@
                 "#FFD000",
                 "#FFFFFF"
             ],
-            "imgpath": ":Summer.jpg",
-            "musicpath": "Summer.mp3",
+            "imgpath": "http://107.170.171.251/GeniUS/Images/Summer.jpg",
+            "musicpath": "http://107.170.171.251/GeniUS/Music/Summer.mp3",
             "name": "Summer"
         },
         {
@@ -32,8 +32,8 @@
                 "#df0909",
                 "#723c02"
             ],
-            "imgpath": ":Autumn.jpg",
-            "musicpath": "Autumn.mp3",
+            "imgpath": "http://107.170.171.251/GeniUS/Images/Autumn.jpg",
+            "musicpath": "http://107.170.171.251/GeniUS/Music/Autumn.mp3",
             "name": "Autumn"
         },
         {
@@ -44,8 +44,8 @@
                 "#c0dcea",
                 "#bed1e3"
             ],
-            "imgpath": ":Winter.jpg",
-            "musicpath": "Winter.mp3",
+            "imgpath": "http://107.170.171.251/GeniUS/Images/Winter.jpg",
+            "musicpath": "http://107.170.171.251/GeniUS/Music/Winter.mp3",
             "name": "Winter"
         },
         {
@@ -56,8 +56,8 @@
                 "#EDC991",
                 "#FFFFFF"
             ],
-            "imgpath": ":Spring.jpg",
-            "musicpath": "Spring.mp3",
+            "imgpath": "http://107.170.171.251/GeniUS/Images/Spring.jpg",
+            "musicpath": "http://107.170.171.251/GeniUS/Music/Spring.mp3",
             "name": "Spring"
         },
         {
@@ -68,8 +68,8 @@
                 "#f300ff",
                 "#ffffff"
             ],
-            "imgpath": ":Party.jpg",
-            "musicpath": "Party.mp3",
+            "imgpath": "http://107.170.171.251/GeniUS/Images/Party.jpg",
+            "musicpath": "http://107.170.171.251/GeniUS/Music/Party.mp3",
             "name": "Party"
         },
         {
@@ -80,8 +80,8 @@
                 "#4ede1c",
                 "#ffffff"
             ],
-            "imgpath": ":Irish.jpg",
-            "musicpath": "Irish.mp3",
+            "imgpath": "http://107.170.171.251/GeniUS/Images/Irish.jpg",
+            "musicpath": "http://107.170.171.251/GeniUS/Music/Irish.mp3",
             "name": "Irish"
         },
         {
@@ -92,8 +92,8 @@
                 "#FF45C7",
                 "#FA25BA"
             ],
-            "imgpath": ":Love.jpg",
-            "musicpath": "Love.mp3",
+            "imgpath": "http://107.170.171.251/GeniUS/Images/Love.jpg",
+            "musicpath": "http://107.170.171.251/GeniUS/Music/Love.mp3",
             "name": "Love"
         },
         {
@@ -104,8 +104,8 @@
                 "#778586",
                 "#324658"
             ],
-            "imgpath": ":GOT.jpg",
-            "musicpath": "GOT.mp3",
+            "imgpath": "http://107.170.171.251/GeniUS/Images/GOT.jpg",
+            "musicpath": "http://107.170.171.251/GeniUS/Music/GOT.mp3",
             "name": "GOT"
         },
 		{
@@ -116,8 +116,8 @@
                 "#D9A027",
                 "#FFFFFF"
             ],
-            "imgpath": ":LOTR.jpg",
-            "musicpath": "LOTR.mp3",
+            "imgpath": "http://107.170.171.251/GeniUS/Images/LOTR.jpg",
+            "musicpath": "http://107.170.171.251/GeniUS/Music/LOTR.mp3",
             "name": "LOTR"
         },
 		{
@@ -128,8 +128,8 @@
                 "#BDBDBD",
                 "#FFFFFF"
             ],
-            "imgpath": ":Zelda.jpg",
-            "musicpath": "Zelda.mp3",
+            "imgpath": "http://107.170.171.251/GeniUS/Images/Zelda.jpg",
+            "musicpath": "http://107.170.171.251/GeniUS/Music/Zelda.mp3",
             "name": "Zelda"
         },
         {
@@ -140,8 +140,8 @@
                 "#00B3ED",
                 "#FDA200"
             ],
-            "imgpath": ":Psychedelic.jpg",
-            "musicpath": "Psychedelic.mp3",
+            "imgpath": "http://107.170.171.251/GeniUS/Images/Psychedelic.jpg",
+            "musicpath": "http://107.170.171.251/GeniUS/Music/Psychedelic.mp3",
             "name": "Psychedelic"
         },
         {
@@ -152,8 +152,8 @@
                 "#F5A773",
                 "#FFFFFF"
             ],
-            "imgpath": ":Moustache.png",
-            "musicpath": "Moustache.mp3",
+            "imgpath": "http://107.170.171.251/GeniUS/Images/Moustache.png",
+            "musicpath": "http://107.170.171.251/GeniUS/Music/Moustache.mp3",
             "name": "Moustache"
         }
     ]

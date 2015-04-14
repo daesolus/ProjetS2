@@ -66,138 +66,143 @@ MainScene::MainScene()
 	request->setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 	netManager->post(*request, body.c_str());
 
-	//prend la taille de l'écran en points (pas en pixels)
-	QRect rec = QApplication::desktop()->screenGeometry();
-
-	float heightConstant = 1;
-#if TARGET_OS_IPHONE
-	if ((float)rec.height() / (float)rec.width() == 0.75)
-		//c'est un iPad
-		heightConstant = 1.23;
-	else
-		heightConstant = 3.4;
-	float screenWidth = 1440;
-#else
-	float screenWidth = rec.width();
-#endif
-
-	float screenHeight = rec.height() * heightConstant;
-
-
-	//hardcore hardcoding, sorry
-	//optimisé pour un écran 1440x900 (retina), mais centre tt au centre pour que ca fonctionne avec
-	//toute taille d'écran
-	cardProperties props;
-	props.x = (screenWidth / 2) - 568.4;
-	props.y = (screenHeight / 2) - 186.4;
-	props.scale = 0.8;
-	cardPos[1] = props;
-	props.x = props.x - 200;
-	cardPos[0] = props;
-	props.x = (screenWidth / 2) + 243.6;
-	props.y = (screenHeight / 2) - 186.4;
-	cardPos[3] = props;
-	props.x = props.x + 200;
-	cardPos[4] = props;
-	props.x = (screenWidth / 2) - 196;
-	props.y = (screenHeight / 2) - 233;
-	props.scale = 1;
-	cardPos[2] = props;
-
-
-	m_webSocket = new QWebSocket();
-	m_webSocket->open(QUrl("ws://107.170.171.251:56453"));
-
-	connect(m_webSocket, &QWebSocket::connected, this, &MainScene::onConnected);
-	connect(m_webSocket, &QWebSocket::disconnected, this, &MainScene::onDisconnect);
-	connect(m_webSocket, &QWebSocket::textMessageReceived, this, &MainScene::wsMessageReceived);
-
-	currentSelection = 1;
-
-	//lis les reglages
-	manager = new SettingsManager();
-	manager->readConfigFile();
-
-	if (ENABLE_SOUND)
-		loadSongs();
-	
-	//set la taille de la scène pour que ca soit plein écran
-	this->setSceneRect(0, 0, screenWidth, screenHeight);
-
-	//charge les flèches back et next à partir du fichier svg
-
-	backArrow = (NavArrow*)UIManager->pixmapItemFromSvg(":arrowLine.svg", this);
-	nextArrow = (NavArrow*)UIManager->pixmapItemFromSvg(":arrowLine.svg", this);
-	//rotate la flèche next
-	nextArrow->setRotation(180);
-	//centre les 2 items
-	layout.centerInScreen(nextArrow);
-	layout.centerInScreen(backArrow);
-
-	backArrow->moveBy(-643, -75);
-	nextArrow->moveBy(643 + (56 * qApp->devicePixelRatio()), 67);
-
-	backArrowOriginalPos = QPoint(backArrow->pos().x(), backArrow->pos().y());
-	nextArrowOriginalPos = QPoint(nextArrow->pos().x(), nextArrow->pos().y());
-
-	float cardWidth = 406;
-	float cardHeight = 466;
-	float cardSmallScale = 0.8;
-
-	for (int i = 0; i < manager->getPresetArray().count(); i++) {
-		CardItem *item = new CardItem(0, 0, cardWidth, cardHeight, "", "");
-
-		//ajoute la carte à la scene
-		this->addItem(item);
-
-		//si c'est la carte du milieu, la sélectionner
-		if (i % 2 == 1){
-			item->setSelectedStyle(true);
-		}
-		else{
-			//sinon, la mettre plus petite
-			item->setScale(cardSmallScale);
-			item->setSelectedStyle(false);
-		}
-		//centrer la carte
-		layout.centerInScreen(item);
-		//le configure pour le bon preset
-		item->configure(&manager->getPresetArray().at(i));
-
-		//l'ajouter au QVector des cartes visibles
-		allCards.append(item);
-
-		if (i < currentSelection - 1) {
-			//cache à gauche
-			UIManager->animateCard(allCards.at(i), QPoint(cardPos[0].x, cardPos[0].y), false, false, ANIMATION_TIME_MS);
-		}
-		else if (i == currentSelection - 1){
-			//place à gauche
-			UIManager->animateCard(allCards.at(i), QPoint(cardPos[1].x, cardPos[1].y), false, true, ANIMATION_TIME_MS);
-		}
-		else if (i == currentSelection){
-			//place au milieu
-			UIManager->animateCard(allCards.at(i), QPoint(cardPos[2].x, cardPos[2].y), true, true, ANIMATION_TIME_MS);
-		}
-		else if (i == currentSelection + 1){
-			//place à droite
-			UIManager->animateCard(allCards.at(i), QPoint(cardPos[3].x, cardPos[3].y), false, true, ANIMATION_TIME_MS);
-		}
-		else if (i > currentSelection + 1){
-			//cache à droite
-			UIManager->animateCard(allCards.at(i), QPoint(cardPos[4].x, cardPos[4].y), false, false, ANIMATION_TIME_MS);
-		}
-	}
-
-	refreshBackground();
-
-
-	//démarre le QTimer pour les Philips Hue
-	timer = new QTimer(this);
-	connect(timer, SIGNAL(timeout()), this, SLOT(updateHue()));
-	timer->start(1000);
+    
+    //lis les reglages
+    manager = new SettingsManager();
+    manager->downloadSettings();
+    
+    connect(manager, SIGNAL (settingsReady()), this, SLOT (finishLoading()));
 
 }
+
+void MainScene::finishLoading(){
+    
+    //prend la taille de l'écran en points (pas en pixels)
+    QRect rec = QApplication::desktop()->screenGeometry();
+    
+    float heightConstant = 1;
+#if TARGET_OS_IPHONE
+    if ((float)rec.height() / (float)rec.width() == 0.75)
+        //c'est un iPad
+        heightConstant = 1.23;
+    else
+        heightConstant = 3.4;
+    float screenWidth = 1440;
+#else
+    float screenWidth = rec.width();
+#endif
+    
+    float screenHeight = rec.height() * heightConstant;
+    
+    
+    //hardcore hardcoding, sorry
+    //optimisé pour un écran 1440x900 (retina), mais centre tt au centre pour que ca fonctionne avec
+    //toute taille d'écran
+    cardProperties props;
+    props.x = (screenWidth / 2) - 568.4;
+    props.y = (screenHeight / 2) - 186.4;
+    props.scale = 0.8;
+    cardPos[1] = props;
+    props.x = props.x - 200;
+    cardPos[0] = props;
+    props.x = (screenWidth / 2) + 243.6;
+    props.y = (screenHeight / 2) - 186.4;
+    cardPos[3] = props;
+    props.x = props.x + 200;
+    cardPos[4] = props;
+    props.x = (screenWidth / 2) - 196;
+    props.y = (screenHeight / 2) - 233;
+    props.scale = 1;
+    cardPos[2] = props;
+    
+    m_webSocket = new QWebSocket();
+    m_webSocket->open(QUrl("ws://107.170.171.251:56453"));
+    
+    connect(m_webSocket, &QWebSocket::connected, this, &MainScene::onConnected);
+    connect(m_webSocket, &QWebSocket::disconnected, this, &MainScene::onDisconnect);
+    connect(m_webSocket, &QWebSocket::textMessageReceived, this, &MainScene::wsMessageReceived);
+    
+    currentSelection = 1;
+    
+    if (ENABLE_SOUND)
+        loadSongs();
+    
+    //set la taille de la scène pour que ca soit plein écran
+    this->setSceneRect(0, 0, screenWidth, screenHeight);
+    
+    //charge les flèches back et next à partir du fichier svg
+    
+    backArrow = (NavArrow*)UIManager->pixmapItemFromSvg(":arrowLine.svg", this);
+    nextArrow = (NavArrow*)UIManager->pixmapItemFromSvg(":arrowLine.svg", this);
+    //rotate la flèche next
+    nextArrow->setRotation(180);
+    //centre les 2 items
+    layout.centerInScreen(nextArrow);
+    layout.centerInScreen(backArrow);
+    
+    backArrow->moveBy(-643, -75);
+    nextArrow->moveBy(643 + (56 * qApp->devicePixelRatio()), 67);
+    
+    backArrowOriginalPos = QPoint(backArrow->pos().x(), backArrow->pos().y());
+    nextArrowOriginalPos = QPoint(nextArrow->pos().x(), nextArrow->pos().y());
+    
+    float cardWidth = 406;
+    float cardHeight = 466;
+    float cardSmallScale = 0.8;
+    
+    for (int i = 0; i < manager->getPresetArray().count(); i++) {
+        CardItem *item = new CardItem(0, 0, cardWidth, cardHeight, "", "");
+        
+        //ajoute la carte à la scene
+        this->addItem(item);
+        
+        //si c'est la carte du milieu, la sélectionner
+        if (i % 2 == 1){
+            item->setSelectedStyle(true);
+        }
+        else{
+            //sinon, la mettre plus petite
+            item->setScale(cardSmallScale);
+            item->setSelectedStyle(false);
+        }
+        //centrer la carte
+        layout.centerInScreen(item);
+        //le configure pour le bon preset
+        item->configure(&manager->getPresetArray().at(i));
+        
+        //l'ajouter au QVector des cartes visibles
+        allCards.append(item);
+        
+        if (i < currentSelection - 1) {
+            //cache à gauche
+            UIManager->animateCard(allCards.at(i), QPoint(cardPos[0].x, cardPos[0].y), false, false, ANIMATION_TIME_MS);
+        }
+        else if (i == currentSelection - 1){
+            //place à gauche
+            UIManager->animateCard(allCards.at(i), QPoint(cardPos[1].x, cardPos[1].y), false, true, ANIMATION_TIME_MS);
+        }
+        else if (i == currentSelection){
+            //place au milieu
+            UIManager->animateCard(allCards.at(i), QPoint(cardPos[2].x, cardPos[2].y), true, true, ANIMATION_TIME_MS);
+        }
+        else if (i == currentSelection + 1){
+            //place à droite
+            UIManager->animateCard(allCards.at(i), QPoint(cardPos[3].x, cardPos[3].y), false, true, ANIMATION_TIME_MS);
+        }
+        else if (i > currentSelection + 1){
+            //cache à droite
+            UIManager->animateCard(allCards.at(i), QPoint(cardPos[4].x, cardPos[4].y), false, false, ANIMATION_TIME_MS);
+        }
+    }
+    
+    connect(allCards.at(currentSelection), SIGNAL (cardLoaded()),this, SLOT (refreshBackground()));
+    
+    //démarre le QTimer pour les Philips Hue
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(updateHue()));
+    timer->start(1000);
+}
+
 #pragma mark - Audio
 
 void MainScene::loadSongs(){
@@ -211,26 +216,9 @@ void MainScene::loadSongs(){
 	//loop
 	playlist->setPlaybackMode(QMediaPlaylist::CurrentItemInLoop);
 
-	//navigue au bon dossier
-	QDir dir = QDir(QCoreApplication::applicationDirPath());
-#if !TARGET_OS_IPHONE
-	dir.cdUp();
-	dir.cdUp();
-	dir.cdUp();
-	dir.cdUp();
-#endif
-
 	//prend chaque musique pour chaque preset
 	for (int i = 0; i < manager->getPresetArray().count(); i++) {
-
-#ifdef __APPLE__
-		playlist->addMedia(QUrl::fromLocalFile(dir.path() + "/" + manager->getPresetArray().at(i).musicPath.c_str()));
-		//playlist->addMedia(QUrl::fromLocalFile(manager->getPresetArray().at(i).musicPath.c_str()));
-
-#else
-		playlist->addMedia(QUrl::fromLocalFile(manager->getPresetArray().at(i).musicPath.c_str()));
-#endif
-
+        playlist->addMedia(QUrl(manager->getPresetArray().at(i).musicPath.c_str()));
 	}
 
 	//fort
@@ -244,7 +232,6 @@ void MainScene::loadSongs(){
 
 void MainScene::refreshBackground(){
 	
-
 	//background = nullptr;
 	if (background == NULL)
 		background = this->addPixmap(*allCards.at(currentSelection)->getBlurredBackground());
@@ -481,21 +468,21 @@ void MainScene::wsMessageReceived(QString text){
 
 		case 'r':
 			if (rcount == 0)
-				navBack(false);
+				navBack(true);
 			else
 				rcount--;
 			break;
 
 		case 'l':
 			if (lcount == 0)
-				navForward(false);
+				navForward(true);
 			else
 				lcount--;
 			break;
 
 		case 'm':
 			if (mcount == 0)
-				navSelect(false);
+				navSelect(true);
 			else
 				mcount--;
 			break;

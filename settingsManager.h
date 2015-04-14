@@ -15,6 +15,7 @@
 #include <QJsonArray>
 #include <string>
 #include "JsonException.h"
+#include "DownloadManager.h"
 
 using namespace std;
 
@@ -30,16 +31,26 @@ struct Preset {
     const char* colors[5];
 };
 
-class SettingsManager //: public QGraphicsItem
+class SettingsManager : public QObject //: public QGraphicsItem
 {
+    Q_OBJECT
+    
 public:
     SettingsManager();
-    void readConfigFile();
     const QList<Preset> getPresetArray();
+    void downloadSettings();
+
+Q_SIGNALS:
+    void settingsReady();
+    
+private Q_SLOTS:
+    void readConfigFile();
+    
 private:
     QList<Preset> presetArray;
 	JsonException jsonExeption;
     void parseAndStore(const QJsonObject &json);
+    DownloadManager *dlManager;
 };
 
 /*

@@ -25,10 +25,12 @@ public:
     void navSendM();
     
 private Q_SLOTS:
+    void finishLoading();
     void onConnected();
     void onDisconnect();
     void updateHue();
     void wsMessageReceived(QString text);
+    void refreshBackground();
 
 private:
     
@@ -36,7 +38,6 @@ private:
     void navForward(bool shouldSendColor);
     void navSelect(bool shouldSendColor);
     void refreshCurrentCards();
-	void refreshBackground();
     void loadSongs();
     void showSettingsForCurrentCard();
     

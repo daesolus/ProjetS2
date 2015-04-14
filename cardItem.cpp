@@ -3,6 +3,7 @@
 #include <QDesktopWidget>
 #include <QFontDatabase>
 #include <QLinearGradient>
+#include <QUrl>
 #include <cmath>
 
 QT_BEGIN_NAMESPACE
@@ -24,29 +25,32 @@ void CardItem::configure(const Preset *prst){
     imgPath = prst->imgPath;
     inSettingsView = false;
     hideContent = false;
+    
+    QUrl imgURL(prst->imgPath.c_str());
+    dlManager = new DownloadManager(imgURL);
+    
+    connect(dlManager, SIGNAL (downloadDone()), this, SLOT (processPictures()));
+
+}
+void CardItem::processPictures(){
+    
     imageObject = new QImage();
-    imageObject->load(imgPath.c_str());
+    imageObject->loadFromData(dlManager->getData());
+    
     image = QPixmap::fromImage(*imageObject);
     
-    //background transparent
-    //affichage de l'arrière plan
-    //imageObject = QImage();
-    //imageObject.load(manager->getPresetArray().at(currentSelection).imgPath.c_str());
-    
-    
-    //extern QImage srcImg;//source image
-    //QPixmap *pxDst( imageObject->size() );//blurred destination
     blurredBackground = QPixmap(imageObject->size()*qApp->devicePixelRatio());
     blurredBackground.fill(Qt::transparent);
     {
         QPainter painter(&blurredBackground);
-        qt_blurImage(&painter, *imageObject, 1000 * ((float)image.height()*(float)image.width() / 1000000.f) / qApp->devicePixelRatio(), true, false);//blur radius: 2px
+        qt_blurImage(&painter, *imageObject, 1000 * ((float)image.height()*(float)image.width() / 1000000.f) / qApp->devicePixelRatio(), true, false);
     }
     
-    //delete imageObject;
-
+    this->update();
+    
+    //emit le slot
+    emit cardLoaded();
 }
-
 QRectF CardItem::boundingRect() const { // outer most edges
     return QRectF(rect.x(), rect.y(), rect.width(), rect.height()+25);
 }

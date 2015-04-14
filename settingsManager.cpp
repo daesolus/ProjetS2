@@ -1,26 +1,21 @@
 #include "settingsManager.h"
-
+#include <QObject>
 
 SettingsManager::SettingsManager(){
     presetArray = QList<Preset>();
 }
+void SettingsManager::downloadSettings(){
+    QUrl imgURL("http://107.170.171.251/GeniUS/presets.json");
+    dlManager = new DownloadManager(imgURL);
+
+    connect(dlManager, SIGNAL (downloadDone()), this, SLOT (readConfigFile()));
+}
 
 void SettingsManager::readConfigFile(){
     
-    //charge le fichier json
-    QFile loadFile(QStringLiteral(":presets.json"));
-    
-    if (!loadFile.open(QIODevice::ReadOnly)) {
-        qWarning("Couldn't open presets.");
-        return;
-    }
-    
-    //lis
-    QByteArray saveData = loadFile.readAll();
-    
 	QJsonParseError errorStatus;
     //place le tout dans un QJsonDocument (qu'on peut facilement parser)
-	QJsonDocument loadDoc = QJsonDocument::fromJson(saveData, &errorStatus);
+	QJsonDocument loadDoc = QJsonDocument::fromJson(dlManager->getData(), &errorStatus);
 	
 	if (errorStatus.error == QJsonParseError::NoError)
 	{
@@ -60,4 +55,5 @@ void SettingsManager::parseAndStore(const QJsonObject &json){
         presetArray.append(prst);
     }
     
+    emit settingsReady();
 }
