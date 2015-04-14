@@ -18,7 +18,7 @@ QT_USE_NAMESPACE
 
 const int ANIMATION_TIME_MS = 250;
 const int LIGHTS_ANIMATION_TIME = 5;
-string PHILIPS_HUE_URL = "10.0.1.34";//34
+string PHILIPS_HUE_URL = "192.168.1.137";//34
 string PHILIPS_HUE_USERNAME = "lapfelixlapfelixlapfelix";
 int PHILIPS_HUE_PORT = 80;
 

@@ -230,19 +230,19 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
             case 1:
 				//5.95/7
 				textCenter = QPointF(backTransRect2.x() + (backTransRect2.width()*constanteDegueulasseMaisTellementCool1), backTransRect2.y() + (backTransRect2.height() >> 1) - (constanteDegueulasseMaisTellementCool2));
-                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«u»");
+                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«a»");
                 break;
                 
             case 2:
 				textCenter = QPointF(backTransRect1.x() + (backTransRect1.width()*constanteDegueulasseMaisTellementCool1), backTransRect1.y() + (backTransRect1.height() >> 1) - (constanteDegueulasseMaisTellementCool2));
-                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«a»");
-				textCenter = QPointF(backTransRect3.x() + (backTransRect3.width()*constanteDegueulasseMaisTellementCool1), backTransRect3.y() + (backTransRect3.height() >> 1) - (constanteDegueulasseMaisTellementCool2));
                 drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«u»");
+				textCenter = QPointF(backTransRect3.x() + (backTransRect3.width()*constanteDegueulasseMaisTellementCool1), backTransRect3.y() + (backTransRect3.height() >> 1) - (constanteDegueulasseMaisTellementCool2));
+                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«a»");
                 break;
                 
             case 3:
 				textCenter = QPointF(backTransRect2.x() + (backTransRect2.width()*constanteDegueulasseMaisTellementCool1), backTransRect2.y() + (backTransRect2.height() >> 1) - (constanteDegueulasseMaisTellementCool2));
-                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«a»");
+                drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, "«u»");
                 break;
                 
             default:
