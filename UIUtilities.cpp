@@ -69,7 +69,7 @@ float UIUtilities::getFullScreenPixelRatioForImage(QPixmap* image){
     
     float heightRatio = imageHeight/screenHeight;
     float widthRatio = imageWidth/screenWidth;
-    qDebug() << "thatt " << ((heightRatio<widthRatio)?heightRatio*qApp->devicePixelRatio():widthRatio*qApp->devicePixelRatio());
+
     //rapporte le ratio le plus petit pour que ca rentre sans qu'il reste de blanc
     return 1/((heightRatio<widthRatio)?heightRatio:widthRatio);
 }
@@ -100,18 +100,7 @@ QGraphicsItem* UIUtilities::pixmapItemFromSvg(const char* svgTitle, QGraphicsSce
 }
 
 void UIUtilities::animateCard(CardItem* card, QPoint position, bool selected, bool visible, const int ANIMATION_TIME_MS){
-#if TARGET_OS_IPHONE
-    //card->pos() = position;
-    //card->setScale(selected?1:0.8);
-    //card->setOpacity(visible?1.0:0.0);
-    //return;
-#endif
-    
-    //if(opacityAnimation->state() != QAbstractAnimation::Stopped)
-    //opacityAnimation->stop();
-    //scaleAnimation->stop();
-    //positionAnimation->stop();
-    
+
     //card->setOpacity(visible?1.0:0.0);
     if(ANIMATION_TIME_MS == 0){
         card->setPos(position);
@@ -159,32 +148,3 @@ void UIUtilities::animateCard(CardItem* card, QPoint position, bool selected, bo
         scaleAnimation->start();
     }
 }
-
-/*
-void UIUtilities::blurBackgroundItem(QGraphicsItem *backgroundItem, QPixmap *referencePixmap){
-    
-#ifdef TARGET_OS_IPHONE
-    return;
-#endif
-    
-    float blurRadius = 80.f;
-    
-    //désactive le blur si le compileur compile pour un ordinateur qui n'est pas un
-    //Mac pour des raisons (mystérieuses(?)) de performance
-//#ifdef __APPLE__
-    QGraphicsBlurEffect *effect = new QGraphicsBlurEffect();
-    effect->setBlurHints(QGraphicsBlurEffect::AnimationHint);
-    effect->setBlurRadius(blurRadius);
-    
-    //assigne l'effet à l'item approprié
-    backgroundItem->setGraphicsEffect(effect);
-//#endif
-    
-    //rend le scale plus grand pour cacher les bordures blanches
-    //backgroundItem->setScale((1/getFullScreenPixelRatioForImage(referencePixmap))*1.2);
-    //cache les bordures en haut et à gauche
-    backgroundItem->setX(-blurRadius/0.5);
-    backgroundItem->setY(-blurRadius/0.5);
-    
-}
- */

@@ -10,28 +10,6 @@ extern Q_WIDGETS_EXPORT void qt_blurImage(QPainter *p, QImage &blurImage, qreal 
 QT_END_NAMESPACE
 
 
-/*
-CardItem::CardItem()
-{
-    
-
-}
-*/
-/*
-CardItem::CardItem(float xPos, float yPos, float width, float height, string text, string imagePath)
-{
-    rect = QRectF(xPos, yPos, width, height);
-    
-    title = text;
-    imgPath = imagePath;
-    
-    imageObject = new QImage();
-    
-    imageObject->load(imgPath.c_str());
-    image = QPixmap::fromImage(*imageObject);
-    delete imageObject;
-}*/
-
 void CardItem::configure(const Preset *prst){
     
     colorSetting = 1;
@@ -129,12 +107,6 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
     
     painter->setOpacity(1.0);
     
-    
-    
-    //QFontDatabase::addApplicationFont ( ":font.ttf" );
-    //QFont font("BN BenWitch Project", 52);
-    
-    //QFont font("Helvetica Neue", 52);
     if(!hideContent){
         
         painter->setOpacity(this->opacity());
@@ -203,13 +175,6 @@ void CardItem::paint(QPainter * painter, const QStyleOptionGraphicsItem * option
         painter->setPen(QPen(Qt::white, penWidth));
         textCenter = QPointF(phonemeRect.x() + phonemeRect.width()/2,phonemeRect.y() + phonemeRect.height()/2 - 5);
         drawText(*painter, textCenter, Qt::AlignVCenter | Qt::AlignHCenter, phonemeString.c_str());
-        
-        //float height = 340;
-        //float width = 340;
-        
-        //float smallestDimension = image.width()<image.height()?image.width():image.height();
-        //painter->drawPixmap(QRect(rect.x()+(rect.width()/2)-(width/2), 30, width, height), image, QRect((smallestDimension-width)/4, 0, smallestDimension, smallestDimension));
-        
         
     }else{
         //les bebelles de settings
@@ -465,7 +430,6 @@ bool CardItem::getInSettingsView(){
 }
 
 void CardItem::turnForSettings(){
-    //NOPE, PAS BON, FAUT FAIRE CA SELON LE SCALE
     
     //ok bonne nuit
     QTransform m2;

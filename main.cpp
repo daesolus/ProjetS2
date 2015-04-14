@@ -40,18 +40,6 @@ int main(int argc, char *argv[])
 
 		a.setStyleSheet("background-color: black;");
 		scene.setBackgroundBrush(QBrush(QColor(0, 0, 0)));
-
-		/*
-		 //Show off mode
-
-		 QTransform m;
-
-		     	int x = 1440;
-				    	m.translate(x,900);
-						    	m.rotate(30,Qt::XAxis);
-								    	m.translate(-x,-990);
-										    	*/
-
 		
         MainView *view = new MainView(&scene);
         
@@ -79,6 +67,7 @@ int main(int argc, char *argv[])
 #else
 		//rien. le défaut est parfait sur Mac
 #endif
+        
 #else
 		view->setWindowFlags(Qt::CustomizeWindowHint | Qt::FramelessWindowHint);
 		view->setFrameShape(QFrame::NoFrame);

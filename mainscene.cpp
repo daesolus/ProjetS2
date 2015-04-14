@@ -70,7 +70,6 @@ MainScene::MainScene()
 	QRect rec = QApplication::desktop()->screenGeometry();
 
 	float heightConstant = 1;
-	//qDebug() << "hellol" << (float)rec.height() / (float)rec.width();
 #if TARGET_OS_IPHONE
 	if ((float)rec.height() / (float)rec.width() == 0.75)
 		//c'est un iPad
@@ -119,32 +118,9 @@ MainScene::MainScene()
 	manager = new SettingsManager();
 	manager->readConfigFile();
 
-	//loadSongs();
-	/*
-	#ifdef __APPLE__
-	#include "TargetConditionals.h"
-	#ifdef TARGET_OS_IPHONE
-	// iOS
-	#elif TARGET_IPHONE_SIMULATOR
-	// iOS Simulator
-	#else
-	// Unsupported platform
-	loadSongs();
-	#endif
-	#else
-	loadSongs();
-	#endif
-	*/
-	//#if TARGET_OS_IPHONE
-	//nothing
-	//#else
 	if (ENABLE_SOUND)
 		loadSongs();
-	//#endif
-
-	//nouveau seed pour que les fonctions aléatoires soient réellement aléatoires
-	//srand(time(NULL));
-
+	
 	//set la taille de la scène pour que ca soit plein écran
 	this->setSceneRect(0, 0, screenWidth, screenHeight);
 
@@ -215,8 +191,6 @@ MainScene::MainScene()
 
 	refreshBackground();
 
-	//rafraichis et configure les cartes
-	//refreshCurrentCards();
 
 	//démarre le QTimer pour les Philips Hue
 	timer = new QTimer(this);
@@ -269,26 +243,7 @@ void MainScene::loadSongs(){
 #pragma mark - Cartes/Navigation
 
 void MainScene::refreshBackground(){
-	/*
-	//affichage de l'arrière plan
-	imageObject = QImage();
-	imageObject.load(manager->getPresetArray().at(currentSelection).imgPath.c_str());
-
-
-	//extern QImage srcImg;//source image
-	//QPixmap *pxDst( imageObject->size() );//blurred destination
-	image = QPixmap(imageObject.size()*qApp->devicePixelRatio());
-	image.fill(Qt::transparent);
-	{
-	QPainter painter(&image);
-	qt_blurImage(&painter, imageObject, 200 * ((float)image.height()*(float)image.width() / 1000000) / qApp->devicePixelRatio(), false, false);//blur radius: 2px
-	}
-	*/
-
-	//this->removeItem(background);
-
-	//if (background)
-	//	delete background;
+	
 
 	//background = nullptr;
 	if (background == NULL)
@@ -305,15 +260,6 @@ void MainScene::refreshBackground(){
 	//le met en arrière plan
 	background->setZValue(-1);
 	background->setScale(UIManager->getFullScreenPixelRatioForImage(&*allCards.at(currentSelection)->getBlurredBackground())*qApp->devicePixelRatio());
-	//image.setDevicePixelRatio(UIManager->getFullScreenPixelRatioForImage(&image)*3);
-	//aspect fill l'écran
-
-	//rend l'arrière plan flou et cool
-	//UIManager->blurBackgroundItem(background, &image);
-
-#if TARGET_OS_IPHONE
-	//return;
-#endif
 
 	//change de musique et la joue
 	if (ENABLE_SOUND){
@@ -376,16 +322,6 @@ void MainScene::navBack(bool shouldSendColor){
 		else
 			currentSelection--;
 
-		/*
-		if(!allCards.at(currentSelection)->getInSettingsView()){
-		if(currentSelection-1 >= 0){
-		currentSelection--;
-		*/
-
-		//#if TARGET_OS_IPHONE
-		//do nothing
-		// #else
-		//change de musique et la joue
 
 		if (ENABLE_SOUND){
 			playlist->setCurrentIndex(currentSelection);
@@ -397,7 +333,6 @@ void MainScene::navBack(bool shouldSendColor){
 		refreshCurrentCards();
 	}
 	else{
-		//on est en settings view, fuck off
 		//go down
 		CardItem *thisCard = allCards.at(currentSelection);
 		thisCard->changeColorSetting(false);
@@ -416,9 +351,6 @@ void MainScene::navForward(bool shouldSendColor){
 		else
 			currentSelection++;
 
-		//#if TARGET_OS_IPHONE
-		//do nothing
-		//#else
 		//change de musique et la joue
 		if (ENABLE_SOUND){
 			playlist->setCurrentIndex(currentSelection);
@@ -429,7 +361,6 @@ void MainScene::navForward(bool shouldSendColor){
 
 	}
 	else{
-		//on est en settings view, fuck off
 		//go up
 		CardItem *thisCard = allCards.at(currentSelection);
 		thisCard->changeColorSetting(true);
@@ -442,14 +373,6 @@ void MainScene::navForward(bool shouldSendColor){
 
 void MainScene::navSelect(bool shouldSendColor){
 	CardItem *currentCard = allCards.at(currentSelection);
-
-	/*
-	QPropertyAnimation *opacityAnimation2 = new QPropertyAnimation((QGraphicsObject*)nextArrow, "pos");
-	opacityAnimation2->setDuration(ANIMATION_TIME_MS);
-	opacityAnimation2->setStartValue(nextArrow->pos());
-	opacityAnimation1->setEndValue(currentCard->getInSettingsView()?nextArrowOriginalPos:QPointF(nextArrowOriginalPos.rx()+100, nextArrowOriginalPos.ry()));
-	opacityAnimation2->start();
-	*/
 
 	Q_FOREACH(CardItem *item, allCards){
 		if (item != currentCard){
@@ -483,23 +406,8 @@ void MainScene::navSelect(bool shouldSendColor){
 
 	}
 
-
-	/*
-	QPropertyAnimation *opacityAnimation1 = new QPropertyAnimation((QGraphicsObject*)backArrow, "scale");
-	opacityAnimation1->setDuration(ANIMATION_TIME_MS);
-	opacityAnimation1->setStartValue(1.1);
-	opacityAnimation1->setEndValue(0.1);
-	opacityAnimation1->start();
-	*/
-
 	scaleAnimation->start();
 
-	/*
-	back
-	QPropertyAnimation animate = new QPropertyAnimation(backArrow, "windowOpacity");
-
-	animate.setDuration(100); animate.setStartValue(1); animate.setEndValue(0); animate.start();
-	*/
 }
 
 void MainScene::showSettingsForCurrentCard(){
@@ -622,7 +530,6 @@ void MainScene::onDisconnect(){
 
 void MainScene::updateHue()
 {
-	//qDebug() << (colorCycle % 2 ? "tic" : "toc");
 	//colorCycle de 0 à 3 constamment
 	colorCycle++;
 	if (colorCycle == 4) {
@@ -650,13 +557,8 @@ void MainScene::updateHue()
 		sendColorToPhilipsHue(((colorCycle + 0) % 4) + 1, (thisPreset->color1).c_str(), 0);
 		sendColorToPhilipsHue(((colorCycle + 1) % 4) + 1, (thisPreset->color2).c_str(), 0);
 		sendColorToPhilipsHue(((colorCycle + 2) % 4) + 1, (thisPreset->color3).c_str(), 0);
-		// sendColorToPhilipsHue(((colorCycle + 3) % 4) + 1, (thisPreset->color4).c_str(), LIGHTS_ANIMATION_TIME);
-		/*
-		sendColorToPhilipsHue(((colorCycle + 0) % 4) + 1, (thisPreset->color1).c_str(), 0);
-		sendColorToPhilipsHue(((colorCycle + 1) % 4) + 1, (thisPreset->color2).c_str(), 0);
-		sendColorToPhilipsHue(((colorCycle + 2) % 4) + 1, (thisPreset->color3).c_str(), 0);
 		sendColorToPhilipsHue(((colorCycle + 3) % 4) + 1, (thisPreset->color4).c_str(), 0);
-		*/
+
 
 		break;
 	case 3:
@@ -683,17 +585,12 @@ void MainScene::sendColorToPhilipsHue(int lightNumber, const char* color, int tr
 
 	//le temps de transition est multiplié par 100ms, donc 7 = 700ms;
 
-	//prend la couleur en HSB
-	//HsbColor colorHSB =  color->getHSB();
-
 	//monte la saturation de 25% pour simuler l'effet gamma d'un écran pour que les couleurs se ressemblent (écran et lumières)
 	float moreSat = (couleur.saturationF() * 1.25) > 1 ? 1 : couleur.saturationF() * 1.25;
 
 	string body = "{ \"on\": true, \"hue\":" + to_string((int)(couleur.hueF() * 65535)) + ", \"sat\":" + to_string((int)(moreSat * 255)) + ", \"bri\":" + to_string((int)(couleur.lightnessF() * 255)) + ", \"transitiontime\":" + to_string(transitionTime) + "}";
 	string URL = "http://" + PHILIPS_HUE_URL + ":" + to_string(PHILIPS_HUE_PORT) + "/api/" + PHILIPS_HUE_USERNAME + "/lights/" + to_string(lightNumber) + "/state";
 
-	//request = new QNetworkRequest(QUrl(URL.c_str()));
-	//request->setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 	netManager->put(QNetworkRequest(QUrl(URL.c_str())), body.c_str());
 
 }

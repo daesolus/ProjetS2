@@ -116,31 +116,6 @@ bool MainView::viewportEvent(QEvent *event)
                     theScene->navSendM();
                     return true;
                 }
-                /*
-                if ((abs(xDiff)/abs(yDiff)) > 1) {
-                    //horizontal swipe
-                    if(xDiff > 0){
-                        //left
-                        theScene->navSendL();
-                    }else{
-                        //right
-                        theScene->navSendR();
-                        
-                    }
-                }else{
-                    //vertical swipe
-                    if(yDiff > 0){
-                        //down
-                        theScene->navSendR();
-                        
-                    }else{
-                        //up
-                        theScene->navSendL();
-                        
-                    }
-                }
-                 */
-                
             }
             return true;
         }
