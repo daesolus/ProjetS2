@@ -18,7 +18,7 @@ class MainScene : public QGraphicsScene
 {
     Q_OBJECT
 public:
-    explicit MainScene();
+    explicit MainScene(QObject *parent);
     void keyPressEvent(QKeyEvent *event);
     void navSendR();
     void navSendL();
@@ -33,7 +33,8 @@ private Q_SLOTS:
     void refreshBackground();
 
 private:
-    
+    void reload();
+    void getPresets();
     void navBack(bool shouldSendColor);
     void navForward(bool shouldSendColor);
     void navSelect(bool shouldSendColor);

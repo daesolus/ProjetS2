@@ -5,6 +5,15 @@ SettingsManager::SettingsManager(){
     presetArray = QList<Preset>();
 }
 void SettingsManager::downloadSettings(){
+    
+    //presetArray.clear();
+    
+    
+    //for (int i = 0; i < presetArray.count(); i++) {
+    for (int i = presetArray.count()-1; i > 0; i--) {
+        presetArray.removeAt(i);
+    }
+    qDebug() << "PILALA:"<< presetArray.count();
     QUrl imgURL("http://107.170.171.251/GeniUS/presets.json");
     dlManager = new DownloadManager(imgURL);
 

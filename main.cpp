@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
     
 	try
 	{
-		MainScene scene;
+		MainScene scene(&a);
 
 		QRect rec = QApplication::desktop()->screenGeometry();
 		float screenHeight = rec.height();

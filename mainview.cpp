@@ -12,7 +12,7 @@ bool ignoreNextEnd = false;
 
 MainView::MainView(MainScene* parent):QGraphicsView(parent)
 {
-    
+
     theScene = parent;
     
     oldPoint = QPointF(-1, -1);
@@ -22,7 +22,6 @@ MainView::MainView(MainScene* parent):QGraphicsView(parent)
     //disable the scrollbars
     setHorizontalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
     setVerticalScrollBarPolicy ( Qt::ScrollBarAlwaysOff );
-    
     
     QRect rec = QApplication::desktop()->screenGeometry();
     float screenHeight = rec.height();

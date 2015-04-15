@@ -50,8 +50,10 @@ struct cardProperties{
 };
 
 cardProperties cardPos[5];
-MainScene::MainScene()
+MainScene::MainScene(QObject *parent)
 {
+    this->setParent(parent);
+    
 	UIManager = new UIUtilities();
 
 	background = nullptr;
@@ -65,7 +67,54 @@ MainScene::MainScene()
 	request = new QNetworkRequest(QUrl(URL.c_str()));
 	request->setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
 	netManager->post(*request, body.c_str());
+    
+    m_webSocket = new QWebSocket();
+    m_webSocket->open(QUrl("ws://107.170.171.251:56453"));
+    
+    //prend la taille de l'écran en points (pas en pixels)
+    QRect rec = QApplication::desktop()->screenGeometry();
+    
+    float heightConstant = 1;
+#if TARGET_OS_IPHONE
+    if ((float)rec.height() / (float)rec.width() == 0.75)
+        //c'est un iPad
+        heightConstant = 1.23;
+    else
+        heightConstant = 3.4;
+    float screenWidth = 1440;
+#else
+    float screenWidth = rec.width();
+#endif
+    
+    float screenHeight = rec.height() * heightConstant;
+    
+    
+    //set la taille de la scène pour que ca soit plein écran
+    this->setSceneRect(0, 0, screenWidth, screenHeight);
+    
+    timer = new QTimer(this);
 
+    //charge les flèches back et next à partir du fichier svg
+    
+    backArrow = (NavArrow*)UIManager->pixmapItemFromSvg(":arrowLine.svg", this);
+    nextArrow = (NavArrow*)UIManager->pixmapItemFromSvg(":arrowLine.svg", this);
+    //rotate la flèche next
+    nextArrow->setRotation(180);
+    //centre les 2 items
+    layout.centerInScreen(nextArrow);
+    layout.centerInScreen(backArrow);
+    
+    backArrow->moveBy(-643, -75);
+    nextArrow->moveBy(643 + (56 * qApp->devicePixelRatio()), 67);
+    
+    backArrowOriginalPos = QPoint(backArrow->pos().x(), backArrow->pos().y());
+    nextArrowOriginalPos = QPoint(nextArrow->pos().x(), nextArrow->pos().y());
+    
+    this->getPresets();
+    
+}
+
+void MainScene::getPresets(){
     
     //lis les reglages
     manager = new SettingsManager();
@@ -74,7 +123,6 @@ MainScene::MainScene()
     connect(manager, SIGNAL (settingsReady()), this, SLOT (finishLoading()));
 
 }
-
 void MainScene::finishLoading(){
     
     //prend la taille de l'écran en points (pas en pixels)
@@ -93,6 +141,8 @@ void MainScene::finishLoading(){
 #endif
     
     float screenHeight = rec.height() * heightConstant;
+    
+    
     
     
     //hardcore hardcoding, sorry
@@ -115,9 +165,6 @@ void MainScene::finishLoading(){
     props.scale = 1;
     cardPos[2] = props;
     
-    m_webSocket = new QWebSocket();
-    m_webSocket->open(QUrl("ws://107.170.171.251:56453"));
-    
     connect(m_webSocket, &QWebSocket::connected, this, &MainScene::onConnected);
     connect(m_webSocket, &QWebSocket::disconnected, this, &MainScene::onDisconnect);
     connect(m_webSocket, &QWebSocket::textMessageReceived, this, &MainScene::wsMessageReceived);
@@ -127,29 +174,10 @@ void MainScene::finishLoading(){
     if (ENABLE_SOUND)
         loadSongs();
     
-    //set la taille de la scène pour que ca soit plein écran
-    this->setSceneRect(0, 0, screenWidth, screenHeight);
-    
-    //charge les flèches back et next à partir du fichier svg
-    
-    backArrow = (NavArrow*)UIManager->pixmapItemFromSvg(":arrowLine.svg", this);
-    nextArrow = (NavArrow*)UIManager->pixmapItemFromSvg(":arrowLine.svg", this);
-    //rotate la flèche next
-    nextArrow->setRotation(180);
-    //centre les 2 items
-    layout.centerInScreen(nextArrow);
-    layout.centerInScreen(backArrow);
-    
-    backArrow->moveBy(-643, -75);
-    nextArrow->moveBy(643 + (56 * qApp->devicePixelRatio()), 67);
-    
-    backArrowOriginalPos = QPoint(backArrow->pos().x(), backArrow->pos().y());
-    nextArrowOriginalPos = QPoint(nextArrow->pos().x(), nextArrow->pos().y());
-    
     float cardWidth = 406;
     float cardHeight = 466;
     float cardSmallScale = 0.8;
-    
+    qDebug()<<"PRESETARRAYCOUNT:"<< manager->getPresetArray().count();
     for (int i = 0; i < manager->getPresetArray().count(); i++) {
         CardItem *item = new CardItem(0, 0, cardWidth, cardHeight, "", "");
         
@@ -194,15 +222,24 @@ void MainScene::finishLoading(){
             UIManager->animateCard(allCards.at(i), QPoint(cardPos[4].x, cardPos[4].y), false, false, ANIMATION_TIME_MS);
         }
     }
-    
     connect(allCards.at(currentSelection), SIGNAL (cardLoaded()),this, SLOT (refreshBackground()));
     
     //démarre le QTimer pour les Philips Hue
-    timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(updateHue()));
     timer->start(1000);
 }
+void MainScene::reload(){
+    player->stop();
+    
+    for (int i = allCards.count()-1; i >= 0; i--) {
+        CardItem * card = allCards.takeAt(i);
+        this->removeItem(card);
+        delete card;
+    }
+    qDebug() << "PILALO:"<< allCards.count();
 
+    this->getPresets();
+}
 #pragma mark - Audio
 
 void MainScene::loadSongs(){
@@ -210,6 +247,8 @@ void MainScene::loadSongs(){
 	//qDebug() << "HERE";
 
 	//initialise player et playlist
+    //delete player;
+    //delete playlist;
 	player = new QMediaPlayer;
 	playlist = new QMediaPlaylist(player);
 
@@ -225,6 +264,8 @@ void MainScene::loadSongs(){
 	player->setVolume(100);
 	//assigne le playlist au player
 	player->setPlaylist(playlist);
+    
+    player->stop();
 
 }
 
@@ -300,7 +341,6 @@ void MainScene::refreshCurrentCards(){
 //navigue par en arrière si possible
 void MainScene::navBack(bool shouldSendColor){
 
-
 	if (!allCards.at(currentSelection)->getInSettingsView()){
 		if (currentSelection == 0)
 		{
@@ -331,7 +371,6 @@ void MainScene::navBack(bool shouldSendColor){
 }
 void MainScene::navForward(bool shouldSendColor){
 
-
 	if (!allCards.at(currentSelection)->getInSettingsView()){
 		if (currentSelection + 1 == manager->getPresetArray().count())
 			currentSelection = 0;
@@ -351,7 +390,6 @@ void MainScene::navForward(bool shouldSendColor){
 		//go up
 		CardItem *thisCard = allCards.at(currentSelection);
 		thisCard->changeColorSetting(true);
-
 	}
 
 	if (shouldSendColor)
@@ -479,13 +517,30 @@ void MainScene::wsMessageReceived(QString text){
 			else
 				lcount--;
 			break;
-
-		case 'm':
-			if (mcount == 0)
-				navSelect(true);
-			else
-				mcount--;
-			break;
+                
+        case 'm':
+            if (mcount == 0)
+                navSelect(true);
+            else
+                mcount--;
+            break;
+                
+        case 'z':
+                //((QApplication*)this->parent())->exit(420);
+                /*
+                 QProcess::startDetached(QApplication::applicationFilePath());
+                exit(12);
+                 */
+                
+                disconnect(m_webSocket, &QWebSocket::connected, this, &MainScene::onConnected);
+                disconnect(m_webSocket, &QWebSocket::disconnected, this, &MainScene::onDisconnect);
+                disconnect(m_webSocket, &QWebSocket::textMessageReceived, this, &MainScene::wsMessageReceived);
+                disconnect(allCards.at(currentSelection), SIGNAL (cardLoaded()),this, SLOT (refreshBackground()));
+                disconnect(timer, SIGNAL(timeout()), this, SLOT(updateHue()));
+                
+                this->reload();
+                
+            break;
 
 		default:
 			break;
